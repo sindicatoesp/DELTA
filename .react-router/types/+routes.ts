@@ -19,6 +19,11 @@ type Pages = {
       "*": string;
     };
   };
+  "/:lang": {
+    params: {
+      "lang": string;
+    };
+  };
   "/:lang/about/about-the-system": {
     params: {
       "lang": string;
@@ -89,6 +94,16 @@ type Pages = {
       "lang": string;
     };
   };
+  "/:lang/api": {
+    params: {
+      "lang": string;
+    };
+  };
+  "/:lang/api/asset": {
+    params: {
+      "lang": string;
+    };
+  };
   "/:lang/api/asset/add": {
     params: {
       "lang": string;
@@ -119,12 +134,12 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/asset": {
+  "/:lang/api/client-log": {
     params: {
       "lang": string;
     };
   };
-  "/:lang/api/client-log": {
+  "/:lang/api/damage": {
     params: {
       "lang": string;
     };
@@ -154,7 +169,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/damage": {
+  "/:lang/api/dev-example1": {
     params: {
       "lang": string;
     };
@@ -184,7 +199,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/dev-example1": {
+  "/:lang/api/disaster-event": {
     params: {
       "lang": string;
     };
@@ -219,11 +234,6 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/disaster-event": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/api/disaster-events/:disaster_event_id/recovery-cost": {
     params: {
       "lang": string;
@@ -246,6 +256,11 @@ type Pages = {
     params: {
       "lang": string;
       "disaster_event_id": string;
+    };
+  };
+  "/:lang/api/disaster-record": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/api/disaster-record/add": {
@@ -279,7 +294,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/disaster-record": {
+  "/:lang/api/disruption": {
     params: {
       "lang": string;
     };
@@ -309,7 +324,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/disruption": {
+  "/:lang/api/division": {
     params: {
       "lang": string;
     };
@@ -329,15 +344,15 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/division": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/api/geojson/:id": {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/api/hazardous-event": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/api/hazardous-event/add": {
@@ -365,12 +380,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/hazardous-event": {
-    params: {
-      "lang": string;
-    };
-  };
-  "/:lang/api/hips/cluster/list": {
+  "/:lang/api/hips": {
     params: {
       "lang": string;
     };
@@ -380,7 +390,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/hips/hazard/list": {
+  "/:lang/api/hips/cluster/list": {
     params: {
       "lang": string;
     };
@@ -390,7 +400,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/hips/type/list": {
+  "/:lang/api/hips/hazard/list": {
     params: {
       "lang": string;
     };
@@ -400,7 +410,12 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/hips": {
+  "/:lang/api/hips/type/list": {
+    params: {
+      "lang": string;
+    };
+  };
+  "/:lang/api/human-effects": {
     params: {
       "lang": string;
     };
@@ -425,7 +440,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/human-effects": {
+  "/:lang/api/losses": {
     params: {
       "lang": string;
     };
@@ -455,7 +470,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/losses": {
+  "/:lang/api/nonecolosses": {
     params: {
       "lang": string;
     };
@@ -485,11 +500,6 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/nonecolosses": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/api/organization": {
     params: {
       "lang": string;
@@ -500,12 +510,17 @@ type Pages = {
       "lang": string;
     };
   };
+  "/:lang/api/sector": {
+    params: {
+      "lang": string;
+    };
+  };
   "/:lang/api/sector/list": {
     params: {
       "lang": string;
     };
   };
-  "/:lang/api/sector": {
+  "/:lang/api/sector-disaster-record-relation": {
     params: {
       "lang": string;
     };
@@ -530,11 +545,6 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api/sector-disaster-record-relation": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/api/spatial-footprint-geojson": {
     params: {
       "lang": string;
@@ -545,15 +555,15 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/api": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/disaster-event/:id": {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/disaster-event": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/disaster-event/csv-export": {
@@ -598,15 +608,15 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/disaster-event": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/disaster-record/:id": {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/disaster-record": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/disaster-record/content-picker-config": {
@@ -635,13 +645,13 @@ type Pages = {
       "id": string;
     };
   };
-  "/:lang/disaster-record/edit-sec/:disRecId/delete": {
+  "/:lang/disaster-record/edit-sec/:disRecId": {
     params: {
       "lang": string;
       "disRecId": string;
     };
   };
-  "/:lang/disaster-record/edit-sec/:disRecId": {
+  "/:lang/disaster-record/edit-sec/:disRecId/delete": {
     params: {
       "lang": string;
       "disRecId": string;
@@ -652,6 +662,12 @@ type Pages = {
       "lang": string;
       "disRecId": string;
       "id": string;
+    };
+  };
+  "/:lang/disaster-record/edit-sub/:disRecId/damages": {
+    params: {
+      "lang": string;
+      "disRecId": string;
     };
   };
   "/:lang/disaster-record/edit-sub/:disRecId/damages/csv-export": {
@@ -680,17 +696,17 @@ type Pages = {
       "id": string;
     };
   };
-  "/:lang/disaster-record/edit-sub/:disRecId/damages": {
-    params: {
-      "lang": string;
-      "disRecId": string;
-    };
-  };
   "/:lang/disaster-record/edit-sub/:disRecId/disruptions/:id": {
     params: {
       "lang": string;
       "disRecId": string;
       "id": string;
+    };
+  };
+  "/:lang/disaster-record/edit-sub/:disRecId/disruptions": {
+    params: {
+      "lang": string;
+      "disRecId": string;
     };
   };
   "/:lang/disaster-record/edit-sub/:disRecId/disruptions/csv-export": {
@@ -719,7 +735,7 @@ type Pages = {
       "id": string;
     };
   };
-  "/:lang/disaster-record/edit-sub/:disRecId/disruptions": {
+  "/:lang/disaster-record/edit-sub/:disRecId/human-effects": {
     params: {
       "lang": string;
       "disRecId": string;
@@ -761,17 +777,17 @@ type Pages = {
       "disRecId": string;
     };
   };
-  "/:lang/disaster-record/edit-sub/:disRecId/human-effects": {
-    params: {
-      "lang": string;
-      "disRecId": string;
-    };
-  };
   "/:lang/disaster-record/edit-sub/:disRecId/losses/:id": {
     params: {
       "lang": string;
       "disRecId": string;
       "id": string;
+    };
+  };
+  "/:lang/disaster-record/edit-sub/:disRecId/losses": {
+    params: {
+      "lang": string;
+      "disRecId": string;
     };
   };
   "/:lang/disaster-record/edit-sub/:disRecId/losses/csv-export": {
@@ -800,12 +816,6 @@ type Pages = {
       "id": string;
     };
   };
-  "/:lang/disaster-record/edit-sub/:disRecId/losses": {
-    params: {
-      "lang": string;
-      "disRecId": string;
-    };
-  };
   "/:lang/disaster-record/edit/:id": {
     params: {
       "lang": string;
@@ -827,21 +837,16 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/disaster-record/non-economic-losses/:id/delete": {
-    params: {
-      "lang": string;
-      "id": string;
-    };
-  };
   "/:lang/disaster-record/non-economic-losses/:id": {
     params: {
       "lang": string;
       "id": string;
     };
   };
-  "/:lang/disaster-record": {
+  "/:lang/disaster-record/non-economic-losses/:id/delete": {
     params: {
       "lang": string;
+      "id": string;
     };
   };
   "/:lang/error/unauthorized": {
@@ -915,6 +920,11 @@ type Pages = {
       "id": string;
     };
   };
+  "/:lang/examples/dev-example1": {
+    params: {
+      "lang": string;
+    };
+  };
   "/:lang/examples/dev-example1/csv-export": {
     params: {
       "lang": string;
@@ -937,7 +947,7 @@ type Pages = {
       "id": string;
     };
   };
-  "/:lang/examples/dev-example1": {
+  "/:lang/examples/multiple-loaders": {
     params: {
       "lang": string;
     };
@@ -952,11 +962,6 @@ type Pages = {
     params: {
       "lang": string;
       "parent": string;
-    };
-  };
-  "/:lang/examples/multiple-loaders": {
-    params: {
-      "lang": string;
     };
   };
   "/:lang/examples/primereact": {
@@ -978,6 +983,11 @@ type Pages = {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/hazardous-event": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/hazardous-event/csv-export": {
@@ -1027,11 +1037,6 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/hazardous-event": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/settings": {
     params: {
       "lang": string;
@@ -1041,6 +1046,11 @@ type Pages = {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/settings/access-mgmnt": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/settings/access-mgmnt/delete/:id": {
@@ -1060,15 +1070,15 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/settings/access-mgmnt": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/settings/api-key/:id": {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/settings/api-key": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/settings/api-key/delete/:id": {
@@ -1083,15 +1093,15 @@ type Pages = {
       "id": string;
     };
   };
-  "/:lang/settings/api-key": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/settings/assets/:id": {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/settings/assets": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/settings/assets/content-picker-datasource": {
@@ -1121,15 +1131,15 @@ type Pages = {
       "id": string;
     };
   };
-  "/:lang/settings/assets": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/settings/geography/:id": {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/settings/geography": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/settings/geography/csv-export": {
@@ -1148,7 +1158,7 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/settings/geography": {
+  "/:lang/settings/human-effects-dsg": {
     params: {
       "lang": string;
     };
@@ -1158,15 +1168,15 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang/settings/human-effects-dsg": {
-    params: {
-      "lang": string;
-    };
-  };
   "/:lang/settings/organizations/:id": {
     params: {
       "lang": string;
       "id": string;
+    };
+  };
+  "/:lang/settings/organizations": {
+    params: {
+      "lang": string;
     };
   };
   "/:lang/settings/organizations/delete/:id": {
@@ -1179,11 +1189,6 @@ type Pages = {
     params: {
       "lang": string;
       "id": string;
-    };
-  };
-  "/:lang/settings/organizations": {
-    params: {
-      "lang": string;
     };
   };
   "/:lang/settings/sectors": {
@@ -1291,11 +1296,6 @@ type Pages = {
       "lang": string;
     };
   };
-  "/:lang": {
-    params: {
-      "lang": string;
-    };
-  };
   "/sso/azure-b2c/callback": {
     params: {};
   };
@@ -1304,11 +1304,15 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/*" | "/:lang/about/about-the-system" | "/:lang/about/methodologies" | "/:lang/about/partners" | "/:lang/about/support" | "/:lang/about/technical-specifications" | "/:lang/admin/country-accounts" | "/:lang/admin/login" | "/:lang/admin/logout" | "/:lang/analytics/content-picker-config" | "/:lang/analytics/content-picker-datasource" | "/:lang/analytics/disaster-events" | "/:lang/analytics/disaster-events/sector" | "/:lang/analytics/hazards" | "/:lang/analytics/sectors" | "/:lang/api/asset/add" | "/:lang/api/asset/csv-import-example" | "/:lang/api/asset/getassets" | "/:lang/api/asset/list" | "/:lang/api/asset/update" | "/:lang/api/asset/upsert" | "/:lang/api/asset" | "/:lang/api/client-log" | "/:lang/api/damage/add" | "/:lang/api/damage/csv-import-example" | "/:lang/api/damage/list" | "/:lang/api/damage/update" | "/:lang/api/damage/upsert" | "/:lang/api/damage" | "/:lang/api/dev-example1/add" | "/:lang/api/dev-example1/csv-import-example" | "/:lang/api/dev-example1/list" | "/:lang/api/dev-example1/update" | "/:lang/api/dev-example1/upsert" | "/:lang/api/dev-example1" | "/:lang/api/disaster-event/add" | "/:lang/api/disaster-event/csv-import-example" | "/:lang/api/disaster-event/list" | "/:lang/api/disaster-event/tags-sectors" | "/:lang/api/disaster-event/update" | "/:lang/api/disaster-event/upsert" | "/:lang/api/disaster-event" | "/:lang/api/disaster-events/:disaster_event_id/recovery-cost" | "/:lang/api/disaster-events/:disaster_event_id/rehabilitation-cost" | "/:lang/api/disaster-events/:disaster_event_id/repair-cost" | "/:lang/api/disaster-events/:disaster_event_id/replacement-cost" | "/:lang/api/disaster-record/add" | "/:lang/api/disaster-record/csv-import-example" | "/:lang/api/disaster-record/delete/:id" | "/:lang/api/disaster-record/list" | "/:lang/api/disaster-record/update" | "/:lang/api/disaster-record/upsert" | "/:lang/api/disaster-record" | "/:lang/api/disruption/add" | "/:lang/api/disruption/csv-import-example" | "/:lang/api/disruption/list" | "/:lang/api/disruption/update" | "/:lang/api/disruption/upsert" | "/:lang/api/disruption" | "/:lang/api/division/delete_all" | "/:lang/api/division/list" | "/:lang/api/division/upload" | "/:lang/api/division" | "/:lang/api/geojson/:id" | "/:lang/api/hazardous-event/add" | "/:lang/api/hazardous-event/csv-import-example" | "/:lang/api/hazardous-event/list" | "/:lang/api/hazardous-event/update" | "/:lang/api/hazardous-event/upsert" | "/:lang/api/hazardous-event" | "/:lang/api/hips/cluster/list" | "/:lang/api/hips/cluster" | "/:lang/api/hips/hazard/list" | "/:lang/api/hips/hazard" | "/:lang/api/hips/type/list" | "/:lang/api/hips/type" | "/:lang/api/hips" | "/:lang/api/human-effects/category-presence-save" | "/:lang/api/human-effects/clear" | "/:lang/api/human-effects/list" | "/:lang/api/human-effects/save" | "/:lang/api/human-effects" | "/:lang/api/losses/add" | "/:lang/api/losses/csv-import-example" | "/:lang/api/losses/list" | "/:lang/api/losses/update" | "/:lang/api/losses/upsert" | "/:lang/api/losses" | "/:lang/api/nonecolosses/add" | "/:lang/api/nonecolosses/csv-import-example" | "/:lang/api/nonecolosses/list" | "/:lang/api/nonecolosses/update" | "/:lang/api/nonecolosses/upsert" | "/:lang/api/nonecolosses" | "/:lang/api/organization" | "/:lang/api/qrcode" | "/:lang/api/sector/list" | "/:lang/api/sector" | "/:lang/api/sector-disaster-record-relation/add" | "/:lang/api/sector-disaster-record-relation/list" | "/:lang/api/sector-disaster-record-relation/update" | "/:lang/api/sector-disaster-record-relation/upsert" | "/:lang/api/sector-disaster-record-relation" | "/:lang/api/spatial-footprint-geojson" | "/:lang/api/subsectors" | "/:lang/api" | "/:lang/disaster-event/:id" | "/:lang/disaster-event/csv-export" | "/:lang/disaster-event/csv-import" | "/:lang/disaster-event/delete/:id" | "/:lang/disaster-event/edit/:id" | "/:lang/disaster-event/file-pre-upload" | "/:lang/disaster-event/file-temp-viewer" | "/:lang/disaster-event/file-viewer" | "/:lang/disaster-event/picker" | "/:lang/disaster-event" | "/:lang/disaster-record/:id" | "/:lang/disaster-record/content-picker-config" | "/:lang/disaster-record/content-picker-datasource" | "/:lang/disaster-record/csv-export" | "/:lang/disaster-record/csv-import" | "/:lang/disaster-record/delete/:id" | "/:lang/disaster-record/edit-sec/:disRecId/delete" | "/:lang/disaster-record/edit-sec/:disRecId" | "/:lang/disaster-record/edit-sub/:disRecId/damages/:id" | "/:lang/disaster-record/edit-sub/:disRecId/damages/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/damages/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/damages/delete/:id" | "/:lang/disaster-record/edit-sub/:disRecId/damages/edit/:id" | "/:lang/disaster-record/edit-sub/:disRecId/damages" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/:id" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/delete/:id" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/edit/:id" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/clear" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/delete-all-data" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/load" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/save" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects" | "/:lang/disaster-record/edit-sub/:disRecId/losses/:id" | "/:lang/disaster-record/edit-sub/:disRecId/losses/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/losses/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/losses/delete/:id" | "/:lang/disaster-record/edit-sub/:disRecId/losses/edit/:id" | "/:lang/disaster-record/edit-sub/:disRecId/losses" | "/:lang/disaster-record/edit/:id" | "/:lang/disaster-record/file-pre-upload" | "/:lang/disaster-record/file-temp-viewer" | "/:lang/disaster-record/file-viewer" | "/:lang/disaster-record/non-economic-losses/:id/delete" | "/:lang/disaster-record/non-economic-losses/:id" | "/:lang/disaster-record" | "/:lang/error/unauthorized" | "/:lang/examples/basic-form" | "/:lang/examples/components/content-picker-config-tree" | "/:lang/examples/components/content-picker-config" | "/:lang/examples/components/content-picker-datasource-tree" | "/:lang/examples/components/content-picker-datasource" | "/:lang/examples/components/content-picker-tree" | "/:lang/examples/components/content-picker" | "/:lang/examples/components/map-chart" | "/:lang/examples/components/spatial-footprints-dr-map" | "/:lang/examples/components/spatial-footprints-map" | "/:lang/examples/components/treeview-01" | "/:lang/examples/components/treeview-02" | "/:lang/examples/dev-example1/:id" | "/:lang/examples/dev-example1/csv-export" | "/:lang/examples/dev-example1/csv-import" | "/:lang/examples/dev-example1/delete/:id" | "/:lang/examples/dev-example1/edit/:id" | "/:lang/examples/dev-example1" | "/:lang/examples/multiple-loaders/parent/:parent" | "/:lang/examples/multiple-loaders/parent/:parent/child" | "/:lang/examples/multiple-loaders" | "/:lang/examples/primereact" | "/:lang/examples/test-route-module" | "/:lang/examples/translations/basic" | "/:lang/hazardous-event/:id" | "/:lang/hazardous-event/csv-export" | "/:lang/hazardous-event/csv-import" | "/:lang/hazardous-event/delete/:id" | "/:lang/hazardous-event/edit/:id" | "/:lang/hazardous-event/file-pre-upload" | "/:lang/hazardous-event/file-temp-viewer" | "/:lang/hazardous-event/file-viewer" | "/:lang/hazardous-event/new" | "/:lang/hazardous-event/picker" | "/:lang/hazardous-event" | "/:lang/settings" | "/:lang/settings/access-mgmnt/:id" | "/:lang/settings/access-mgmnt/delete/:id" | "/:lang/settings/access-mgmnt/edit/:id" | "/:lang/settings/access-mgmnt/invite" | "/:lang/settings/access-mgmnt" | "/:lang/settings/api-key/:id" | "/:lang/settings/api-key/delete/:id" | "/:lang/settings/api-key/edit/:id" | "/:lang/settings/api-key" | "/:lang/settings/assets/:id" | "/:lang/settings/assets/content-picker-datasource" | "/:lang/settings/assets/csv-export" | "/:lang/settings/assets/csv-import" | "/:lang/settings/assets/delete/:id" | "/:lang/settings/assets/edit/:id" | "/:lang/settings/assets" | "/:lang/settings/geography/:id" | "/:lang/settings/geography/csv-export" | "/:lang/settings/geography/edit/:id" | "/:lang/settings/geography/upload" | "/:lang/settings/geography" | "/:lang/settings/human-effects-dsg/custom" | "/:lang/settings/human-effects-dsg" | "/:lang/settings/organizations/:id" | "/:lang/settings/organizations/delete/:id" | "/:lang/settings/organizations/edit/:id" | "/:lang/settings/organizations" | "/:lang/settings/sectors" | "/:lang/settings/system" | "/:lang/setup/admin-account-sso" | "/:lang/sso/azure-b2c/invite" | "/:lang/sso/azure-b2c/login" | "/:lang/user/accept-invite-welcome" | "/:lang/user/accept-invite" | "/:lang/user/change-password" | "/:lang/user/forgot-password" | "/:lang/user/login" | "/:lang/user/logout" | "/:lang/user/refresh-session" | "/:lang/user/reset-password" | "/:lang/user/select-instance" | "/:lang/user/settings" | "/:lang/user/totp-disable" | "/:lang/user/totp-enable" | "/:lang/user/totp-login" | "/:lang/user/verify-email-complete" | "/:lang/user/verify-email-send-again" | "/:lang/user/verify-email" | "/:lang" | "/sso/azure-b2c/callback";
+    page: "/" | "/*" | "/:lang" | "/:lang/about/about-the-system" | "/:lang/about/methodologies" | "/:lang/about/partners" | "/:lang/about/support" | "/:lang/about/technical-specifications" | "/:lang/admin/country-accounts" | "/:lang/admin/login" | "/:lang/admin/logout" | "/:lang/analytics/content-picker-config" | "/:lang/analytics/content-picker-datasource" | "/:lang/analytics/disaster-events" | "/:lang/analytics/disaster-events/sector" | "/:lang/analytics/hazards" | "/:lang/analytics/sectors" | "/:lang/api" | "/:lang/api/asset" | "/:lang/api/asset/add" | "/:lang/api/asset/csv-import-example" | "/:lang/api/asset/getassets" | "/:lang/api/asset/list" | "/:lang/api/asset/update" | "/:lang/api/asset/upsert" | "/:lang/api/client-log" | "/:lang/api/damage" | "/:lang/api/damage/add" | "/:lang/api/damage/csv-import-example" | "/:lang/api/damage/list" | "/:lang/api/damage/update" | "/:lang/api/damage/upsert" | "/:lang/api/dev-example1" | "/:lang/api/dev-example1/add" | "/:lang/api/dev-example1/csv-import-example" | "/:lang/api/dev-example1/list" | "/:lang/api/dev-example1/update" | "/:lang/api/dev-example1/upsert" | "/:lang/api/disaster-event" | "/:lang/api/disaster-event/add" | "/:lang/api/disaster-event/csv-import-example" | "/:lang/api/disaster-event/list" | "/:lang/api/disaster-event/tags-sectors" | "/:lang/api/disaster-event/update" | "/:lang/api/disaster-event/upsert" | "/:lang/api/disaster-events/:disaster_event_id/recovery-cost" | "/:lang/api/disaster-events/:disaster_event_id/rehabilitation-cost" | "/:lang/api/disaster-events/:disaster_event_id/repair-cost" | "/:lang/api/disaster-events/:disaster_event_id/replacement-cost" | "/:lang/api/disaster-record" | "/:lang/api/disaster-record/add" | "/:lang/api/disaster-record/csv-import-example" | "/:lang/api/disaster-record/delete/:id" | "/:lang/api/disaster-record/list" | "/:lang/api/disaster-record/update" | "/:lang/api/disaster-record/upsert" | "/:lang/api/disruption" | "/:lang/api/disruption/add" | "/:lang/api/disruption/csv-import-example" | "/:lang/api/disruption/list" | "/:lang/api/disruption/update" | "/:lang/api/disruption/upsert" | "/:lang/api/division" | "/:lang/api/division/delete_all" | "/:lang/api/division/list" | "/:lang/api/division/upload" | "/:lang/api/geojson/:id" | "/:lang/api/hazardous-event" | "/:lang/api/hazardous-event/add" | "/:lang/api/hazardous-event/csv-import-example" | "/:lang/api/hazardous-event/list" | "/:lang/api/hazardous-event/update" | "/:lang/api/hazardous-event/upsert" | "/:lang/api/hips" | "/:lang/api/hips/cluster" | "/:lang/api/hips/cluster/list" | "/:lang/api/hips/hazard" | "/:lang/api/hips/hazard/list" | "/:lang/api/hips/type" | "/:lang/api/hips/type/list" | "/:lang/api/human-effects" | "/:lang/api/human-effects/category-presence-save" | "/:lang/api/human-effects/clear" | "/:lang/api/human-effects/list" | "/:lang/api/human-effects/save" | "/:lang/api/losses" | "/:lang/api/losses/add" | "/:lang/api/losses/csv-import-example" | "/:lang/api/losses/list" | "/:lang/api/losses/update" | "/:lang/api/losses/upsert" | "/:lang/api/nonecolosses" | "/:lang/api/nonecolosses/add" | "/:lang/api/nonecolosses/csv-import-example" | "/:lang/api/nonecolosses/list" | "/:lang/api/nonecolosses/update" | "/:lang/api/nonecolosses/upsert" | "/:lang/api/organization" | "/:lang/api/qrcode" | "/:lang/api/sector" | "/:lang/api/sector/list" | "/:lang/api/sector-disaster-record-relation" | "/:lang/api/sector-disaster-record-relation/add" | "/:lang/api/sector-disaster-record-relation/list" | "/:lang/api/sector-disaster-record-relation/update" | "/:lang/api/sector-disaster-record-relation/upsert" | "/:lang/api/spatial-footprint-geojson" | "/:lang/api/subsectors" | "/:lang/disaster-event/:id" | "/:lang/disaster-event" | "/:lang/disaster-event/csv-export" | "/:lang/disaster-event/csv-import" | "/:lang/disaster-event/delete/:id" | "/:lang/disaster-event/edit/:id" | "/:lang/disaster-event/file-pre-upload" | "/:lang/disaster-event/file-temp-viewer" | "/:lang/disaster-event/file-viewer" | "/:lang/disaster-event/picker" | "/:lang/disaster-record/:id" | "/:lang/disaster-record" | "/:lang/disaster-record/content-picker-config" | "/:lang/disaster-record/content-picker-datasource" | "/:lang/disaster-record/csv-export" | "/:lang/disaster-record/csv-import" | "/:lang/disaster-record/delete/:id" | "/:lang/disaster-record/edit-sec/:disRecId" | "/:lang/disaster-record/edit-sec/:disRecId/delete" | "/:lang/disaster-record/edit-sub/:disRecId/damages/:id" | "/:lang/disaster-record/edit-sub/:disRecId/damages" | "/:lang/disaster-record/edit-sub/:disRecId/damages/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/damages/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/damages/delete/:id" | "/:lang/disaster-record/edit-sub/:disRecId/damages/edit/:id" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/:id" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/delete/:id" | "/:lang/disaster-record/edit-sub/:disRecId/disruptions/edit/:id" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/clear" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/delete-all-data" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/load" | "/:lang/disaster-record/edit-sub/:disRecId/human-effects/save" | "/:lang/disaster-record/edit-sub/:disRecId/losses/:id" | "/:lang/disaster-record/edit-sub/:disRecId/losses" | "/:lang/disaster-record/edit-sub/:disRecId/losses/csv-export" | "/:lang/disaster-record/edit-sub/:disRecId/losses/csv-import" | "/:lang/disaster-record/edit-sub/:disRecId/losses/delete/:id" | "/:lang/disaster-record/edit-sub/:disRecId/losses/edit/:id" | "/:lang/disaster-record/edit/:id" | "/:lang/disaster-record/file-pre-upload" | "/:lang/disaster-record/file-temp-viewer" | "/:lang/disaster-record/file-viewer" | "/:lang/disaster-record/non-economic-losses/:id" | "/:lang/disaster-record/non-economic-losses/:id/delete" | "/:lang/error/unauthorized" | "/:lang/examples/basic-form" | "/:lang/examples/components/content-picker-config-tree" | "/:lang/examples/components/content-picker-config" | "/:lang/examples/components/content-picker-datasource-tree" | "/:lang/examples/components/content-picker-datasource" | "/:lang/examples/components/content-picker-tree" | "/:lang/examples/components/content-picker" | "/:lang/examples/components/map-chart" | "/:lang/examples/components/spatial-footprints-dr-map" | "/:lang/examples/components/spatial-footprints-map" | "/:lang/examples/components/treeview-01" | "/:lang/examples/components/treeview-02" | "/:lang/examples/dev-example1/:id" | "/:lang/examples/dev-example1" | "/:lang/examples/dev-example1/csv-export" | "/:lang/examples/dev-example1/csv-import" | "/:lang/examples/dev-example1/delete/:id" | "/:lang/examples/dev-example1/edit/:id" | "/:lang/examples/multiple-loaders" | "/:lang/examples/multiple-loaders/parent/:parent" | "/:lang/examples/multiple-loaders/parent/:parent/child" | "/:lang/examples/primereact" | "/:lang/examples/test-route-module" | "/:lang/examples/translations/basic" | "/:lang/hazardous-event/:id" | "/:lang/hazardous-event" | "/:lang/hazardous-event/csv-export" | "/:lang/hazardous-event/csv-import" | "/:lang/hazardous-event/delete/:id" | "/:lang/hazardous-event/edit/:id" | "/:lang/hazardous-event/file-pre-upload" | "/:lang/hazardous-event/file-temp-viewer" | "/:lang/hazardous-event/file-viewer" | "/:lang/hazardous-event/new" | "/:lang/hazardous-event/picker" | "/:lang/settings" | "/:lang/settings/access-mgmnt/:id" | "/:lang/settings/access-mgmnt" | "/:lang/settings/access-mgmnt/delete/:id" | "/:lang/settings/access-mgmnt/edit/:id" | "/:lang/settings/access-mgmnt/invite" | "/:lang/settings/api-key/:id" | "/:lang/settings/api-key" | "/:lang/settings/api-key/delete/:id" | "/:lang/settings/api-key/edit/:id" | "/:lang/settings/assets/:id" | "/:lang/settings/assets" | "/:lang/settings/assets/content-picker-datasource" | "/:lang/settings/assets/csv-export" | "/:lang/settings/assets/csv-import" | "/:lang/settings/assets/delete/:id" | "/:lang/settings/assets/edit/:id" | "/:lang/settings/geography/:id" | "/:lang/settings/geography" | "/:lang/settings/geography/csv-export" | "/:lang/settings/geography/edit/:id" | "/:lang/settings/geography/upload" | "/:lang/settings/human-effects-dsg" | "/:lang/settings/human-effects-dsg/custom" | "/:lang/settings/organizations/:id" | "/:lang/settings/organizations" | "/:lang/settings/organizations/delete/:id" | "/:lang/settings/organizations/edit/:id" | "/:lang/settings/sectors" | "/:lang/settings/system" | "/:lang/setup/admin-account-sso" | "/:lang/sso/azure-b2c/invite" | "/:lang/sso/azure-b2c/login" | "/:lang/user/accept-invite-welcome" | "/:lang/user/accept-invite" | "/:lang/user/change-password" | "/:lang/user/forgot-password" | "/:lang/user/login" | "/:lang/user/logout" | "/:lang/user/refresh-session" | "/:lang/user/reset-password" | "/:lang/user/select-instance" | "/:lang/user/settings" | "/:lang/user/totp-disable" | "/:lang/user/totp-enable" | "/:lang/user/totp-login" | "/:lang/user/verify-email-complete" | "/:lang/user/verify-email-send-again" | "/:lang/user/verify-email" | "/sso/azure-b2c/callback";
   };
   "routes/$.tsx": {
     id: "routes/$";
     page: "/*";
+  };
+  "routes/$lang+/_index.tsx": {
+    id: "routes/$lang+/_index";
+    page: "/:lang";
   };
   "routes/$lang+/about+/about-the-system.tsx": {
     id: "routes/$lang+/about+/about-the-system";
@@ -1366,6 +1370,14 @@ type RouteFiles = {
     id: "routes/$lang+/analytics+/sectors";
     page: "/:lang/analytics/sectors";
   };
+  "routes/$lang+/api+/_index.tsx": {
+    id: "routes/$lang+/api+/_index";
+    page: "/:lang/api";
+  };
+  "routes/$lang+/api+/asset+/_index.tsx": {
+    id: "routes/$lang+/api+/asset+/_index";
+    page: "/:lang/api/asset";
+  };
   "routes/$lang+/api+/asset+/add.ts": {
     id: "routes/$lang+/api+/asset+/add";
     page: "/:lang/api/asset/add";
@@ -1390,13 +1402,13 @@ type RouteFiles = {
     id: "routes/$lang+/api+/asset+/upsert";
     page: "/:lang/api/asset/upsert";
   };
-  "routes/$lang+/api+/asset+/_index.tsx": {
-    id: "routes/$lang+/api+/asset+/_index";
-    page: "/:lang/api/asset";
-  };
   "routes/$lang+/api+/client-log.ts": {
     id: "routes/$lang+/api+/client-log";
     page: "/:lang/api/client-log";
+  };
+  "routes/$lang+/api+/damage+/_index.tsx": {
+    id: "routes/$lang+/api+/damage+/_index";
+    page: "/:lang/api/damage";
   };
   "routes/$lang+/api+/damage+/add.ts": {
     id: "routes/$lang+/api+/damage+/add";
@@ -1418,9 +1430,9 @@ type RouteFiles = {
     id: "routes/$lang+/api+/damage+/upsert";
     page: "/:lang/api/damage/upsert";
   };
-  "routes/$lang+/api+/damage+/_index.tsx": {
-    id: "routes/$lang+/api+/damage+/_index";
-    page: "/:lang/api/damage";
+  "routes/$lang+/api+/dev-example1+/_index.tsx": {
+    id: "routes/$lang+/api+/dev-example1+/_index";
+    page: "/:lang/api/dev-example1";
   };
   "routes/$lang+/api+/dev-example1+/add.ts": {
     id: "routes/$lang+/api+/dev-example1+/add";
@@ -1442,9 +1454,9 @@ type RouteFiles = {
     id: "routes/$lang+/api+/dev-example1+/upsert";
     page: "/:lang/api/dev-example1/upsert";
   };
-  "routes/$lang+/api+/dev-example1+/_index.tsx": {
-    id: "routes/$lang+/api+/dev-example1+/_index";
-    page: "/:lang/api/dev-example1";
+  "routes/$lang+/api+/disaster-event+/_index.tsx": {
+    id: "routes/$lang+/api+/disaster-event+/_index";
+    page: "/:lang/api/disaster-event";
   };
   "routes/$lang+/api+/disaster-event+/add.ts": {
     id: "routes/$lang+/api+/disaster-event+/add";
@@ -1470,10 +1482,6 @@ type RouteFiles = {
     id: "routes/$lang+/api+/disaster-event+/upsert";
     page: "/:lang/api/disaster-event/upsert";
   };
-  "routes/$lang+/api+/disaster-event+/_index.tsx": {
-    id: "routes/$lang+/api+/disaster-event+/_index";
-    page: "/:lang/api/disaster-event";
-  };
   "routes/$lang+/api+/disaster-events.$disaster_event_id+/recovery-cost.ts": {
     id: "routes/$lang+/api+/disaster-events.$disaster_event_id+/recovery-cost";
     page: "/:lang/api/disaster-events/:disaster_event_id/recovery-cost";
@@ -1489,6 +1497,10 @@ type RouteFiles = {
   "routes/$lang+/api+/disaster-events.$disaster_event_id+/replacement-cost.tsx": {
     id: "routes/$lang+/api+/disaster-events.$disaster_event_id+/replacement-cost";
     page: "/:lang/api/disaster-events/:disaster_event_id/replacement-cost";
+  };
+  "routes/$lang+/api+/disaster-record+/_index.tsx": {
+    id: "routes/$lang+/api+/disaster-record+/_index";
+    page: "/:lang/api/disaster-record";
   };
   "routes/$lang+/api+/disaster-record+/add.ts": {
     id: "routes/$lang+/api+/disaster-record+/add";
@@ -1514,9 +1526,9 @@ type RouteFiles = {
     id: "routes/$lang+/api+/disaster-record+/upsert";
     page: "/:lang/api/disaster-record/upsert";
   };
-  "routes/$lang+/api+/disaster-record+/_index.tsx": {
-    id: "routes/$lang+/api+/disaster-record+/_index";
-    page: "/:lang/api/disaster-record";
+  "routes/$lang+/api+/disruption+/_index.tsx": {
+    id: "routes/$lang+/api+/disruption+/_index";
+    page: "/:lang/api/disruption";
   };
   "routes/$lang+/api+/disruption+/add.ts": {
     id: "routes/$lang+/api+/disruption+/add";
@@ -1538,9 +1550,9 @@ type RouteFiles = {
     id: "routes/$lang+/api+/disruption+/upsert";
     page: "/:lang/api/disruption/upsert";
   };
-  "routes/$lang+/api+/disruption+/_index.tsx": {
-    id: "routes/$lang+/api+/disruption+/_index";
-    page: "/:lang/api/disruption";
+  "routes/$lang+/api+/division+/_index.tsx": {
+    id: "routes/$lang+/api+/division+/_index";
+    page: "/:lang/api/division";
   };
   "routes/$lang+/api+/division+/delete_all.ts": {
     id: "routes/$lang+/api+/division+/delete_all";
@@ -1554,13 +1566,13 @@ type RouteFiles = {
     id: "routes/$lang+/api+/division+/upload";
     page: "/:lang/api/division/upload";
   };
-  "routes/$lang+/api+/division+/_index.tsx": {
-    id: "routes/$lang+/api+/division+/_index";
-    page: "/:lang/api/division";
-  };
   "routes/$lang+/api+/geojson.$id.ts": {
     id: "routes/$lang+/api+/geojson.$id";
     page: "/:lang/api/geojson/:id";
+  };
+  "routes/$lang+/api+/hazardous-event+/_index.tsx": {
+    id: "routes/$lang+/api+/hazardous-event+/_index";
+    page: "/:lang/api/hazardous-event";
   };
   "routes/$lang+/api+/hazardous-event+/add.ts": {
     id: "routes/$lang+/api+/hazardous-event+/add";
@@ -1582,37 +1594,37 @@ type RouteFiles = {
     id: "routes/$lang+/api+/hazardous-event+/upsert";
     page: "/:lang/api/hazardous-event/upsert";
   };
-  "routes/$lang+/api+/hazardous-event+/_index.tsx": {
-    id: "routes/$lang+/api+/hazardous-event+/_index";
-    page: "/:lang/api/hazardous-event";
-  };
-  "routes/$lang+/api+/hips+/cluster+/list.ts": {
-    id: "routes/$lang+/api+/hips+/cluster+/list";
-    page: "/:lang/api/hips/cluster/list";
+  "routes/$lang+/api+/hips+/_index.tsx": {
+    id: "routes/$lang+/api+/hips+/_index";
+    page: "/:lang/api/hips";
   };
   "routes/$lang+/api+/hips+/cluster+/_index.tsx": {
     id: "routes/$lang+/api+/hips+/cluster+/_index";
     page: "/:lang/api/hips/cluster";
   };
-  "routes/$lang+/api+/hips+/hazard+/list.ts": {
-    id: "routes/$lang+/api+/hips+/hazard+/list";
-    page: "/:lang/api/hips/hazard/list";
+  "routes/$lang+/api+/hips+/cluster+/list.ts": {
+    id: "routes/$lang+/api+/hips+/cluster+/list";
+    page: "/:lang/api/hips/cluster/list";
   };
   "routes/$lang+/api+/hips+/hazard+/_index.tsx": {
     id: "routes/$lang+/api+/hips+/hazard+/_index";
     page: "/:lang/api/hips/hazard";
   };
-  "routes/$lang+/api+/hips+/type+/list.ts": {
-    id: "routes/$lang+/api+/hips+/type+/list";
-    page: "/:lang/api/hips/type/list";
+  "routes/$lang+/api+/hips+/hazard+/list.ts": {
+    id: "routes/$lang+/api+/hips+/hazard+/list";
+    page: "/:lang/api/hips/hazard/list";
   };
   "routes/$lang+/api+/hips+/type+/_index.tsx": {
     id: "routes/$lang+/api+/hips+/type+/_index";
     page: "/:lang/api/hips/type";
   };
-  "routes/$lang+/api+/hips+/_index.tsx": {
-    id: "routes/$lang+/api+/hips+/_index";
-    page: "/:lang/api/hips";
+  "routes/$lang+/api+/hips+/type+/list.ts": {
+    id: "routes/$lang+/api+/hips+/type+/list";
+    page: "/:lang/api/hips/type/list";
+  };
+  "routes/$lang+/api+/human-effects+/_index.tsx": {
+    id: "routes/$lang+/api+/human-effects+/_index";
+    page: "/:lang/api/human-effects";
   };
   "routes/$lang+/api+/human-effects+/category-presence-save.tsx": {
     id: "routes/$lang+/api+/human-effects+/category-presence-save";
@@ -1630,9 +1642,9 @@ type RouteFiles = {
     id: "routes/$lang+/api+/human-effects+/save";
     page: "/:lang/api/human-effects/save";
   };
-  "routes/$lang+/api+/human-effects+/_index.tsx": {
-    id: "routes/$lang+/api+/human-effects+/_index";
-    page: "/:lang/api/human-effects";
+  "routes/$lang+/api+/losses+/_index.tsx": {
+    id: "routes/$lang+/api+/losses+/_index";
+    page: "/:lang/api/losses";
   };
   "routes/$lang+/api+/losses+/add.ts": {
     id: "routes/$lang+/api+/losses+/add";
@@ -1654,9 +1666,9 @@ type RouteFiles = {
     id: "routes/$lang+/api+/losses+/upsert";
     page: "/:lang/api/losses/upsert";
   };
-  "routes/$lang+/api+/losses+/_index.tsx": {
-    id: "routes/$lang+/api+/losses+/_index";
-    page: "/:lang/api/losses";
+  "routes/$lang+/api+/nonecolosses+/_index.tsx": {
+    id: "routes/$lang+/api+/nonecolosses+/_index";
+    page: "/:lang/api/nonecolosses";
   };
   "routes/$lang+/api+/nonecolosses+/add.ts": {
     id: "routes/$lang+/api+/nonecolosses+/add";
@@ -1678,10 +1690,6 @@ type RouteFiles = {
     id: "routes/$lang+/api+/nonecolosses+/upsert";
     page: "/:lang/api/nonecolosses/upsert";
   };
-  "routes/$lang+/api+/nonecolosses+/_index.tsx": {
-    id: "routes/$lang+/api+/nonecolosses+/_index";
-    page: "/:lang/api/nonecolosses";
-  };
   "routes/$lang+/api+/organization/_index.tsx": {
     id: "routes/$lang+/api+/organization/_index";
     page: "/:lang/api/organization";
@@ -1690,13 +1698,17 @@ type RouteFiles = {
     id: "routes/$lang+/api+/qrcode";
     page: "/:lang/api/qrcode";
   };
+  "routes/$lang+/api+/sector+/_index.tsx": {
+    id: "routes/$lang+/api+/sector+/_index";
+    page: "/:lang/api/sector";
+  };
   "routes/$lang+/api+/sector+/list.ts": {
     id: "routes/$lang+/api+/sector+/list";
     page: "/:lang/api/sector/list";
   };
-  "routes/$lang+/api+/sector+/_index.tsx": {
-    id: "routes/$lang+/api+/sector+/_index";
-    page: "/:lang/api/sector";
+  "routes/$lang+/api+/sector-disaster-record-relation+/_index.tsx": {
+    id: "routes/$lang+/api+/sector-disaster-record-relation+/_index";
+    page: "/:lang/api/sector-disaster-record-relation";
   };
   "routes/$lang+/api+/sector-disaster-record-relation+/add.ts": {
     id: "routes/$lang+/api+/sector-disaster-record-relation+/add";
@@ -1714,10 +1726,6 @@ type RouteFiles = {
     id: "routes/$lang+/api+/sector-disaster-record-relation+/upsert";
     page: "/:lang/api/sector-disaster-record-relation/upsert";
   };
-  "routes/$lang+/api+/sector-disaster-record-relation+/_index.tsx": {
-    id: "routes/$lang+/api+/sector-disaster-record-relation+/_index";
-    page: "/:lang/api/sector-disaster-record-relation";
-  };
   "routes/$lang+/api+/spatial-footprint-geojson.ts": {
     id: "routes/$lang+/api+/spatial-footprint-geojson";
     page: "/:lang/api/spatial-footprint-geojson";
@@ -1726,13 +1734,13 @@ type RouteFiles = {
     id: "routes/$lang+/api+/subsectors";
     page: "/:lang/api/subsectors";
   };
-  "routes/$lang+/api+/_index.tsx": {
-    id: "routes/$lang+/api+/_index";
-    page: "/:lang/api";
-  };
   "routes/$lang+/disaster-event+/$id.tsx": {
     id: "routes/$lang+/disaster-event+/$id";
     page: "/:lang/disaster-event/:id";
+  };
+  "routes/$lang+/disaster-event+/_index.tsx": {
+    id: "routes/$lang+/disaster-event+/_index";
+    page: "/:lang/disaster-event";
   };
   "routes/$lang+/disaster-event+/csv-export.ts": {
     id: "routes/$lang+/disaster-event+/csv-export";
@@ -1766,13 +1774,13 @@ type RouteFiles = {
     id: "routes/$lang+/disaster-event+/picker";
     page: "/:lang/disaster-event/picker";
   };
-  "routes/$lang+/disaster-event+/_index.tsx": {
-    id: "routes/$lang+/disaster-event+/_index";
-    page: "/:lang/disaster-event";
-  };
   "routes/$lang+/disaster-record+/$id.tsx": {
     id: "routes/$lang+/disaster-record+/$id";
     page: "/:lang/disaster-record/:id";
+  };
+  "routes/$lang+/disaster-record+/_index.tsx": {
+    id: "routes/$lang+/disaster-record+/_index";
+    page: "/:lang/disaster-record";
   };
   "routes/$lang+/disaster-record+/content-picker-config.tsx": {
     id: "routes/$lang+/disaster-record+/content-picker-config";
@@ -1794,17 +1802,21 @@ type RouteFiles = {
     id: "routes/$lang+/disaster-record+/delete.$id";
     page: "/:lang/disaster-record/delete/:id";
   };
-  "routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete.ts": {
-    id: "routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete";
-    page: "/:lang/disaster-record/edit-sec/:disRecId/delete";
-  };
   "routes/$lang+/disaster-record+/edit-sec.$disRecId+/_index.tsx": {
     id: "routes/$lang+/disaster-record+/edit-sec.$disRecId+/_index";
     page: "/:lang/disaster-record/edit-sec/:disRecId";
   };
+  "routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete.ts": {
+    id: "routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete";
+    page: "/:lang/disaster-record/edit-sec/:disRecId/delete";
+  };
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/$id.tsx": {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/$id";
     page: "/:lang/disaster-record/edit-sub/:disRecId/damages/:id";
+  };
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index.tsx": {
+    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index";
+    page: "/:lang/disaster-record/edit-sub/:disRecId/damages";
   };
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/csv-export.ts": {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/csv-export";
@@ -1822,13 +1834,13 @@ type RouteFiles = {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/edit.$id";
     page: "/:lang/disaster-record/edit-sub/:disRecId/damages/edit/:id";
   };
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index.tsx": {
-    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index";
-    page: "/:lang/disaster-record/edit-sub/:disRecId/damages";
-  };
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/$id.tsx": {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/$id";
     page: "/:lang/disaster-record/edit-sub/:disRecId/disruptions/:id";
+  };
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index.tsx": {
+    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index";
+    page: "/:lang/disaster-record/edit-sub/:disRecId/disruptions";
   };
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/csv-export.ts": {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/csv-export";
@@ -1846,9 +1858,9 @@ type RouteFiles = {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/edit.$id";
     page: "/:lang/disaster-record/edit-sub/:disRecId/disruptions/edit/:id";
   };
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index.tsx": {
-    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index";
-    page: "/:lang/disaster-record/edit-sub/:disRecId/disruptions";
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index.tsx": {
+    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index";
+    page: "/:lang/disaster-record/edit-sub/:disRecId/human-effects";
   };
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/clear.ts": {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/clear";
@@ -1874,13 +1886,13 @@ type RouteFiles = {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/save";
     page: "/:lang/disaster-record/edit-sub/:disRecId/human-effects/save";
   };
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index.tsx": {
-    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index";
-    page: "/:lang/disaster-record/edit-sub/:disRecId/human-effects";
-  };
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/$id.tsx": {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/$id";
     page: "/:lang/disaster-record/edit-sub/:disRecId/losses/:id";
+  };
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index.tsx": {
+    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index";
+    page: "/:lang/disaster-record/edit-sub/:disRecId/losses";
   };
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/csv-export.ts": {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/csv-export";
@@ -1898,10 +1910,6 @@ type RouteFiles = {
     id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/edit.$id";
     page: "/:lang/disaster-record/edit-sub/:disRecId/losses/edit/:id";
   };
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index.tsx": {
-    id: "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index";
-    page: "/:lang/disaster-record/edit-sub/:disRecId/losses";
-  };
   "routes/$lang+/disaster-record+/edit.$id.tsx": {
     id: "routes/$lang+/disaster-record+/edit.$id";
     page: "/:lang/disaster-record/edit/:id";
@@ -1918,17 +1926,13 @@ type RouteFiles = {
     id: "routes/$lang+/disaster-record+/file-viewer";
     page: "/:lang/disaster-record/file-viewer";
   };
-  "routes/$lang+/disaster-record+/non-economic-losses.$id+/delete.ts": {
-    id: "routes/$lang+/disaster-record+/non-economic-losses.$id+/delete";
-    page: "/:lang/disaster-record/non-economic-losses/:id/delete";
-  };
   "routes/$lang+/disaster-record+/non-economic-losses.$id+/_index.tsx": {
     id: "routes/$lang+/disaster-record+/non-economic-losses.$id+/_index";
     page: "/:lang/disaster-record/non-economic-losses/:id";
   };
-  "routes/$lang+/disaster-record+/_index.tsx": {
-    id: "routes/$lang+/disaster-record+/_index";
-    page: "/:lang/disaster-record";
+  "routes/$lang+/disaster-record+/non-economic-losses.$id+/delete.ts": {
+    id: "routes/$lang+/disaster-record+/non-economic-losses.$id+/delete";
+    page: "/:lang/disaster-record/non-economic-losses/:id/delete";
   };
   "routes/$lang+/error+/unauthorized.tsx": {
     id: "routes/$lang+/error+/unauthorized";
@@ -1986,6 +1990,10 @@ type RouteFiles = {
     id: "routes/$lang+/examples+/dev-example1+/$id";
     page: "/:lang/examples/dev-example1/:id";
   };
+  "routes/$lang+/examples+/dev-example1+/_index.tsx": {
+    id: "routes/$lang+/examples+/dev-example1+/_index";
+    page: "/:lang/examples/dev-example1";
+  };
   "routes/$lang+/examples+/dev-example1+/csv-export.ts": {
     id: "routes/$lang+/examples+/dev-example1+/csv-export";
     page: "/:lang/examples/dev-example1/csv-export";
@@ -2002,9 +2010,9 @@ type RouteFiles = {
     id: "routes/$lang+/examples+/dev-example1+/edit.$id";
     page: "/:lang/examples/dev-example1/edit/:id";
   };
-  "routes/$lang+/examples+/dev-example1+/_index.tsx": {
-    id: "routes/$lang+/examples+/dev-example1+/_index";
-    page: "/:lang/examples/dev-example1";
+  "routes/$lang+/examples+/multiple-loaders+/_index.tsx": {
+    id: "routes/$lang+/examples+/multiple-loaders+/_index";
+    page: "/:lang/examples/multiple-loaders";
   };
   "routes/$lang+/examples+/multiple-loaders+/parent.$parent.tsx": {
     id: "routes/$lang+/examples+/multiple-loaders+/parent.$parent";
@@ -2013,10 +2021,6 @@ type RouteFiles = {
   "routes/$lang+/examples+/multiple-loaders+/parent.$parent.child.tsx": {
     id: "routes/$lang+/examples+/multiple-loaders+/parent.$parent.child";
     page: "/:lang/examples/multiple-loaders/parent/:parent/child";
-  };
-  "routes/$lang+/examples+/multiple-loaders+/_index.tsx": {
-    id: "routes/$lang+/examples+/multiple-loaders+/_index";
-    page: "/:lang/examples/multiple-loaders";
   };
   "routes/$lang+/examples+/primereact.tsx": {
     id: "routes/$lang+/examples+/primereact";
@@ -2033,6 +2037,10 @@ type RouteFiles = {
   "routes/$lang+/hazardous-event+/$id.tsx": {
     id: "routes/$lang+/hazardous-event+/$id";
     page: "/:lang/hazardous-event/:id";
+  };
+  "routes/$lang+/hazardous-event+/_index.tsx": {
+    id: "routes/$lang+/hazardous-event+/_index";
+    page: "/:lang/hazardous-event";
   };
   "routes/$lang+/hazardous-event+/csv-export.ts": {
     id: "routes/$lang+/hazardous-event+/csv-export";
@@ -2070,17 +2078,17 @@ type RouteFiles = {
     id: "routes/$lang+/hazardous-event+/picker";
     page: "/:lang/hazardous-event/picker";
   };
-  "routes/$lang+/hazardous-event+/_index.tsx": {
-    id: "routes/$lang+/hazardous-event+/_index";
-    page: "/:lang/hazardous-event";
-  };
   "routes/$lang+/settings/route.tsx": {
     id: "routes/$lang+/settings/route";
-    page: "/:lang/settings" | "/:lang/settings/access-mgmnt/:id" | "/:lang/settings/access-mgmnt/delete/:id" | "/:lang/settings/access-mgmnt/edit/:id" | "/:lang/settings/access-mgmnt/invite" | "/:lang/settings/access-mgmnt" | "/:lang/settings/api-key/:id" | "/:lang/settings/api-key/delete/:id" | "/:lang/settings/api-key/edit/:id" | "/:lang/settings/api-key" | "/:lang/settings/assets/:id" | "/:lang/settings/assets/content-picker-datasource" | "/:lang/settings/assets/csv-export" | "/:lang/settings/assets/csv-import" | "/:lang/settings/assets/delete/:id" | "/:lang/settings/assets/edit/:id" | "/:lang/settings/assets" | "/:lang/settings/geography/:id" | "/:lang/settings/geography/csv-export" | "/:lang/settings/geography/edit/:id" | "/:lang/settings/geography/upload" | "/:lang/settings/geography" | "/:lang/settings/human-effects-dsg/custom" | "/:lang/settings/human-effects-dsg" | "/:lang/settings/organizations/:id" | "/:lang/settings/organizations/delete/:id" | "/:lang/settings/organizations/edit/:id" | "/:lang/settings/organizations" | "/:lang/settings/sectors" | "/:lang/settings/system";
+    page: "/:lang/settings" | "/:lang/settings/access-mgmnt/:id" | "/:lang/settings/access-mgmnt" | "/:lang/settings/access-mgmnt/delete/:id" | "/:lang/settings/access-mgmnt/edit/:id" | "/:lang/settings/access-mgmnt/invite" | "/:lang/settings/api-key/:id" | "/:lang/settings/api-key" | "/:lang/settings/api-key/delete/:id" | "/:lang/settings/api-key/edit/:id" | "/:lang/settings/assets/:id" | "/:lang/settings/assets" | "/:lang/settings/assets/content-picker-datasource" | "/:lang/settings/assets/csv-export" | "/:lang/settings/assets/csv-import" | "/:lang/settings/assets/delete/:id" | "/:lang/settings/assets/edit/:id" | "/:lang/settings/geography/:id" | "/:lang/settings/geography" | "/:lang/settings/geography/csv-export" | "/:lang/settings/geography/edit/:id" | "/:lang/settings/geography/upload" | "/:lang/settings/human-effects-dsg" | "/:lang/settings/human-effects-dsg/custom" | "/:lang/settings/organizations/:id" | "/:lang/settings/organizations" | "/:lang/settings/organizations/delete/:id" | "/:lang/settings/organizations/edit/:id" | "/:lang/settings/sectors" | "/:lang/settings/system";
   };
   "routes/$lang+/settings+/access-mgmnt+/$id.tsx": {
     id: "routes/$lang+/settings+/access-mgmnt+/$id";
     page: "/:lang/settings/access-mgmnt/:id";
+  };
+  "routes/$lang+/settings+/access-mgmnt+/_index.tsx": {
+    id: "routes/$lang+/settings+/access-mgmnt+/_index";
+    page: "/:lang/settings/access-mgmnt";
   };
   "routes/$lang+/settings+/access-mgmnt+/delete.$id.tsx": {
     id: "routes/$lang+/settings+/access-mgmnt+/delete.$id";
@@ -2094,13 +2102,13 @@ type RouteFiles = {
     id: "routes/$lang+/settings+/access-mgmnt+/invite";
     page: "/:lang/settings/access-mgmnt/invite";
   };
-  "routes/$lang+/settings+/access-mgmnt+/_index.tsx": {
-    id: "routes/$lang+/settings+/access-mgmnt+/_index";
-    page: "/:lang/settings/access-mgmnt";
-  };
   "routes/$lang+/settings+/api-key+/$id.tsx": {
     id: "routes/$lang+/settings+/api-key+/$id";
     page: "/:lang/settings/api-key/:id";
+  };
+  "routes/$lang+/settings+/api-key+/_index.tsx": {
+    id: "routes/$lang+/settings+/api-key+/_index";
+    page: "/:lang/settings/api-key";
   };
   "routes/$lang+/settings+/api-key+/delete.$id.tsx": {
     id: "routes/$lang+/settings+/api-key+/delete.$id";
@@ -2110,13 +2118,13 @@ type RouteFiles = {
     id: "routes/$lang+/settings+/api-key+/edit.$id";
     page: "/:lang/settings/api-key/edit/:id";
   };
-  "routes/$lang+/settings+/api-key+/_index.tsx": {
-    id: "routes/$lang+/settings+/api-key+/_index";
-    page: "/:lang/settings/api-key";
-  };
   "routes/$lang+/settings+/assets+/$id.tsx": {
     id: "routes/$lang+/settings+/assets+/$id";
     page: "/:lang/settings/assets/:id";
+  };
+  "routes/$lang+/settings+/assets+/_index.tsx": {
+    id: "routes/$lang+/settings+/assets+/_index";
+    page: "/:lang/settings/assets";
   };
   "routes/$lang+/settings+/assets+/content-picker-datasource.tsx": {
     id: "routes/$lang+/settings+/assets+/content-picker-datasource";
@@ -2138,13 +2146,13 @@ type RouteFiles = {
     id: "routes/$lang+/settings+/assets+/edit.$id";
     page: "/:lang/settings/assets/edit/:id";
   };
-  "routes/$lang+/settings+/assets+/_index.tsx": {
-    id: "routes/$lang+/settings+/assets+/_index";
-    page: "/:lang/settings/assets";
-  };
   "routes/$lang+/settings+/geography+/$id.tsx": {
     id: "routes/$lang+/settings+/geography+/$id";
     page: "/:lang/settings/geography/:id";
+  };
+  "routes/$lang+/settings+/geography+/_index.tsx": {
+    id: "routes/$lang+/settings+/geography+/_index";
+    page: "/:lang/settings/geography";
   };
   "routes/$lang+/settings+/geography+/csv-export.ts": {
     id: "routes/$lang+/settings+/geography+/csv-export";
@@ -2158,21 +2166,21 @@ type RouteFiles = {
     id: "routes/$lang+/settings+/geography+/upload";
     page: "/:lang/settings/geography/upload";
   };
-  "routes/$lang+/settings+/geography+/_index.tsx": {
-    id: "routes/$lang+/settings+/geography+/_index";
-    page: "/:lang/settings/geography";
+  "routes/$lang+/settings+/human-effects-dsg+/_index.tsx": {
+    id: "routes/$lang+/settings+/human-effects-dsg+/_index";
+    page: "/:lang/settings/human-effects-dsg";
   };
   "routes/$lang+/settings+/human-effects-dsg+/custom.tsx": {
     id: "routes/$lang+/settings+/human-effects-dsg+/custom";
     page: "/:lang/settings/human-effects-dsg/custom";
   };
-  "routes/$lang+/settings+/human-effects-dsg+/_index.tsx": {
-    id: "routes/$lang+/settings+/human-effects-dsg+/_index";
-    page: "/:lang/settings/human-effects-dsg";
-  };
   "routes/$lang+/settings+/organizations+/$id.tsx": {
     id: "routes/$lang+/settings+/organizations+/$id";
     page: "/:lang/settings/organizations/:id";
+  };
+  "routes/$lang+/settings+/organizations+/_index.tsx": {
+    id: "routes/$lang+/settings+/organizations+/_index";
+    page: "/:lang/settings/organizations";
   };
   "routes/$lang+/settings+/organizations+/delete.$id.tsx": {
     id: "routes/$lang+/settings+/organizations+/delete.$id";
@@ -2181,10 +2189,6 @@ type RouteFiles = {
   "routes/$lang+/settings+/organizations+/edit.$id.tsx": {
     id: "routes/$lang+/settings+/organizations+/edit.$id";
     page: "/:lang/settings/organizations/edit/:id";
-  };
-  "routes/$lang+/settings+/organizations+/_index.tsx": {
-    id: "routes/$lang+/settings+/organizations+/_index";
-    page: "/:lang/settings/organizations";
   };
   "routes/$lang+/settings+/sectors.tsx": {
     id: "routes/$lang+/settings+/sectors";
@@ -2270,23 +2274,20 @@ type RouteFiles = {
     id: "routes/$lang+/user+/verify-email";
     page: "/:lang/user/verify-email";
   };
-  "routes/$lang+/_index.tsx": {
-    id: "routes/$lang+/_index";
-    page: "/:lang";
+  "routes/_index.tsx": {
+    id: "routes/_index";
+    page: "/";
   };
   "routes/sso+/azure-b2c.callback.tsx": {
     id: "routes/sso+/azure-b2c.callback";
     page: "/sso/azure-b2c/callback";
-  };
-  "routes/_index.tsx": {
-    id: "routes/_index";
-    page: "/";
   };
 };
 
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/$": typeof import("./app/routes/$.tsx");
+  "routes/$lang+/_index": typeof import("./app/routes/$lang+/_index.tsx");
   "routes/$lang+/about+/about-the-system": typeof import("./app/routes/$lang+/about+/about-the-system.tsx");
   "routes/$lang+/about+/methodologies": typeof import("./app/routes/$lang+/about+/methodologies.tsx");
   "routes/$lang+/about+/partners": typeof import("./app/routes/$lang+/about+/partners.tsx");
@@ -2301,98 +2302,99 @@ type RouteModules = {
   "routes/$lang+/analytics+/disaster-events.sector": typeof import("./app/routes/$lang+/analytics+/disaster-events.sector.tsx");
   "routes/$lang+/analytics+/hazards": typeof import("./app/routes/$lang+/analytics+/hazards.tsx");
   "routes/$lang+/analytics+/sectors": typeof import("./app/routes/$lang+/analytics+/sectors.tsx");
+  "routes/$lang+/api+/_index": typeof import("./app/routes/$lang+/api+/_index.tsx");
+  "routes/$lang+/api+/asset+/_index": typeof import("./app/routes/$lang+/api+/asset+/_index.tsx");
   "routes/$lang+/api+/asset+/add": typeof import("./app/routes/$lang+/api+/asset+/add.ts");
   "routes/$lang+/api+/asset+/csv-import-example": typeof import("./app/routes/$lang+/api+/asset+/csv-import-example.ts");
   "routes/$lang+/api+/asset+/getassets": typeof import("./app/routes/$lang+/api+/asset+/getassets.ts");
   "routes/$lang+/api+/asset+/list": typeof import("./app/routes/$lang+/api+/asset+/list.ts");
   "routes/$lang+/api+/asset+/update": typeof import("./app/routes/$lang+/api+/asset+/update.ts");
   "routes/$lang+/api+/asset+/upsert": typeof import("./app/routes/$lang+/api+/asset+/upsert.ts");
-  "routes/$lang+/api+/asset+/_index": typeof import("./app/routes/$lang+/api+/asset+/_index.tsx");
   "routes/$lang+/api+/client-log": typeof import("./app/routes/$lang+/api+/client-log.ts");
+  "routes/$lang+/api+/damage+/_index": typeof import("./app/routes/$lang+/api+/damage+/_index.tsx");
   "routes/$lang+/api+/damage+/add": typeof import("./app/routes/$lang+/api+/damage+/add.ts");
   "routes/$lang+/api+/damage+/csv-import-example": typeof import("./app/routes/$lang+/api+/damage+/csv-import-example.ts");
   "routes/$lang+/api+/damage+/list": typeof import("./app/routes/$lang+/api+/damage+/list.ts");
   "routes/$lang+/api+/damage+/update": typeof import("./app/routes/$lang+/api+/damage+/update.ts");
   "routes/$lang+/api+/damage+/upsert": typeof import("./app/routes/$lang+/api+/damage+/upsert.ts");
-  "routes/$lang+/api+/damage+/_index": typeof import("./app/routes/$lang+/api+/damage+/_index.tsx");
+  "routes/$lang+/api+/dev-example1+/_index": typeof import("./app/routes/$lang+/api+/dev-example1+/_index.tsx");
   "routes/$lang+/api+/dev-example1+/add": typeof import("./app/routes/$lang+/api+/dev-example1+/add.ts");
   "routes/$lang+/api+/dev-example1+/csv-import-example": typeof import("./app/routes/$lang+/api+/dev-example1+/csv-import-example.ts");
   "routes/$lang+/api+/dev-example1+/list": typeof import("./app/routes/$lang+/api+/dev-example1+/list.ts");
   "routes/$lang+/api+/dev-example1+/update": typeof import("./app/routes/$lang+/api+/dev-example1+/update.ts");
   "routes/$lang+/api+/dev-example1+/upsert": typeof import("./app/routes/$lang+/api+/dev-example1+/upsert.ts");
-  "routes/$lang+/api+/dev-example1+/_index": typeof import("./app/routes/$lang+/api+/dev-example1+/_index.tsx");
+  "routes/$lang+/api+/disaster-event+/_index": typeof import("./app/routes/$lang+/api+/disaster-event+/_index.tsx");
   "routes/$lang+/api+/disaster-event+/add": typeof import("./app/routes/$lang+/api+/disaster-event+/add.ts");
   "routes/$lang+/api+/disaster-event+/csv-import-example": typeof import("./app/routes/$lang+/api+/disaster-event+/csv-import-example.ts");
   "routes/$lang+/api+/disaster-event+/list": typeof import("./app/routes/$lang+/api+/disaster-event+/list.ts");
   "routes/$lang+/api+/disaster-event+/tags-sectors": typeof import("./app/routes/$lang+/api+/disaster-event+/tags-sectors.ts");
   "routes/$lang+/api+/disaster-event+/update": typeof import("./app/routes/$lang+/api+/disaster-event+/update.ts");
   "routes/$lang+/api+/disaster-event+/upsert": typeof import("./app/routes/$lang+/api+/disaster-event+/upsert.ts");
-  "routes/$lang+/api+/disaster-event+/_index": typeof import("./app/routes/$lang+/api+/disaster-event+/_index.tsx");
   "routes/$lang+/api+/disaster-events.$disaster_event_id+/recovery-cost": typeof import("./app/routes/$lang+/api+/disaster-events.$disaster_event_id+/recovery-cost.ts");
   "routes/$lang+/api+/disaster-events.$disaster_event_id+/rehabilitation-cost": typeof import("./app/routes/$lang+/api+/disaster-events.$disaster_event_id+/rehabilitation-cost.tsx");
   "routes/$lang+/api+/disaster-events.$disaster_event_id+/repair-cost": typeof import("./app/routes/$lang+/api+/disaster-events.$disaster_event_id+/repair-cost.tsx");
   "routes/$lang+/api+/disaster-events.$disaster_event_id+/replacement-cost": typeof import("./app/routes/$lang+/api+/disaster-events.$disaster_event_id+/replacement-cost.tsx");
+  "routes/$lang+/api+/disaster-record+/_index": typeof import("./app/routes/$lang+/api+/disaster-record+/_index.tsx");
   "routes/$lang+/api+/disaster-record+/add": typeof import("./app/routes/$lang+/api+/disaster-record+/add.ts");
   "routes/$lang+/api+/disaster-record+/csv-import-example": typeof import("./app/routes/$lang+/api+/disaster-record+/csv-import-example.ts");
   "routes/$lang+/api+/disaster-record+/delete.$id": typeof import("./app/routes/$lang+/api+/disaster-record+/delete.$id.ts");
   "routes/$lang+/api+/disaster-record+/list": typeof import("./app/routes/$lang+/api+/disaster-record+/list.ts");
   "routes/$lang+/api+/disaster-record+/update": typeof import("./app/routes/$lang+/api+/disaster-record+/update.ts");
   "routes/$lang+/api+/disaster-record+/upsert": typeof import("./app/routes/$lang+/api+/disaster-record+/upsert.ts");
-  "routes/$lang+/api+/disaster-record+/_index": typeof import("./app/routes/$lang+/api+/disaster-record+/_index.tsx");
+  "routes/$lang+/api+/disruption+/_index": typeof import("./app/routes/$lang+/api+/disruption+/_index.tsx");
   "routes/$lang+/api+/disruption+/add": typeof import("./app/routes/$lang+/api+/disruption+/add.ts");
   "routes/$lang+/api+/disruption+/csv-import-example": typeof import("./app/routes/$lang+/api+/disruption+/csv-import-example.ts");
   "routes/$lang+/api+/disruption+/list": typeof import("./app/routes/$lang+/api+/disruption+/list.ts");
   "routes/$lang+/api+/disruption+/update": typeof import("./app/routes/$lang+/api+/disruption+/update.ts");
   "routes/$lang+/api+/disruption+/upsert": typeof import("./app/routes/$lang+/api+/disruption+/upsert.ts");
-  "routes/$lang+/api+/disruption+/_index": typeof import("./app/routes/$lang+/api+/disruption+/_index.tsx");
+  "routes/$lang+/api+/division+/_index": typeof import("./app/routes/$lang+/api+/division+/_index.tsx");
   "routes/$lang+/api+/division+/delete_all": typeof import("./app/routes/$lang+/api+/division+/delete_all.ts");
   "routes/$lang+/api+/division+/list": typeof import("./app/routes/$lang+/api+/division+/list.ts");
   "routes/$lang+/api+/division+/upload": typeof import("./app/routes/$lang+/api+/division+/upload.ts");
-  "routes/$lang+/api+/division+/_index": typeof import("./app/routes/$lang+/api+/division+/_index.tsx");
   "routes/$lang+/api+/geojson.$id": typeof import("./app/routes/$lang+/api+/geojson.$id.ts");
+  "routes/$lang+/api+/hazardous-event+/_index": typeof import("./app/routes/$lang+/api+/hazardous-event+/_index.tsx");
   "routes/$lang+/api+/hazardous-event+/add": typeof import("./app/routes/$lang+/api+/hazardous-event+/add.ts");
   "routes/$lang+/api+/hazardous-event+/csv-import-example": typeof import("./app/routes/$lang+/api+/hazardous-event+/csv-import-example.ts");
   "routes/$lang+/api+/hazardous-event+/list": typeof import("./app/routes/$lang+/api+/hazardous-event+/list.ts");
   "routes/$lang+/api+/hazardous-event+/update": typeof import("./app/routes/$lang+/api+/hazardous-event+/update.ts");
   "routes/$lang+/api+/hazardous-event+/upsert": typeof import("./app/routes/$lang+/api+/hazardous-event+/upsert.ts");
-  "routes/$lang+/api+/hazardous-event+/_index": typeof import("./app/routes/$lang+/api+/hazardous-event+/_index.tsx");
-  "routes/$lang+/api+/hips+/cluster+/list": typeof import("./app/routes/$lang+/api+/hips+/cluster+/list.ts");
-  "routes/$lang+/api+/hips+/cluster+/_index": typeof import("./app/routes/$lang+/api+/hips+/cluster+/_index.tsx");
-  "routes/$lang+/api+/hips+/hazard+/list": typeof import("./app/routes/$lang+/api+/hips+/hazard+/list.ts");
-  "routes/$lang+/api+/hips+/hazard+/_index": typeof import("./app/routes/$lang+/api+/hips+/hazard+/_index.tsx");
-  "routes/$lang+/api+/hips+/type+/list": typeof import("./app/routes/$lang+/api+/hips+/type+/list.ts");
-  "routes/$lang+/api+/hips+/type+/_index": typeof import("./app/routes/$lang+/api+/hips+/type+/_index.tsx");
   "routes/$lang+/api+/hips+/_index": typeof import("./app/routes/$lang+/api+/hips+/_index.tsx");
+  "routes/$lang+/api+/hips+/cluster+/_index": typeof import("./app/routes/$lang+/api+/hips+/cluster+/_index.tsx");
+  "routes/$lang+/api+/hips+/cluster+/list": typeof import("./app/routes/$lang+/api+/hips+/cluster+/list.ts");
+  "routes/$lang+/api+/hips+/hazard+/_index": typeof import("./app/routes/$lang+/api+/hips+/hazard+/_index.tsx");
+  "routes/$lang+/api+/hips+/hazard+/list": typeof import("./app/routes/$lang+/api+/hips+/hazard+/list.ts");
+  "routes/$lang+/api+/hips+/type+/_index": typeof import("./app/routes/$lang+/api+/hips+/type+/_index.tsx");
+  "routes/$lang+/api+/hips+/type+/list": typeof import("./app/routes/$lang+/api+/hips+/type+/list.ts");
+  "routes/$lang+/api+/human-effects+/_index": typeof import("./app/routes/$lang+/api+/human-effects+/_index.tsx");
   "routes/$lang+/api+/human-effects+/category-presence-save": typeof import("./app/routes/$lang+/api+/human-effects+/category-presence-save.tsx");
   "routes/$lang+/api+/human-effects+/clear": typeof import("./app/routes/$lang+/api+/human-effects+/clear.tsx");
   "routes/$lang+/api+/human-effects+/list": typeof import("./app/routes/$lang+/api+/human-effects+/list.tsx");
   "routes/$lang+/api+/human-effects+/save": typeof import("./app/routes/$lang+/api+/human-effects+/save.tsx");
-  "routes/$lang+/api+/human-effects+/_index": typeof import("./app/routes/$lang+/api+/human-effects+/_index.tsx");
+  "routes/$lang+/api+/losses+/_index": typeof import("./app/routes/$lang+/api+/losses+/_index.tsx");
   "routes/$lang+/api+/losses+/add": typeof import("./app/routes/$lang+/api+/losses+/add.ts");
   "routes/$lang+/api+/losses+/csv-import-example": typeof import("./app/routes/$lang+/api+/losses+/csv-import-example.ts");
   "routes/$lang+/api+/losses+/list": typeof import("./app/routes/$lang+/api+/losses+/list.ts");
   "routes/$lang+/api+/losses+/update": typeof import("./app/routes/$lang+/api+/losses+/update.ts");
   "routes/$lang+/api+/losses+/upsert": typeof import("./app/routes/$lang+/api+/losses+/upsert.ts");
-  "routes/$lang+/api+/losses+/_index": typeof import("./app/routes/$lang+/api+/losses+/_index.tsx");
+  "routes/$lang+/api+/nonecolosses+/_index": typeof import("./app/routes/$lang+/api+/nonecolosses+/_index.tsx");
   "routes/$lang+/api+/nonecolosses+/add": typeof import("./app/routes/$lang+/api+/nonecolosses+/add.ts");
   "routes/$lang+/api+/nonecolosses+/csv-import-example": typeof import("./app/routes/$lang+/api+/nonecolosses+/csv-import-example.ts");
   "routes/$lang+/api+/nonecolosses+/list": typeof import("./app/routes/$lang+/api+/nonecolosses+/list.ts");
   "routes/$lang+/api+/nonecolosses+/update": typeof import("./app/routes/$lang+/api+/nonecolosses+/update.ts");
   "routes/$lang+/api+/nonecolosses+/upsert": typeof import("./app/routes/$lang+/api+/nonecolosses+/upsert.ts");
-  "routes/$lang+/api+/nonecolosses+/_index": typeof import("./app/routes/$lang+/api+/nonecolosses+/_index.tsx");
   "routes/$lang+/api+/organization/_index": typeof import("./app/routes/$lang+/api+/organization/_index.tsx");
   "routes/$lang+/api+/qrcode": typeof import("./app/routes/$lang+/api+/qrcode.tsx");
-  "routes/$lang+/api+/sector+/list": typeof import("./app/routes/$lang+/api+/sector+/list.ts");
   "routes/$lang+/api+/sector+/_index": typeof import("./app/routes/$lang+/api+/sector+/_index.tsx");
+  "routes/$lang+/api+/sector+/list": typeof import("./app/routes/$lang+/api+/sector+/list.ts");
+  "routes/$lang+/api+/sector-disaster-record-relation+/_index": typeof import("./app/routes/$lang+/api+/sector-disaster-record-relation+/_index.tsx");
   "routes/$lang+/api+/sector-disaster-record-relation+/add": typeof import("./app/routes/$lang+/api+/sector-disaster-record-relation+/add.ts");
   "routes/$lang+/api+/sector-disaster-record-relation+/list": typeof import("./app/routes/$lang+/api+/sector-disaster-record-relation+/list.ts");
   "routes/$lang+/api+/sector-disaster-record-relation+/update": typeof import("./app/routes/$lang+/api+/sector-disaster-record-relation+/update.ts");
   "routes/$lang+/api+/sector-disaster-record-relation+/upsert": typeof import("./app/routes/$lang+/api+/sector-disaster-record-relation+/upsert.ts");
-  "routes/$lang+/api+/sector-disaster-record-relation+/_index": typeof import("./app/routes/$lang+/api+/sector-disaster-record-relation+/_index.tsx");
   "routes/$lang+/api+/spatial-footprint-geojson": typeof import("./app/routes/$lang+/api+/spatial-footprint-geojson.ts");
   "routes/$lang+/api+/subsectors": typeof import("./app/routes/$lang+/api+/subsectors.tsx");
-  "routes/$lang+/api+/_index": typeof import("./app/routes/$lang+/api+/_index.tsx");
   "routes/$lang+/disaster-event+/$id": typeof import("./app/routes/$lang+/disaster-event+/$id.tsx");
+  "routes/$lang+/disaster-event+/_index": typeof import("./app/routes/$lang+/disaster-event+/_index.tsx");
   "routes/$lang+/disaster-event+/csv-export": typeof import("./app/routes/$lang+/disaster-event+/csv-export.ts");
   "routes/$lang+/disaster-event+/csv-import": typeof import("./app/routes/$lang+/disaster-event+/csv-import.tsx");
   "routes/$lang+/disaster-event+/delete.$id": typeof import("./app/routes/$lang+/disaster-event+/delete.$id.tsx");
@@ -2401,47 +2403,46 @@ type RouteModules = {
   "routes/$lang+/disaster-event+/file-temp-viewer": typeof import("./app/routes/$lang+/disaster-event+/file-temp-viewer.tsx");
   "routes/$lang+/disaster-event+/file-viewer": typeof import("./app/routes/$lang+/disaster-event+/file-viewer.tsx");
   "routes/$lang+/disaster-event+/picker": typeof import("./app/routes/$lang+/disaster-event+/picker.tsx");
-  "routes/$lang+/disaster-event+/_index": typeof import("./app/routes/$lang+/disaster-event+/_index.tsx");
   "routes/$lang+/disaster-record+/$id": typeof import("./app/routes/$lang+/disaster-record+/$id.tsx");
+  "routes/$lang+/disaster-record+/_index": typeof import("./app/routes/$lang+/disaster-record+/_index.tsx");
   "routes/$lang+/disaster-record+/content-picker-config": typeof import("./app/routes/$lang+/disaster-record+/content-picker-config.tsx");
   "routes/$lang+/disaster-record+/content-picker-datasource": typeof import("./app/routes/$lang+/disaster-record+/content-picker-datasource.tsx");
   "routes/$lang+/disaster-record+/csv-export": typeof import("./app/routes/$lang+/disaster-record+/csv-export.ts");
   "routes/$lang+/disaster-record+/csv-import": typeof import("./app/routes/$lang+/disaster-record+/csv-import.tsx");
   "routes/$lang+/disaster-record+/delete.$id": typeof import("./app/routes/$lang+/disaster-record+/delete.$id.tsx");
-  "routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete": typeof import("./app/routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete.ts");
   "routes/$lang+/disaster-record+/edit-sec.$disRecId+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sec.$disRecId+/_index.tsx");
+  "routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete": typeof import("./app/routes/$lang+/disaster-record+/edit-sec.$disRecId+/delete.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/$id.tsx");
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/csv-export": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/csv-export.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/csv-import": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/csv-import.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/delete.$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/delete.$id.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/edit.$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/edit.$id.tsx");
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/$id.tsx");
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/csv-export": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/csv-export.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/csv-import": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/csv-import.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/delete.$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/delete.$id.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/edit.$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/edit.$id.tsx");
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index.tsx");
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/clear": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/clear.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/csv-export": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/csv-export.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/csv-import": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/csv-import.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/delete-all-data": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/delete-all-data.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/load": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/load.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/save": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/save.ts");
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/human-effects+/_index.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/$id.tsx");
+  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/csv-export": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/csv-export.ts");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/csv-import": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/csv-import.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/delete.$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/delete.$id.tsx");
   "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/edit.$id": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/edit.$id.tsx");
-  "routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index": typeof import("./app/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/_index.tsx");
   "routes/$lang+/disaster-record+/edit.$id": typeof import("./app/routes/$lang+/disaster-record+/edit.$id.tsx");
   "routes/$lang+/disaster-record+/file-pre-upload": typeof import("./app/routes/$lang+/disaster-record+/file-pre-upload.tsx");
   "routes/$lang+/disaster-record+/file-temp-viewer": typeof import("./app/routes/$lang+/disaster-record+/file-temp-viewer.tsx");
   "routes/$lang+/disaster-record+/file-viewer": typeof import("./app/routes/$lang+/disaster-record+/file-viewer.tsx");
-  "routes/$lang+/disaster-record+/non-economic-losses.$id+/delete": typeof import("./app/routes/$lang+/disaster-record+/non-economic-losses.$id+/delete.ts");
   "routes/$lang+/disaster-record+/non-economic-losses.$id+/_index": typeof import("./app/routes/$lang+/disaster-record+/non-economic-losses.$id+/_index.tsx");
-  "routes/$lang+/disaster-record+/_index": typeof import("./app/routes/$lang+/disaster-record+/_index.tsx");
+  "routes/$lang+/disaster-record+/non-economic-losses.$id+/delete": typeof import("./app/routes/$lang+/disaster-record+/non-economic-losses.$id+/delete.ts");
   "routes/$lang+/error+/unauthorized": typeof import("./app/routes/$lang+/error+/unauthorized.tsx");
   "routes/$lang+/examples+/basic-form+/_index": typeof import("./app/routes/$lang+/examples+/basic-form+/_index.tsx");
   "routes/$lang+/examples+/components+/content-picker-config-tree": typeof import("./app/routes/$lang+/examples+/components+/content-picker-config-tree.tsx");
@@ -2456,18 +2457,19 @@ type RouteModules = {
   "routes/$lang+/examples+/components+/treeview-01": typeof import("./app/routes/$lang+/examples+/components+/treeview-01.tsx");
   "routes/$lang+/examples+/components+/treeview-02": typeof import("./app/routes/$lang+/examples+/components+/treeview-02.tsx");
   "routes/$lang+/examples+/dev-example1+/$id": typeof import("./app/routes/$lang+/examples+/dev-example1+/$id.tsx");
+  "routes/$lang+/examples+/dev-example1+/_index": typeof import("./app/routes/$lang+/examples+/dev-example1+/_index.tsx");
   "routes/$lang+/examples+/dev-example1+/csv-export": typeof import("./app/routes/$lang+/examples+/dev-example1+/csv-export.ts");
   "routes/$lang+/examples+/dev-example1+/csv-import": typeof import("./app/routes/$lang+/examples+/dev-example1+/csv-import.tsx");
   "routes/$lang+/examples+/dev-example1+/delete.$id": typeof import("./app/routes/$lang+/examples+/dev-example1+/delete.$id.tsx");
   "routes/$lang+/examples+/dev-example1+/edit.$id": typeof import("./app/routes/$lang+/examples+/dev-example1+/edit.$id.tsx");
-  "routes/$lang+/examples+/dev-example1+/_index": typeof import("./app/routes/$lang+/examples+/dev-example1+/_index.tsx");
+  "routes/$lang+/examples+/multiple-loaders+/_index": typeof import("./app/routes/$lang+/examples+/multiple-loaders+/_index.tsx");
   "routes/$lang+/examples+/multiple-loaders+/parent.$parent": typeof import("./app/routes/$lang+/examples+/multiple-loaders+/parent.$parent.tsx");
   "routes/$lang+/examples+/multiple-loaders+/parent.$parent.child": typeof import("./app/routes/$lang+/examples+/multiple-loaders+/parent.$parent.child.tsx");
-  "routes/$lang+/examples+/multiple-loaders+/_index": typeof import("./app/routes/$lang+/examples+/multiple-loaders+/_index.tsx");
   "routes/$lang+/examples+/primereact": typeof import("./app/routes/$lang+/examples+/primereact.tsx");
   "routes/$lang+/examples+/test-route-module+/_index": typeof import("./app/routes/$lang+/examples+/test-route-module+/_index.tsx");
   "routes/$lang+/examples+/translations+/basic": typeof import("./app/routes/$lang+/examples+/translations+/basic.tsx");
   "routes/$lang+/hazardous-event+/$id": typeof import("./app/routes/$lang+/hazardous-event+/$id.tsx");
+  "routes/$lang+/hazardous-event+/_index": typeof import("./app/routes/$lang+/hazardous-event+/_index.tsx");
   "routes/$lang+/hazardous-event+/csv-export": typeof import("./app/routes/$lang+/hazardous-event+/csv-export.ts");
   "routes/$lang+/hazardous-event+/csv-import": typeof import("./app/routes/$lang+/hazardous-event+/csv-import.tsx");
   "routes/$lang+/hazardous-event+/delete.$id": typeof import("./app/routes/$lang+/hazardous-event+/delete.$id.tsx");
@@ -2477,35 +2479,34 @@ type RouteModules = {
   "routes/$lang+/hazardous-event+/file-viewer": typeof import("./app/routes/$lang+/hazardous-event+/file-viewer.tsx");
   "routes/$lang+/hazardous-event+/new": typeof import("./app/routes/$lang+/hazardous-event+/new.tsx");
   "routes/$lang+/hazardous-event+/picker": typeof import("./app/routes/$lang+/hazardous-event+/picker.tsx");
-  "routes/$lang+/hazardous-event+/_index": typeof import("./app/routes/$lang+/hazardous-event+/_index.tsx");
   "routes/$lang+/settings/route": typeof import("./app/routes/$lang+/settings/route.tsx");
   "routes/$lang+/settings+/access-mgmnt+/$id": typeof import("./app/routes/$lang+/settings+/access-mgmnt+/$id.tsx");
+  "routes/$lang+/settings+/access-mgmnt+/_index": typeof import("./app/routes/$lang+/settings+/access-mgmnt+/_index.tsx");
   "routes/$lang+/settings+/access-mgmnt+/delete.$id": typeof import("./app/routes/$lang+/settings+/access-mgmnt+/delete.$id.tsx");
   "routes/$lang+/settings+/access-mgmnt+/edit.$id": typeof import("./app/routes/$lang+/settings+/access-mgmnt+/edit.$id.tsx");
   "routes/$lang+/settings+/access-mgmnt+/invite": typeof import("./app/routes/$lang+/settings+/access-mgmnt+/invite.tsx");
-  "routes/$lang+/settings+/access-mgmnt+/_index": typeof import("./app/routes/$lang+/settings+/access-mgmnt+/_index.tsx");
   "routes/$lang+/settings+/api-key+/$id": typeof import("./app/routes/$lang+/settings+/api-key+/$id.tsx");
+  "routes/$lang+/settings+/api-key+/_index": typeof import("./app/routes/$lang+/settings+/api-key+/_index.tsx");
   "routes/$lang+/settings+/api-key+/delete.$id": typeof import("./app/routes/$lang+/settings+/api-key+/delete.$id.tsx");
   "routes/$lang+/settings+/api-key+/edit.$id": typeof import("./app/routes/$lang+/settings+/api-key+/edit.$id.tsx");
-  "routes/$lang+/settings+/api-key+/_index": typeof import("./app/routes/$lang+/settings+/api-key+/_index.tsx");
   "routes/$lang+/settings+/assets+/$id": typeof import("./app/routes/$lang+/settings+/assets+/$id.tsx");
+  "routes/$lang+/settings+/assets+/_index": typeof import("./app/routes/$lang+/settings+/assets+/_index.tsx");
   "routes/$lang+/settings+/assets+/content-picker-datasource": typeof import("./app/routes/$lang+/settings+/assets+/content-picker-datasource.tsx");
   "routes/$lang+/settings+/assets+/csv-export": typeof import("./app/routes/$lang+/settings+/assets+/csv-export.ts");
   "routes/$lang+/settings+/assets+/csv-import": typeof import("./app/routes/$lang+/settings+/assets+/csv-import.tsx");
   "routes/$lang+/settings+/assets+/delete.$id": typeof import("./app/routes/$lang+/settings+/assets+/delete.$id.tsx");
   "routes/$lang+/settings+/assets+/edit.$id": typeof import("./app/routes/$lang+/settings+/assets+/edit.$id.tsx");
-  "routes/$lang+/settings+/assets+/_index": typeof import("./app/routes/$lang+/settings+/assets+/_index.tsx");
   "routes/$lang+/settings+/geography+/$id": typeof import("./app/routes/$lang+/settings+/geography+/$id.tsx");
+  "routes/$lang+/settings+/geography+/_index": typeof import("./app/routes/$lang+/settings+/geography+/_index.tsx");
   "routes/$lang+/settings+/geography+/csv-export": typeof import("./app/routes/$lang+/settings+/geography+/csv-export.ts");
   "routes/$lang+/settings+/geography+/edit.$id": typeof import("./app/routes/$lang+/settings+/geography+/edit.$id.tsx");
   "routes/$lang+/settings+/geography+/upload": typeof import("./app/routes/$lang+/settings+/geography+/upload.tsx");
-  "routes/$lang+/settings+/geography+/_index": typeof import("./app/routes/$lang+/settings+/geography+/_index.tsx");
-  "routes/$lang+/settings+/human-effects-dsg+/custom": typeof import("./app/routes/$lang+/settings+/human-effects-dsg+/custom.tsx");
   "routes/$lang+/settings+/human-effects-dsg+/_index": typeof import("./app/routes/$lang+/settings+/human-effects-dsg+/_index.tsx");
+  "routes/$lang+/settings+/human-effects-dsg+/custom": typeof import("./app/routes/$lang+/settings+/human-effects-dsg+/custom.tsx");
   "routes/$lang+/settings+/organizations+/$id": typeof import("./app/routes/$lang+/settings+/organizations+/$id.tsx");
+  "routes/$lang+/settings+/organizations+/_index": typeof import("./app/routes/$lang+/settings+/organizations+/_index.tsx");
   "routes/$lang+/settings+/organizations+/delete.$id": typeof import("./app/routes/$lang+/settings+/organizations+/delete.$id.tsx");
   "routes/$lang+/settings+/organizations+/edit.$id": typeof import("./app/routes/$lang+/settings+/organizations+/edit.$id.tsx");
-  "routes/$lang+/settings+/organizations+/_index": typeof import("./app/routes/$lang+/settings+/organizations+/_index.tsx");
   "routes/$lang+/settings+/sectors": typeof import("./app/routes/$lang+/settings+/sectors.tsx");
   "routes/$lang+/settings+/system": typeof import("./app/routes/$lang+/settings+/system.tsx");
   "routes/$lang+/setup+/admin-account-sso": typeof import("./app/routes/$lang+/setup+/admin-account-sso.tsx");
@@ -2527,7 +2528,6 @@ type RouteModules = {
   "routes/$lang+/user+/verify-email-complete": typeof import("./app/routes/$lang+/user+/verify-email-complete.tsx");
   "routes/$lang+/user+/verify-email-send-again": typeof import("./app/routes/$lang+/user+/verify-email-send-again.tsx");
   "routes/$lang+/user+/verify-email": typeof import("./app/routes/$lang+/user+/verify-email.tsx");
-  "routes/$lang+/_index": typeof import("./app/routes/$lang+/_index.tsx");
-  "routes/sso+/azure-b2c.callback": typeof import("./app/routes/sso+/azure-b2c.callback.tsx");
   "routes/_index": typeof import("./app/routes/_index.tsx");
+  "routes/sso+/azure-b2c.callback": typeof import("./app/routes/sso+/azure-b2c.callback.tsx");
 };

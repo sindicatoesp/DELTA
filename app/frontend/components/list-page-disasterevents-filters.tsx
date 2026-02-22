@@ -43,13 +43,13 @@ export function DisasterEventsFilter(props: Props) {
 				toast.current?.show({
 					severity: "error",
 					summary: ctx.t({
-						"code": "common.invalid_date_range",
-						"msg": "Invalid date range"
+						code: "common.invalid_date_range",
+						msg: "Invalid date range",
 					}),
 					detail: ctx.t({
-						"code": "common.to_date_before_from_date",
-						"desc": "Detail message explaining that 'To' date cannot be earlier than 'From' date",
-						"msg": "'To' date cannot be earlier than 'From' date."
+						code: "common.to_date_before_from_date",
+						desc: "Detail message explaining that 'To' date cannot be earlier than 'From' date",
+						msg: "'To' date cannot be earlier than 'From' date.",
 					}),
 					life: 4000,
 				});
@@ -69,21 +69,22 @@ export function DisasterEventsFilter(props: Props) {
 				{/* Disaster event name */}
 				<div className="dts-form-component mg-grid__col--span-2">
 					<label>
-						<div className="dts-form-component__label"><span>
-							{ctx.t({
-								"code": "disaster_event.name_label",
-								"msg": "Disaster event name"
-							})}
-						</span></div>
+						<div className="dts-form-component__label">
+							<span>
+								{ctx.t({
+									code: "disaster_event.name_label",
+									msg: "Disaster event name",
+								})}
+							</span>
+						</div>
 						<input
 							name="disasterEventName"
 							type="text"
 							placeholder={ctx.t({
-								"code": "disaster_event.search_name_placeholder",
-								"desc": "Placeholder for disaster event name search input",
-								"msg": "All disaster events"
+								code: "disaster_event.search_name_placeholder",
+								desc: "Placeholder for disaster event name search input",
+								msg: "All disaster events",
 							})}
-
 							defaultValue={props.disasterEventName}
 						/>
 					</label>
@@ -92,19 +93,21 @@ export function DisasterEventsFilter(props: Props) {
 				{/* Recording Institution */}
 				<div className="dts-form-component">
 					<label>
-						<div className="dts-form-component__label"><span>
-							{ctx.t({
-								"code": "disaster_event.recording_organization",
-								"msg": "Recording organization"
-							})}
-						</span></div>
+						<div className="dts-form-component__label">
+							<span>
+								{ctx.t({
+									code: "disaster_event.recording_organization",
+									msg: "Recording organization",
+								})}
+							</span>
+						</div>
 						<input
 							name="recordingInstitution"
 							type="text"
 							placeholder={ctx.t({
-								"code": "disaster_event.search_organization_placeholder",
-								"desc": "Placeholder for organization search input",
-								"msg": "Search organization"
+								code: "disaster_event.search_organization_placeholder",
+								desc: "Placeholder for organization search input",
+								msg: "Search organization",
 							})}
 							defaultValue={props.recordingInstitution}
 						/>
@@ -114,19 +117,21 @@ export function DisasterEventsFilter(props: Props) {
 				{/* From date */}
 				<div className="dts-form-component">
 					<label>
-						<div className="dts-form-component__label"><span>
-							{ctx.t({
-								"code": "common.from_date",
-								"desc": "From date",
-								"msg": "From"
-							})}
-						</span></div>
+						<div className="dts-form-component__label">
+							<span>
+								{ctx.t({
+									code: "common.from_date",
+									desc: "From date",
+									msg: "From",
+								})}
+							</span>
+						</div>
 						<input
 							name="fromDate"
 							type="date"
 							placeholder={ctx.t({
-								"code": "common.select_date",
-								"msg": "Select date"
+								code: "common.select_date",
+								msg: "Select date",
 							})}
 							defaultValue={props.fromDate}
 						/>
@@ -136,19 +141,21 @@ export function DisasterEventsFilter(props: Props) {
 				{/* To date */}
 				<div className="dts-form-component">
 					<label>
-						<div className="dts-form-component__label"><span>
-							{ctx.t({
-								"code": "common.to_date",
-								"desc": "To date",
-								"msg": "To"
-							})}
-						</span></div>
+						<div className="dts-form-component__label">
+							<span>
+								{ctx.t({
+									code: "common.to_date",
+									desc: "To date",
+									msg: "To",
+								})}
+							</span>
+						</div>
 						<input
 							name="toDate"
 							type="date"
 							placeholder={ctx.t({
-								"code": "common.select_date",
-								"msg": "Select date"
+								code: "common.select_date",
+								msg: "Select date",
 							})}
 							defaultValue={props.toDate}
 						/>
@@ -156,23 +163,28 @@ export function DisasterEventsFilter(props: Props) {
 				</div>
 
 				<div className="dts-form-component">
-					<div className="dts-form-component__label"><span>
-						{ctx.t({
-							"code": "record.status",
-							"msg": "Record status"
-						})}
-					</span></div>
+					<div className="dts-form-component__label">
+						<span>
+							{ctx.t({
+								code: "record.status",
+								msg: "Record status",
+							})}
+						</span>
+					</div>
 					<label>
-						<select id="recordStatus" name="recordStatus" defaultValue={props.recordStatus}>
+						<select
+							id="recordStatus"
+							name="recordStatus"
+							defaultValue={props.recordStatus}
+						>
 							<option value="">
 								{ctx.t({
-									"code": "record.select_status",
-									"msg": "Select record status"
+									code: "record.select_status",
+									msg: "Select record status",
 								})}
 							</option>
 							{getRecordStatusOptions(ctx).map((recordStatus) => (
-								<option key={recordStatus.value}
-									value={recordStatus.value}>
+								<option key={recordStatus.value} value={recordStatus.value}>
 									{recordStatus.label}
 								</option>
 							))}
@@ -182,64 +194,99 @@ export function DisasterEventsFilter(props: Props) {
 			</div>
 
 			{/* Buttons */}
-			<div className="dts-form__actions dts-form__actions--standalone" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-				<div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-					<div className="dts-form-component" style={{
-						display:canAddNewRecord(ctx.user?.role ?? null) ? 'block' : 'none'
-						// display: 'none'
-					}}>
-						<label htmlFor="viewMyRecords" className="dts-form-component__label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0, cursor: 'pointer' }}>
-						<input
-							type="checkbox"
-							id="viewMyRecords"
-							name="viewMyRecords"
-							defaultChecked={viewMyRecords}
-						/>
-						{ ctx.t({
-								"code": "list.filter.view_my_records",
-								"msg": "View my records"
-						}) }
+			<div
+				className="dts-form__actions dts-form__actions--standalone"
+				style={{ justifyContent: "space-between", alignItems: "center" }}
+			>
+				<div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+					<div
+						className="dts-form-component"
+						style={{
+							display: canAddNewRecord(ctx.user?.role ?? null)
+								? "block"
+								: "none",
+							// display: 'none'
+						}}
+					>
+						<label
+							htmlFor="viewMyRecords"
+							className="dts-form-component__label"
+							style={{
+								display: "flex",
+								alignItems: "center",
+								gap: "0.5rem",
+								marginBottom: 0,
+								cursor: "pointer",
+							}}
+						>
+							<input
+								type="checkbox"
+								id="viewMyRecords"
+								name="viewMyRecords"
+								defaultChecked={viewMyRecords}
+							/>
+							{ctx.t({
+								code: "list.filter.view_my_records",
+								msg: "View my records",
+							})}
 						</label>
 					</div>
 
-					<div className="dts-form-component" style={{
-						display:canAddNewRecord(ctx.user?.role ?? null) ? 'block' : 'none'
-						// display: 'none'
-					}}>
-						<label htmlFor="pendingMyAction" className="dts-form-component__label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0, cursor: 'pointer' }}>
-						<input
-							type="checkbox"
-							id="pendingMyAction"
-							name="pendingMyAction"
-							defaultChecked={pendingMyAction}
-						/>
-						{ ctx.t({
-								"code": "list.filter.pending_my_action",
-								"msg": "Pending my action"
-						}) }
-						
+					<div
+						className="dts-form-component"
+						style={{
+							display: canAddNewRecord(ctx.user?.role ?? null)
+								? "block"
+								: "none",
+							// display: 'none'
+						}}
+					>
+						<label
+							htmlFor="pendingMyAction"
+							className="dts-form-component__label"
+							style={{
+								display: "flex",
+								alignItems: "center",
+								gap: "0.5rem",
+								marginBottom: 0,
+								cursor: "pointer",
+							}}
+						>
+							<input
+								type="checkbox"
+								id="pendingMyAction"
+								name="pendingMyAction"
+								defaultChecked={pendingMyAction}
+							/>
+							{ctx.t({
+								code: "list.filter.pending_my_action",
+								msg: "Pending my action",
+							})}
 						</label>
 					</div>
 				</div>
 
-				<div style={{ display: 'flex', gap: '0.8rem' }}>
-					<a href={props.clearFiltersUrl} className="mg-button mg-button-outline">
+				<div style={{ display: "flex", gap: "0.8rem" }}>
+					<a
+						href={props.clearFiltersUrl}
+						className="mg-button mg-button-outline"
+					>
 						{ctx.t({
-							"code": "common.clear",
-							"desc": "Button label to clear filters or input",
-							"msg": "Clear"
+							code: "common.clear",
+							desc: "Button label to clear filters or input",
+							msg: "Clear",
 						})}
 					</a>
 
 					<input
 						type="submit"
 						value={ctx.t({
-							"code": "common.apply_filters",
-							"desc": "Button label to apply filters",
-							"msg": "Apply filters"
+							code: "common.apply_filters",
+							desc: "Button label to apply filters",
+							msg: "Apply filters",
 						})}
 						className="mg-button mg-button-primary"
-					/>					
+					/>
 				</div>
 			</div>
 		</Form>

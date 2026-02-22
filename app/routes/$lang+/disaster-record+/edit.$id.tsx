@@ -49,7 +49,6 @@ import { ViewContext } from "~/frontend/context";
 import { LangLink } from "~/util/link";
 import { BackendContext } from "~/backend.server/context";
 
-
 type NonecoLossRow = {
 	noneccoId: string;
 	noneccoDesc: string;
@@ -106,8 +105,8 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 			and(
 				isNull(divisionTable.parentId),
 				isNotNull(divisionTable.geojson),
-				eq(divisionTable.countryAccountsId, countryAccountsId)
-			)
+				eq(divisionTable.countryAccountsId, countryAccountsId),
+			),
 		);
 
 	if (params.id === "new") {
@@ -118,7 +117,6 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 			ctryIso3 = settings.dtsInstanceCtryIso3;
 		}
 		return {
-
 			item: null,
 			recordsNonecoLosses: [],
 			recordsDisRecSectors: [],
@@ -138,16 +136,16 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 		throw new Response("Not Found", { status: 404 });
 	}
 
-
-	const dbNonecoLosses: NonecoLossRow[] = await nonecoLossesFilderBydisasterRecordsId(ctx, params.id);
+	const dbNonecoLosses: NonecoLossRow[] =
+		await nonecoLossesFilderBydisasterRecordsId(ctx, params.id);
 	const dbDisRecSectors = await sectorsFilterByDisasterRecordId(ctx, params.id);
 	const dbDisRecHumanEffects = await getHumanEffectRecordsById(
 		params.id,
-		countryAccountsId
+		countryAccountsId,
 	);
 	const dbDisRecHumanEffectsSummaryTable = await getAffectedByDisasterRecord(
 		dr,
-		params.id
+		params.id,
 	);
 
 	// Define Keys Mapping (Make it Adaptable)
@@ -161,11 +159,10 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 	const cpDisplayName = await contentPickerConfig(ctx).selectedDisplay(
 		ctx,
 		dr,
-		item.disasterEventId
+		item.disasterEventId,
 	);
 
 	return {
-
 		item,
 		recordsNonecoLosses: dbNonecoLosses,
 		recordsDisRecSectors: dbDisRecSectors,
@@ -188,14 +185,23 @@ export const action = authActionWithPerm(
 
 		const countryAccountsId = await getCountryAccountsIdFromSession(request);
 
-		const updateWithTenant = async (ctx: BackendContext, tx: any, id: string, fields: any) => {
+		const updateWithTenant = async (
+			ctx: BackendContext,
+			tx: any,
+			id: string,
+			fields: any,
+		) => {
 			return disasterRecordsUpdate(ctx, tx, id, fields, countryAccountsId);
 		};
-		const getByIdWithTenant = async (_ctx: BackendContext, tx: Tx, id: string) => {
+		const getByIdWithTenant = async (
+			_ctx: BackendContext,
+			tx: Tx,
+			id: string,
+		) => {
 			const record = await disasterRecordsByIdTx(tx, id);
 			if (!record) {
 				throw new Error(
-					"Record not found or you don't have permission to access it"
+					"Record not found or you don't have permission to access it",
 				);
 			}
 			return record;
@@ -225,7 +231,7 @@ export const action = authActionWithPerm(
 				const processedAttachments = ContentRepeaterUploadFile.save(
 					attachmentsArray,
 					save_path_temp,
-					save_path
+					save_path,
 				);
 
 				// Update the `attachments` field in the database
@@ -240,7 +246,7 @@ export const action = authActionWithPerm(
 		});
 
 		return actionHandler(args);
-	}
+	},
 );
 
 export default function Screen() {
@@ -273,8 +279,8 @@ export default function Screen() {
 								<div className="dts-form__intro">
 									<legend className="dts-heading-3">
 										{ctx.t({
-											"code": "human_effects",
-											"msg": "Human effects"
+											code: "human_effects",
+											msg: "Human effects",
 										})}
 									</legend>
 								</div>
@@ -284,10 +290,12 @@ export default function Screen() {
 											lang={ctx.lang}
 											to={`/disaster-record/edit-sub/${ld.item.id}/human-effects`}
 										>
-											[ {ctx.t({
-												"code": "common.add_new_record",
-												"msg": "Add new record"
-											})} ]
+											[{" "}
+											{ctx.t({
+												code: "common.add_new_record",
+												msg: "Add new record",
+											})}{" "}
+											]
 										</LangLink>
 										&nbsp;
 									</div>
@@ -301,9 +309,9 @@ export default function Screen() {
 														<th></th>
 														<th className="center" colSpan={2}>
 															{ctx.t({
-																"code": "human_effects.affected_old_desinventar",
-																"desc": "Human effects Affected (DesInventar is an older system used for tracking disaster data)",
-																"msg": "Affected (Old DesInventar)"
+																code: "human_effects.affected_old_desinventar",
+																desc: "Human effects Affected (DesInventar is an older system used for tracking disaster data)",
+																msg: "Affected (Old DesInventar)",
 															})}
 														</th>
 														<th></th>
@@ -312,44 +320,44 @@ export default function Screen() {
 													<tr>
 														<th>
 															{ctx.t({
-																"code": "human_effects.deaths",
-																"msg": "Deaths"
+																code: "human_effects.deaths",
+																msg: "Deaths",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "human_effects.injured",
-																"msg": "Injured"
+																code: "human_effects.injured",
+																msg: "Injured",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "human_effects.missing",
-																"msg": "Missing"
+																code: "human_effects.missing",
+																msg: "Missing",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "human_effects.directly_affected",
-																"msg": "Directly"
+																code: "human_effects.directly_affected",
+																msg: "Directly",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "human_effects.indirectly_affected",
-																"msg": "Indirectly"
+																code: "human_effects.indirectly_affected",
+																msg: "Indirectly",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "human_effects.displaced",
-																"msg": "Displaced"
+																code: "human_effects.displaced",
+																msg: "Displaced",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "common.actions",
-																"msg": "Actions"
+																code: "common.actions",
+																msg: "Actions",
 															})}
 														</th>
 													</tr>
@@ -359,15 +367,15 @@ export default function Screen() {
 														<td>
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.deaths == "number" && (
-																	<>
-																		<LangLink
-																			lang={ctx.lang}
-																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Deaths`}
-																		>
-																			{ld.dbDisRecHumanEffectsSummaryTable.deaths}
-																		</LangLink>
-																	</>
-																)}
+																<>
+																	<LangLink
+																		lang={ctx.lang}
+																		to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Deaths`}
+																	>
+																		{ld.dbDisRecHumanEffectsSummaryTable.deaths}
+																	</LangLink>
+																</>
+															)}
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.deaths == "boolean" &&
 																ld.dbDisRecHumanEffectsSummaryTable.deaths && (
@@ -377,8 +385,8 @@ export default function Screen() {
 																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Deaths`}
 																		>
 																			{ctx.t({
-																				"code": "common.yes",
-																				"msg": "Yes"
+																				code: "common.yes",
+																				msg: "Yes",
 																			})}
 																		</LangLink>
 																	</>
@@ -392,18 +400,18 @@ export default function Screen() {
 														<td>
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.injured == "number" && (
-																	<>
-																		<LangLink
-																			lang={ctx.lang}
-																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Injured`}
-																		>
-																			{
-																				ld.dbDisRecHumanEffectsSummaryTable
-																					.injured
-																			}
-																		</LangLink>
-																	</>
-																)}
+																<>
+																	<LangLink
+																		lang={ctx.lang}
+																		to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Injured`}
+																	>
+																		{
+																			ld.dbDisRecHumanEffectsSummaryTable
+																				.injured
+																		}
+																	</LangLink>
+																</>
+															)}
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.injured == "boolean" &&
 																ld.dbDisRecHumanEffectsSummaryTable.injured && (
@@ -413,8 +421,8 @@ export default function Screen() {
 																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Injured`}
 																		>
 																			{ctx.t({
-																				"code": "common.yes",
-																				"msg": "Yes"
+																				code: "common.yes",
+																				msg: "Yes",
 																			})}
 																		</LangLink>
 																	</>
@@ -427,18 +435,18 @@ export default function Screen() {
 														<td>
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.missing == "number" && (
-																	<>
-																		<LangLink
-																			lang={ctx.lang}
-																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Missing`}
-																		>
-																			{
-																				ld.dbDisRecHumanEffectsSummaryTable
-																					.missing
-																			}
-																		</LangLink>
-																	</>
-																)}
+																<>
+																	<LangLink
+																		lang={ctx.lang}
+																		to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Missing`}
+																	>
+																		{
+																			ld.dbDisRecHumanEffectsSummaryTable
+																				.missing
+																		}
+																	</LangLink>
+																</>
+															)}
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.missing == "boolean" &&
 																ld.dbDisRecHumanEffectsSummaryTable.missing && (
@@ -448,8 +456,8 @@ export default function Screen() {
 																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Missing`}
 																		>
 																			{ctx.t({
-																				"code": "common.yes",
-																				"msg": "Yes"
+																				code: "common.yes",
+																				msg: "Yes",
 																			})}
 																		</LangLink>
 																	</>
@@ -462,18 +470,18 @@ export default function Screen() {
 														<td>
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.directlyAffected == "number" && (
-																	<>
-																		<LangLink
-																			lang={ctx.lang}
-																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Affected`}
-																		>
-																			{
-																				ld.dbDisRecHumanEffectsSummaryTable
-																					.directlyAffected
-																			}
-																		</LangLink>
-																	</>
-																)}
+																<>
+																	<LangLink
+																		lang={ctx.lang}
+																		to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Affected`}
+																	>
+																		{
+																			ld.dbDisRecHumanEffectsSummaryTable
+																				.directlyAffected
+																		}
+																	</LangLink>
+																</>
+															)}
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.directlyAffected == "boolean" &&
 																ld.dbDisRecHumanEffectsSummaryTable
@@ -484,8 +492,8 @@ export default function Screen() {
 																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Affected`}
 																		>
 																			{ctx.t({
-																				"code": "common.yes",
-																				"msg": "Yes"
+																				code: "common.yes",
+																				msg: "Yes",
 																			})}
 																		</LangLink>
 																	</>
@@ -498,18 +506,18 @@ export default function Screen() {
 														<td>
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.indirectlyAffected == "number" && (
-																	<>
-																		<LangLink
-																			lang={ctx.lang}
-																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Affected`}
-																		>
-																			{
-																				ld.dbDisRecHumanEffectsSummaryTable
-																					.indirectlyAffected
-																			}
-																		</LangLink>
-																	</>
-																)}
+																<>
+																	<LangLink
+																		lang={ctx.lang}
+																		to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Affected`}
+																	>
+																		{
+																			ld.dbDisRecHumanEffectsSummaryTable
+																				.indirectlyAffected
+																		}
+																	</LangLink>
+																</>
+															)}
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.indirectlyAffected == "boolean" &&
 																ld.dbDisRecHumanEffectsSummaryTable
@@ -520,8 +528,8 @@ export default function Screen() {
 																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Affected`}
 																		>
 																			{ctx.t({
-																				"code": "common.yes",
-																				"msg": "Yes"
+																				code: "common.yes",
+																				msg: "Yes",
 																			})}
 																		</LangLink>
 																	</>
@@ -534,18 +542,18 @@ export default function Screen() {
 														<td>
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.displaced == "number" && (
-																	<>
-																		<LangLink
-																			lang={ctx.lang}
-																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Displaced`}
-																		>
-																			{
-																				ld.dbDisRecHumanEffectsSummaryTable
-																					.displaced
-																			}
-																		</LangLink>
-																	</>
-																)}
+																<>
+																	<LangLink
+																		lang={ctx.lang}
+																		to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Displaced`}
+																	>
+																		{
+																			ld.dbDisRecHumanEffectsSummaryTable
+																				.displaced
+																		}
+																	</LangLink>
+																</>
+															)}
 															{typeof ld.dbDisRecHumanEffectsSummaryTable
 																.displaced == "boolean" &&
 																ld.dbDisRecHumanEffectsSummaryTable
@@ -556,8 +564,8 @@ export default function Screen() {
 																			to={`/disaster-record/edit-sub/${ld.item.id}/human-effects?tbl=Displaced`}
 																		>
 																			{ctx.t({
-																				"code": "common.yes",
-																				"msg": "Yes"
+																				code: "common.yes",
+																				msg: "Yes",
 																			})}
 																		</LangLink>
 																	</>
@@ -570,10 +578,12 @@ export default function Screen() {
 														<td>
 															<DeleteButton
 																ctx={ctx}
-																action={ctx.url(`/disaster-record/edit-sub/${ld.item.id}/human-effects/delete-all-data`)}
+																action={ctx.url(
+																	`/disaster-record/edit-sub/${ld.item.id}/human-effects/delete-all-data`,
+																)}
 																label={ctx.t({
-																	"code": "common.delete",
-																	"msg": "Delete"
+																	code: "common.delete",
+																	msg: "Delete",
 																})}
 															/>
 														</td>
@@ -592,18 +602,23 @@ export default function Screen() {
 								<div className="dts-form__intro">
 									<legend className="dts-heading-3">
 										{ctx.t({
-											"code": "sector_effects",
-											"msg": "Sector effects"
+											code: "sector_effects",
+											msg: "Sector effects",
 										})}
 									</legend>
 								</div>
 								<div className="dts-form__body no-border-bottom">
 									<div className="dts-form__section-remove">
-										<LangLink lang={ctx.lang} to={`/disaster-record/edit-sec/${ld.item.id}`}>
-											[ {ctx.t({
-												"code": "common.add_new_record",
-												"msg": "Add new record"
-											})} ]
+										<LangLink
+											lang={ctx.lang}
+											to={`/disaster-record/edit-sec/${ld.item.id}`}
+										>
+											[{" "}
+											{ctx.t({
+												code: "common.add_new_record",
+												msg: "Add new record",
+											})}{" "}
+											]
 										</LangLink>
 									</div>
 									<div className="mg-grid mg-grid__col-1">
@@ -615,14 +630,14 @@ export default function Screen() {
 														<th></th>
 														<th className="center" colSpan={3}>
 															{ctx.t({
-																"code": "sector_effects.damage",
-																"msg": "Damage"
+																code: "sector_effects.damage",
+																msg: "Damage",
 															})}
 														</th>
 														<th className="center" colSpan={2}>
 															{ctx.t({
-																"code": "sector_effects.losses",
-																"msg": "Losses"
+																code: "sector_effects.losses",
+																msg: "Losses",
 															})}
 														</th>
 														<th></th>
@@ -631,59 +646,58 @@ export default function Screen() {
 													<tr>
 														<th>
 															{ctx.t({
-																"code": "common.id",
-																"msg": "ID"
+																code: "common.id",
+																msg: "ID",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "sector_effects.sector",
-																"msg": "Sector"
+																code: "sector_effects.sector",
+																msg: "Sector",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "sector_effects.damage",
-																"msg": "Damage"
+																code: "sector_effects.damage",
+																msg: "Damage",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "sector_effects.recovery_cost",
-																"msg": "Recovery cost"
+																code: "sector_effects.recovery_cost",
+																msg: "Recovery cost",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "sector_effects.cost",
-																"msg": "Cost"
+																code: "sector_effects.cost",
+																msg: "Cost",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "sector_effects.losses",
-																"msg": "Losses"
+																code: "sector_effects.losses",
+																msg: "Losses",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "sector_effects.cost",
-																"msg": "Cost"
+																code: "sector_effects.cost",
+																msg: "Cost",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "sector_effects.disruption",
-																"msg": "Disruption"
+																code: "sector_effects.disruption",
+																msg: "Disruption",
 															})}
 														</th>
 														<th>
 															{ctx.t({
-																"code": "common.actions",
-																"msg": "Actions"
+																code: "common.actions",
+																msg: "Actions",
 															})}
 														</th>
-
 													</tr>
 												</thead>
 												<tbody>
@@ -701,10 +715,9 @@ export default function Screen() {
 																				to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/damages?sectorId=${item.disRecSectorsSectorId}`}
 																			>
 																				{ctx.t({
-																					"code": "common.yes",
-																					"msg": "Yes"
+																					code: "common.yes",
+																					msg: "Yes",
 																				})}
-
 																			</LangLink>
 																		</>
 																	)}
@@ -735,10 +748,9 @@ export default function Screen() {
 																				to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/losses?sectorId=${item.disRecSectorsSectorId}`}
 																			>
 																				{ctx.t({
-																					"code": "common.yes",
-																					"msg": "Yes"
+																					code: "common.yes",
+																					msg: "Yes",
 																				})}
-
 																			</LangLink>
 																		</>
 																	)}
@@ -759,10 +771,9 @@ export default function Screen() {
 																				to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/disruptions?sectorId=${item.disRecSectorsSectorId}`}
 																			>
 																				{ctx.t({
-																					"code": "common.yes",
-																					"msg": "Yes"
+																					code: "common.yes",
+																					msg: "Yes",
 																				})}
-
 																			</LangLink>
 																		</>
 																	)}
@@ -775,8 +786,8 @@ export default function Screen() {
 																				to={`/disaster-record/edit-sec/${ld.item.id}/delete/?id=${item.disRecSectorsId}`}
 																			>
 																				{ctx.t({
-																					"code": "common.delete",
-																					"msg": "Delete"
+																					code: "common.delete",
+																					msg: "Delete",
 																				})}
 																			</LangLink>
 																			&nbsp;|&nbsp;
@@ -785,8 +796,8 @@ export default function Screen() {
 																				to={`/disaster-record/edit-sec/${ld.item.id}/?id=${item.disRecSectorsId}`}
 																			>
 																				{ctx.t({
-																					"code": "common.edit",
-																					"msg": "Edit"
+																					code: "common.edit",
+																					msg: "Edit",
 																				})}
 																			</LangLink>
 																		</>
@@ -808,17 +819,22 @@ export default function Screen() {
 								<div className="dts-form__intro">
 									<legend className="dts-heading-3">
 										{ctx.t({
-											"code": "non_economic_losses",
-											"msg": "Non-economic losses"
+											code: "non_economic_losses",
+											msg: "Non-economic losses",
 										})}
 									</legend>
 									<div className="dts-form__body no-border-bottom">
 										<div className="dts-form__section-remove">
-											<LangLink lang={ctx.lang} to={`${route}/non-economic-losses/${ld.item.id}`}>
-												[ {ctx.t({
-													"code": "common.add_new_record",
-													"msg": "Add new record"
-												})} ]
+											<LangLink
+												lang={ctx.lang}
+												to={`${route}/non-economic-losses/${ld.item.id}`}
+											>
+												[{" "}
+												{ctx.t({
+													code: "common.add_new_record",
+													msg: "Add new record",
+												})}{" "}
+												]
 											</LangLink>
 										</div>
 										<div className="mg-grid mg-grid__col-1">
@@ -828,26 +844,26 @@ export default function Screen() {
 														<tr>
 															<th>
 																{ctx.t({
-																	"code": "common.id",
-																	"msg": "ID"
+																	code: "common.id",
+																	msg: "ID",
 																})}
 															</th>
 															<th>
 																{ctx.t({
-																	"code": "common.category",
-																	"msg": "Category"
+																	code: "common.category",
+																	msg: "Category",
 																})}
 															</th>
 															<th>
 																{ctx.t({
-																	"code": "common.description",
-																	"msg": "Description"
+																	code: "common.description",
+																	msg: "Description",
 																})}
 															</th>
 															<th>
 																{ctx.t({
-																	"code": "common.actions",
-																	"msg": "Actions"
+																	code: "common.actions",
+																	msg: "Actions",
 																})}
 															</th>
 														</tr>
@@ -868,8 +884,8 @@ export default function Screen() {
 																					to={`${route}/non-economic-losses/${ld.item.id}/delete/?id=${item.noneccoId}`}
 																				>
 																					{ctx.t({
-																						"code": "common.delete",
-																						"msg": "Delete"
+																						code: "common.delete",
+																						msg: "Delete",
 																					})}
 																				</LangLink>
 																				&nbsp;|&nbsp;
@@ -878,8 +894,8 @@ export default function Screen() {
 																					to={`${route}/non-economic-losses/${ld.item.id}/?id=${item.noneccoId}`}
 																				>
 																					{ctx.t({
-																						"code": "common.edit",
-																						"msg": "Edit"
+																						code: "common.edit",
+																						msg: "Edit",
 																					})}
 																				</LangLink>
 																			</>

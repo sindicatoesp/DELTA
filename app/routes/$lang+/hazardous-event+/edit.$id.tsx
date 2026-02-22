@@ -37,7 +37,10 @@ import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { ViewContext } from "~/frontend/context";
 
 import { BackendContext } from "~/backend.server/context";
-import { getUserCountryAccountsWithValidatorRole, getUserCountryAccountsWithAdminRole } from "~/db/queries/userCountryAccounts";
+import {
+	getUserCountryAccountsWithValidatorRole,
+	getUserCountryAccountsWithAdminRole,
+} from "~/db/queries/userCountryAccounts";
 import { handleApprovalWorkflowService } from "~/backend.server/services/approvalWorkflowService";
 
 export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
@@ -52,22 +55,24 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 	const userId = await getUserIdFromSession(request);
 
 	// Get users with validator role
-	const usersWithValidatorRole = await getUserCountryAccountsWithValidatorRole(countryAccountsId);
+	const usersWithValidatorRole =
+		await getUserCountryAccountsWithValidatorRole(countryAccountsId);
 
 	let filteredUsersWithValidatorRole: typeof usersWithValidatorRole = [];
 
 	if (usersWithValidatorRole.length > 0) {
 		// filter the usersWithValidatorRole to exclude the current user
 		filteredUsersWithValidatorRole = usersWithValidatorRole.filter(
-			(userAccount) => userAccount.id !== userId
+			(userAccount) => userAccount.id !== userId,
 		);
 	}
 
 	// if usersWithValidatorRole is empty, fall back to usersWithAdminRole excluding current user
 	if (filteredUsersWithValidatorRole.length === 0) {
-		const usersWithAdminRole = await getUserCountryAccountsWithAdminRole(countryAccountsId);
+		const usersWithAdminRole =
+			await getUserCountryAccountsWithAdminRole(countryAccountsId);
 		filteredUsersWithValidatorRole = usersWithAdminRole.filter(
-			(userAccount) => userAccount.id !== userId
+			(userAccount) => userAccount.id !== userId,
 		);
 	}
 
@@ -81,7 +86,6 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 		}
 
 		return {
-			
 			hip,
 			item,
 			parent: parent2,
@@ -124,15 +128,14 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 			and(
 				isNull(divisionTable.parentId),
 				isNotNull(divisionTable.geojson),
-				eq(divisionTable.countryAccountsId, countryAccountsId)
-			)
+				eq(divisionTable.countryAccountsId, countryAccountsId),
+			),
 		);
 
 	const settings = await getCountrySettingsFromSession(request);
 	const ctryIso3 = settings.ctryIso3;
 
 	return {
-		
 		hip: hip,
 		item: item,
 		treeData: treeData,
@@ -161,13 +164,24 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 			};
 			if (id) {
 				// Save normal for data to database using the hazardousEventUpdate function
-				const returnValue = await hazardousEventUpdate(ctx, tx, id, updatedData);
+				const returnValue = await hazardousEventUpdate(
+					ctx,
+					tx,
+					id,
+					updatedData,
+				);
 
 				if (returnValue.ok === true) {
 					// continue to approval workflow processing
-					await handleApprovalWorkflowService(ctx, tx, id, "hazardous_event", updatedData);
+					await handleApprovalWorkflowService(
+						ctx,
+						tx,
+						id,
+						"hazardous_event",
+						updatedData,
+					);
 				}
-				
+
 				return returnValue;
 			} else {
 				throw "not an create screen";
@@ -182,7 +196,7 @@ export default function Screen() {
 	if (!ld.item) {
 		throw "invalid";
 	}
-	let ctx = new ViewContext()
+	let ctx = new ViewContext();
 	let fieldsInitial = {
 		// both ld.item.event and ld.item have description fields, description field on event is not used
 		// TODO: remove those fields from db

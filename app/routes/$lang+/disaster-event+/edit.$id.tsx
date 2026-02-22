@@ -40,7 +40,10 @@ import { buildTree } from "~/components/TreeView";
 import { ViewContext } from "~/frontend/context";
 
 import { BackendContext } from "~/backend.server/context";
-import { getUserCountryAccountsWithValidatorRole, getUserCountryAccountsWithAdminRole } from "~/db/queries/userCountryAccounts";
+import {
+	getUserCountryAccountsWithValidatorRole,
+	getUserCountryAccountsWithAdminRole,
+} from "~/db/queries/userCountryAccounts";
 import { handleApprovalWorkflowService } from "~/backend.server/services/approvalWorkflowService";
 
 // Helper function to get country ISO3 code
@@ -63,8 +66,8 @@ async function getDivisionGeoJSON(countryAccountsId: string) {
 			and(
 				isNull(divisionTable.parentId),
 				isNotNull(divisionTable.geojson),
-				eq(divisionTable.countryAccountsId, countryAccountsId)
-			)
+				eq(divisionTable.countryAccountsId, countryAccountsId),
+			),
 		);
 }
 
@@ -99,8 +102,8 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 					//console.log( 'data', data );
 					await handleApprovalWorkflowService(ctx, tx, id, "disaster_event", {
 						...updatedData,
-						'tempValidatorUserIds': formData.get("tempValidatorUserIds"),
-						'tempAction': formData.get("tempAction"),
+						tempValidatorUserIds: formData.get("tempValidatorUserIds"),
+						tempAction: formData.get("tempAction"),
 					});
 				}
 
@@ -111,8 +114,14 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 
 				if (returnValue.ok === true) {
 					// continue to approval workflow processing
-					
-					await handleApprovalWorkflowService(ctx, tx, returnValue.id, "disaster_event", updatedData);
+
+					await handleApprovalWorkflowService(
+						ctx,
+						tx,
+						returnValue.id,
+						"disaster_event",
+						updatedData,
+					);
 				}
 
 				return returnValue;
@@ -130,22 +139,24 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 	const userId = await getUserIdFromSession(request);
 
 	// Get users with validator role
-	const usersWithValidatorRole = await getUserCountryAccountsWithValidatorRole(countryAccountsId);
+	const usersWithValidatorRole =
+		await getUserCountryAccountsWithValidatorRole(countryAccountsId);
 
 	let filteredUsersWithValidatorRole: typeof usersWithValidatorRole = [];
 
 	if (usersWithValidatorRole.length > 0) {
 		// filter the usersWithValidatorRole to exclude the current user
 		filteredUsersWithValidatorRole = usersWithValidatorRole.filter(
-			(userAccount) => userAccount.id !== userId
+			(userAccount) => userAccount.id !== userId,
 		);
 	}
 
 	// if usersWithValidatorRole is empty, fall back to usersWithAdminRole excluding current user
 	if (filteredUsersWithValidatorRole.length === 0) {
-		const usersWithAdminRole = await getUserCountryAccountsWithAdminRole(countryAccountsId);
+		const usersWithAdminRole =
+			await getUserCountryAccountsWithAdminRole(countryAccountsId);
 		filteredUsersWithValidatorRole = usersWithAdminRole.filter(
-			(userAccount) => userAccount.id !== userId
+			(userAccount) => userAccount.id !== userId,
 		);
 	}
 
@@ -180,7 +191,6 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 		const divisionGeoJSON = await getDivisionGeoJSON(countryAccountsId);
 
 		return {
-			
 			item: null, // No existing item for new disaster event
 			hip: await dataForHazardPicker(ctx),
 			treeData: treeData,
@@ -241,7 +251,6 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 	const divisionGeoJSON = await getDivisionGeoJSON(countryAccountsId);
 
 	return {
-		
 		item,
 		hip,
 		treeData,
@@ -257,17 +266,17 @@ export default function Screen() {
 	let ctx = new ViewContext();
 	let fieldsInitial: Partial<DisasterEventFields> = ld.item
 		? {
-			...ld.item,
-			createdByUserId: ld.item.createdByUserId ?? undefined,
-			updatedByUserId: ld.item.updatedByUserId ?? undefined,
-		}
+				...ld.item,
+				createdByUserId: ld.item.createdByUserId ?? undefined,
+				updatedByUserId: ld.item.updatedByUserId ?? undefined,
+			}
 		: {};
 
 	// Fix the hazardousEvent to include missing HIP properties with complete structure
 	const fixedHazardousEvent = ld.item?.hazardousEvent
 		? {
-			...ld.item.hazardousEvent,
-		}
+				...ld.item.hazardousEvent,
+			}
 		: null;
 
 	return formScreen({

@@ -11,7 +11,10 @@ import { dataForHazardPicker } from "~/backend.server/models/hip_hazard_picker";
 import { handleApprovalWorkflowService } from "~/backend.server/services/approvalWorkflowService";
 import { buildTree } from "~/components/TreeView";
 import { dr } from "~/db.server";
-import { getUserCountryAccountsWithValidatorRole, getUserCountryAccountsWithAdminRole } from "~/db/queries/userCountryAccounts";
+import {
+	getUserCountryAccountsWithValidatorRole,
+	getUserCountryAccountsWithAdminRole,
+} from "~/db/queries/userCountryAccounts";
 import { divisionTable } from "~/drizzle/schema";
 import { ViewContext } from "~/frontend/context";
 import {
@@ -50,22 +53,24 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
 
 	// Get users with validator role
-	const usersWithValidatorRole = await getUserCountryAccountsWithValidatorRole(countryAccountsId);
+	const usersWithValidatorRole =
+		await getUserCountryAccountsWithValidatorRole(countryAccountsId);
 	let filteredUsersWithValidatorRole: typeof usersWithValidatorRole = [];
 
 	if (usersWithValidatorRole.length > 0) {
 		// filter the usersWithValidatorRole to exclude the current user
 		filteredUsersWithValidatorRole = usersWithValidatorRole.filter(
-			(userAccount) => userAccount.id !== userId
+			(userAccount) => userAccount.id !== userId,
 		);
 	}
 
 	// if usersWithValidatorRole is empty, fall back to usersWithAdminRole excluding current user
 	if (filteredUsersWithValidatorRole.length === 0) {
-		const usersWithAdminRole = await getUserCountryAccountsWithAdminRole(countryAccountsId);
+		const usersWithAdminRole =
+			await getUserCountryAccountsWithAdminRole(countryAccountsId);
 		filteredUsersWithValidatorRole = usersWithAdminRole.filter(
-			(userAccount) => userAccount.id !== userId
-		);	
+			(userAccount) => userAccount.id !== userId,
+		);
 	}
 
 	if (parentId) {
@@ -77,9 +82,8 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 		if (parent.countryAccountsId !== countryAccountsId) {
 			throw new Response("Unauthorized Access denied", { status: 403 });
 		}
-		
+
 		return {
-			
 			hip,
 			parentId,
 			parent,
@@ -127,12 +131,11 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 			and(
 				isNull(divisionTable.parentId),
 				isNotNull(divisionTable.geojson),
-				eq(divisionTable.countryAccountsId, countryAccountsId)
-			)
+				eq(divisionTable.countryAccountsId, countryAccountsId),
+			),
 		);
 
 	return {
-		
 		hip,
 		treeData,
 		ctryIso3,
@@ -164,10 +167,16 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 
 				// Save normal for data to database using the hazardousEventUpdate function
 				const returnValue = await hazardousEventCreate(ctx, tx, eventData);
-				
+
 				if (returnValue.ok === true) {
 					// continue to approval workflow processing
-					await handleApprovalWorkflowService(ctx, tx, returnValue.id, "hazardous_event", eventData);
+					await handleApprovalWorkflowService(
+						ctx,
+						tx,
+						returnValue.id,
+						"hazardous_event",
+						eventData,
+					);
 				}
 
 				return returnValue;
@@ -181,7 +190,7 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 
 export default function Screen() {
 	let ld = useLoaderData<typeof loader>();
-	let ctx = new ViewContext()
+	let ctx = new ViewContext();
 
 	// @ts-ignore
 	let fieldsInitial = { parent: ld.parentId };
