@@ -412,32 +412,6 @@ export const loader = async (loaderArgs: LoaderFunctionArgs) => {
 		console.log("DEBUG: No recognizable state or code parameters.");
 	}
 
-	/*else if (queryStringState == 'azure_sso_b2c-admin-setup' && queryStringCode) {
-		const data2 = await _code2Token(queryStringCode);
-
-		if (data2.okay) {
-			data['email'] = data2.email;
-			data['password'] = '';
-			data['firstName'] = data2.firstName;
-			data['lastName'] = data2.lastName;
-
-			try {
-				const data3 = setupAdminAccountFieldsFromMap(data) 
-				const res = await setupAdminAccountSSOAzureB2C(data3);
-				if (!res.ok){
-					console.error( res.errors );
-					return { data, errors: res.errors };
-				}
-				const headers = await createUserSession(res.userId);
-				return redirect("/user/verify-email", { headers });
-			}
-			catch (error) { 
-				console.error('Error:', error); 
-				return { errors:error };
-			}
-		}
-	}*/
-
 	return { errors: "Unknown error" };
 };
 

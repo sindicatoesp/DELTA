@@ -124,16 +124,6 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 		return Response.json({ data, errors }, { status: 400 });
 	}
 
-	// --- PATCH: Check if user is pending activation and redirect to verify-email ---
-	const userSession = await getUserFromSession(request);
-	if (
-		userSession &&
-		userSession.user &&
-		userSession.user.emailVerified === false
-	) {
-		return redirectLangFromRoute(routeArgs, "/user/verify-email");
-	}
-
 	// Check if user's country accounts is inactive, then show error message and redirect to login
 	const countryAccountId = res.countryAccountId;
 	if (countryAccountId) {

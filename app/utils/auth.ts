@@ -84,9 +84,6 @@ export async function requireUser(routeArgs: RouteArgs) {
 		);
 	}
 	const { user, session } = userSession;
-	if (!user.emailVerified) {
-		throw redirectLangFromRoute(routeArgs, "/user/verify-email");
-	}
 	if (user.totpEnabled && !session.totpAuthed) {
 		throw redirectLangFromRoute(routeArgs, "/user/totp-login");
 	}
@@ -100,9 +97,6 @@ export async function optionalUser(routeArgs: RouteArgs) {
 		return null;
 	}
 	const { user, session } = userSession;
-	if (!user.emailVerified) {
-		throw redirectLangFromRoute(routeArgs, "/user/verify-email");
-	}
 	if (user.totpEnabled && !session.totpAuthed) {
 		throw redirectLangFromRoute(routeArgs, "/user/totp-login");
 	}
@@ -123,10 +117,6 @@ export async function requireUserAllowNoTotp(routeArgs: RouteArgs) {
 	const userSession = await getUserFromSession(request);
 	if (!userSession) {
 		throw redirectLangFromRoute(routeArgs, "/user/login");
-	}
-	const { user } = userSession;
-	if (!user.emailVerified) {
-		throw redirectLangFromRoute(routeArgs, "/user/verify-email");
 	}
 	return userSession;
 }
