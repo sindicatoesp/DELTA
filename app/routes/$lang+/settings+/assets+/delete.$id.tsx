@@ -2,7 +2,7 @@ import { ActionFunction } from "react-router";
 import { getTableName } from "drizzle-orm";
 import { createDeleteAction } from "~/backend.server/handlers/form/form";
 import { assetById, assetDeleteById } from "~/backend.server/models/asset";
-import { assetTable } from "~/drizzle/schema";
+import { assetTable } from "~/drizzle/schema/assetTable";
 
 import { route } from "~/frontend/asset";
 import { requireUser } from "~/utils/auth";
@@ -23,7 +23,6 @@ export const action: ActionFunction = async (args) => {
 			return assetDeleteById(id, countryAccountsId);
 		},
 		tableName: getTableName(assetTable),
-		getById: assetById
+		getById: assetById,
 	})(args);
 };
-

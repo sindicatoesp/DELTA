@@ -1,5 +1,9 @@
 import type { MetaFunction } from "react-router";
-import { ActionFunctionArgs, LoaderFunctionArgs, redirectDocument } from "react-router";
+import {
+	ActionFunctionArgs,
+	LoaderFunctionArgs,
+	redirectDocument,
+} from "react-router";
 import { useLoaderData, useActionData } from "react-router";
 import { useEffect } from "react";
 import {
@@ -24,7 +28,7 @@ import {
 } from "~/utils/config";
 import PasswordInput from "~/components/PasswordInput";
 import { getCountryAccountWithCountryById } from "~/db/queries/countryAccounts";
-import { countryAccountStatuses } from "~/drizzle/schema";
+import { countryAccountStatuses } from "~/drizzle/schema/countryAccounts";
 import Messages from "~/components/Messages";
 import { getUserCountryAccountsByUserId } from "~/db/queries/userCountryAccounts";
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
@@ -55,7 +59,7 @@ type LoaderData = {
 };
 
 export const action = async (routeArgs: ActionFunctionArgs) => {
-	let { request } = routeArgs
+	let { request } = routeArgs;
 	const ctx = new BackendContext(routeArgs);
 
 	// Check if form authentication is supported
@@ -69,7 +73,7 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 					],
 				},
 			},
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 
@@ -89,16 +93,15 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 				errors: {
 					general: [
 						ctx.t({
-							"code": "common.csrf_validation_failed",
-							"msg": "CSRF validation failed. Please ensure you're submitting the form from a valid session. For your security, please restart your browser and try again."
-						})
+							code: "common.csrf_validation_failed",
+							msg: "CSRF validation failed. Please ensure you're submitting the form from a valid session. For your security, please restart your browser and try again.",
+						}),
 					],
 				},
 			},
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
-
 
 	const res = await login(data.email, data.password);
 	if (!res.ok) {
@@ -106,37 +109,26 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 			fields: {
 				email: [
 					ctx.t({
-						"code": "user_login.email_or_password_do_not_match",
-						"msg": "Email or password do not match"
-					})
+						code: "user_login.email_or_password_do_not_match",
+						msg: "Email or password do not match",
+					}),
 				],
 				password: [
 					ctx.t({
-						"code": "user_login.email_or_password_do_not_match",
-						"msg": "Email or password do not match"
-					})
+						code: "user_login.email_or_password_do_not_match",
+						msg: "Email or password do not match",
+					}),
 				],
 			},
 		};
 		return Response.json({ data, errors }, { status: 400 });
 	}
 
-	// --- PATCH: Check if user is pending activation and redirect to verify-email ---
-	const userSession = await getUserFromSession(request);
-	if (
-		userSession &&
-		userSession.user &&
-		userSession.user.emailVerified === false
-	) {
-		return redirectLangFromRoute(routeArgs, "/user/verify-email")
-	}
-
 	// Check if user's country accounts is inactive, then show error message and redirect to login
 	const countryAccountId = res.countryAccountId;
 	if (countryAccountId) {
-		const countryAccount = await getCountryAccountWithCountryById(
-			countryAccountId
-		);
+		const countryAccount =
+			await getCountryAccountWithCountryById(countryAccountId);
 		if (
 			countryAccount &&
 			countryAccount.status === countryAccountStatuses.INACTIVE
@@ -146,7 +138,7 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 					data,
 					errors: { general: ["Your country account is inactive"] },
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 	}
@@ -162,30 +154,34 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 
 	if (userCountryAccounts && userCountryAccounts.length === 1) {
 		const countrySettings = await getInstanceSystemSettingsByCountryAccountId(
-			userCountryAccounts[0].countryAccountsId
+			userCountryAccounts[0].countryAccountsId,
 		);
 
 		const session = await sessionCookie().getSession(
-			headerSession["Set-Cookie"]
+			headerSession["Set-Cookie"],
 		);
 		session.set("countryAccountsId", userCountryAccounts[0].countryAccountsId);
 		session.set("userRole", userCountryAccounts[0].role);
 		session.set("countrySettings", countrySettings);
 		const setCookie = await sessionCookie().commitSession(session);
 
-		redirectTo = replaceLang(redirectTo, countrySettings?.language || "en")
+		redirectTo = replaceLang(redirectTo, countrySettings?.language || "en");
 		return redirectDocument(redirectTo, {
 			headers: { "Set-Cookie": setCookie },
 		});
 	} else if (userCountryAccounts && userCountryAccounts.length > 1) {
-		return redirectLangFromRoute(routeArgs, "/user/select-instance", { headers: headerSession });
+		return redirectLangFromRoute(routeArgs, "/user/select-instance", {
+			headers: headerSession,
+		});
 	}
-	return redirectLangFromRoute(routeArgs, redirectTo, { headers: headerSession });
+	return redirectLangFromRoute(routeArgs, redirectTo, {
+		headers: headerSession,
+	});
 };
 
 export const loader = async (args: LoaderFunctionArgs) => {
 	const ctx = new BackendContext(args);
-	const { request } = args
+	const { request } = args;
 
 	const user = await getUserFromSession(request);
 
@@ -204,12 +200,14 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
 	if (user) {
 		const userCountryAccounts = await getUserCountryAccountsByUserId(
-			user.user.id
+			user.user.id,
 		);
 		if (userCountryAccounts.length > 1) {
 			const countryAccountsId = await getCountryAccountsIdFromSession(request);
 			if (countryAccountsId) {
-				return redirectLangFromRoute(args, redirectTo, { headers: { "Set-Cookie": setCookie } });
+				return redirectLangFromRoute(args, redirectTo, {
+					headers: { "Set-Cookie": setCookie },
+				});
 			} else {
 				return redirectLangFromRoute(args, "/user/select-instance", {
 					headers: { "Set-Cookie": setCookie },
@@ -217,7 +215,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
 			}
 		}
 
-		return redirectLangFromRoute(args, redirectTo, { headers: { "Set-Cookie": setCookie } });
+		return redirectLangFromRoute(args, redirectTo, {
+			headers: { "Set-Cookie": setCookie },
+		});
 	}
 
 	const isFormAuthSupported = configAuthSupportedForm();
@@ -226,19 +226,18 @@ export const loader = async (args: LoaderFunctionArgs) => {
 	// If no authentication methods are configured, show error
 	if (!isFormAuthSupported && !isSSOAuthSupported) {
 		throw new Error(
-			"No authentication methods configured. Please check AUTHENTICATION_SUPPORTED environment variable."
+			"No authentication methods configured. Please check AUTHENTICATION_SUPPORTED environment variable.",
 		);
 	}
 
 	return Response.json(
 		{
-
 			redirectTo: redirectTo,
 			isFormAuthSupported: isFormAuthSupported,
 			isSSOAuthSupported: isSSOAuthSupported,
 			csrfToken: csrfToken,
 		},
-		{ headers: { "Set-Cookie": setCookie } }
+		{ headers: { "Set-Cookie": setCookie } },
 	);
 };
 
@@ -249,7 +248,7 @@ export function getSafeRedirectTo(
 	if (redirectTo && redirectTo.startsWith("/")) {
 		return redirectTo;
 	}
-	return ctx.url("")
+	return ctx.url("");
 }
 
 export const meta: MetaFunction = () => {
@@ -257,18 +256,21 @@ export const meta: MetaFunction = () => {
 
 	return [
 		{
-			title: htmlTitle(ctx, ctx.t({
-				"code": "common.sign-in",
-				"msg": "Sign-in"
-			})),
+			title: htmlTitle(
+				ctx,
+				ctx.t({
+					code: "common.sign-in",
+					msg: "Sign-in",
+				}),
+			),
 		},
 		{
 			name: "description",
 			content: ctx.t({
-				"code": "common.login",
-				"msg": "Login"
+				code: "common.login",
+				msg: "Login",
 			}),
-		}
+		},
 	];
 };
 
@@ -286,7 +288,7 @@ export default function Screen() {
 		// Submit button enabling only when required fields are filled (only if form is supported)
 		if (isFormAuthSupported) {
 			const submitButton = document.querySelector(
-				"[id='login-button']"
+				"[id='login-button']",
 			) as HTMLButtonElement;
 			if (submitButton) {
 				submitButton.disabled = true;
@@ -303,38 +305,44 @@ export default function Screen() {
 						{errors.general && <Messages messages={errors.general} />}
 						<h2 className="dts-heading-1">
 							{ctx.t({
-								"code": "user_login.sign_in",
-								"msg": "Sign in"
+								code: "user_login.sign_in",
+								msg: "Sign in",
 							})}
 						</h2>
 						{isFormAuthSupported && isSSOAuthSupported && (
 							<>
-								<p>{ctx.t({
-									"code": "user_login.intro",
-									"desc": "Login page intro text",
-									"msg": "Enter your credentials or use SSO to access your account."
-								})}</p>
-								<p style={{ marginBottom: "2px" }}>*
+								<p>
 									{ctx.t({
-										"code": "common.required_information",
-										"desc": "Indicates required information on login form",
-										"msg": "Required information"
+										code: "user_login.intro",
+										desc: "Login page intro text",
+										msg: "Enter your credentials or use SSO to access your account.",
+									})}
+								</p>
+								<p style={{ marginBottom: "2px" }}>
+									*
+									{ctx.t({
+										code: "common.required_information",
+										desc: "Indicates required information on login form",
+										msg: "Required information",
 									})}
 								</p>
 							</>
 						)}
 						{isFormAuthSupported && !isSSOAuthSupported && (
 							<>
-								<p>{ctx.t({
-									"code": "user_login.intro_form_only",
-									"desc": "Login page intro text when only form auth is supported",
-									"msg": "Enter your credentials to access your account."
-								})}</p>
-								<p style={{ marginBottom: "2px" }}>*
+								<p>
 									{ctx.t({
-										"code": "common.required_information",
-										"desc": "Indicates required information on login form",
-										"msg": "Required information"
+										code: "user_login.intro_form_only",
+										desc: "Login page intro text when only form auth is supported",
+										msg: "Enter your credentials to access your account.",
+									})}
+								</p>
+								<p style={{ marginBottom: "2px" }}>
+									*
+									{ctx.t({
+										code: "common.required_information",
+										desc: "Indicates required information on login form",
+										msg: "Required information",
 									})}
 								</p>
 							</>
@@ -342,9 +350,9 @@ export default function Screen() {
 						{!isFormAuthSupported && isSSOAuthSupported && (
 							<p>
 								{ctx.t({
-									"code": "user_login.intro_sso_only",
-									"desc": "Login page intro text when only SSO auth is supported",
-									"msg": "Use your organization's Single Sign-On to access your account."
+									code: "user_login.intro_sso_only",
+									desc: "Login page intro text when only SSO auth is supported",
+									msg: "Use your organization's Single Sign-On to access your account.",
 								})}
 							</p>
 						)}
@@ -378,8 +386,8 @@ export default function Screen() {
 											autoComplete="off"
 											name="email"
 											placeholder={`*${ctx.t({
-												"code": "user_login.email_address",
-												"msg": "Email address"
+												code: "user_login.email_address",
+												msg: "Email address",
 											})}`}
 											defaultValue={data?.email}
 											required
@@ -400,8 +408,8 @@ export default function Screen() {
 										<PasswordInput
 											name="password"
 											placeholder={`*${ctx.t({
-												"code": "user_login.password",
-												"msg": "Password"
+												code: "user_login.password",
+												msg: "Password",
 											})}`}
 											defaultValue={data?.password}
 											errors={errors}
@@ -419,10 +427,11 @@ export default function Screen() {
 								{isFormAuthSupported && (
 									<LangLink lang={ctx.lang} to="/user/forgot-password">
 										{ctx.t({
-											"code": "user_login.forgot_password",
-											"desc": "Link text for forgot password on login form",
-											"msg": "Forgot password"
-										})}?
+											code: "user_login.forgot_password",
+											desc: "Link text for forgot password on login form",
+											msg: "Forgot password",
+										})}
+										?
 									</LangLink>
 								)}
 							</u>
@@ -438,8 +447,8 @@ export default function Screen() {
 								<SubmitButton
 									className="mg-button mg-button-primary"
 									label={`${ctx.t({
-										"code": "user_login.sign_in",
-										"msg": "Sign in"
+										code: "user_login.sign_in",
+										msg: "Sign in",
 									})}`}
 									id="login-button"
 									style={{
@@ -470,7 +479,8 @@ export default function Screen() {
 										margin: "0",
 									}}
 								/>
-								<span className="text-upper"
+								<span
+									className="text-upper"
 									style={{
 										position: "absolute",
 										top: "-10px",
@@ -480,12 +490,12 @@ export default function Screen() {
 										padding: "0 15px",
 										color: "#666",
 										fontSize: "14px",
-										textTransform: "uppercase"
+										textTransform: "uppercase",
 									}}
 								>
 									{ctx.t({
-										"code": "common.or",
-										"msg": "Or"
+										code: "common.or",
+										msg: "Or",
 									})}
 								</span>
 							</div>
@@ -506,9 +516,9 @@ export default function Screen() {
 								}}
 							>
 								{ctx.t({
-									"code": "user_login.sign_in_with_azure_b2c_sso",
-									"desc": "Button text for sign in with Azure B2C SSO",
-									"msg": "Sign in with Azure B2C SSO"
+									code: "user_login.sign_in_with_azure_b2c_sso",
+									desc: "Button text for sign in with Azure B2C SSO",
+									msg: "Sign in with Azure B2C SSO",
 								})}
 							</LangLink>
 						</div>

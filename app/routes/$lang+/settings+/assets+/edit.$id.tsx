@@ -12,7 +12,7 @@ import { formScreen } from "~/frontend/form";
 
 import { createOrUpdateAction } from "~/backend.server/handlers/form/form";
 import { getTableName } from "drizzle-orm";
-import { assetTable } from "~/drizzle/schema";
+import { assetTable } from "~/drizzle/schema/assetTable";
 import { useLoaderData } from "react-router";
 import { authLoaderWithPerm } from "~/utils/auth";
 
@@ -33,27 +33,25 @@ export const action = async (args: ActionFunctionArgs) => {
 		throw new Response("Unauthorized access", { status: 401 });
 	}
 
-	return createOrUpdateAction(
-		{
-			fieldsDef: async () => {
-				return await fieldsDef(ctx)
-			},
-			create: assetCreate,
-			update: assetUpdate,
-			getById: assetByIdTx,
-			redirectTo: (id) => `${route}/${id}`,
-			tableName: getTableName(assetTable),
-			action: (isCreate) => (isCreate ? "Create asset" : "Update asset"),
-			countryAccountsId
+	return createOrUpdateAction({
+		fieldsDef: async () => {
+			return await fieldsDef(ctx);
 		},
-	)(args);
+		create: assetCreate,
+		update: assetUpdate,
+		getById: assetByIdTx,
+		redirectTo: (id) => `${route}/${id}`,
+		tableName: getTableName(assetTable),
+		action: (isCreate) => (isCreate ? "Create asset" : "Update asset"),
+		countryAccountsId,
+	})(args);
 };
 
 export const loader = authLoaderWithPerm("EditData", async (args) => {
 	const ctx = new BackendContext(args);
 	const { request, params } = args;
 	if (!params.id) throw new Error("Missing id param");
-	const countryAccountsId = await getCountryAccountsIdFromSession(request)
+	const countryAccountsId = await getCountryAccountsIdFromSession(request);
 	if (!countryAccountsId) {
 		throw new Response("Unauthorized access", { status: 401 });
 	}
@@ -63,11 +61,11 @@ export const loader = authLoaderWithPerm("EditData", async (args) => {
 		fieldsDef: await fieldsDef(ctx),
 		sectorId,
 	};
-	if (params.id === "new") return {
-
-		item: null,
-		...extra
-	};
+	if (params.id === "new")
+		return {
+			item: null,
+			...extra,
+		};
 
 	let item = await assetById(ctx, params.id);
 	if (!item) throw new Response("Not Found", { status: 404 });
@@ -77,20 +75,19 @@ export const loader = authLoaderWithPerm("EditData", async (args) => {
 
 	const selectedDisplay = await contentPickerConfigSector(ctx).selectedDisplay(
 		dr,
-		item.sectorIds || ""
+		item.sectorIds || "",
 	);
 
 	extra = { ...extra, selectedDisplay } as any;
 	return {
-
 		item,
-		...extra
+		...extra,
 	};
 });
 
 export default function Screen() {
 	let ld = useLoaderData<typeof loader>();
-	let ctx = new ViewContext()
+	let ctx = new ViewContext();
 
 	let fieldsInitial = ld.item ? { ...ld.item } : {};
 	if ("sectorId" in fieldsInitial && !fieldsInitial.sectorId && ld.sectorId) {

@@ -4,7 +4,7 @@ import {
 	disasterRecordsById,
 	disasterRecordsDeleteById,
 } from "~/backend.server/models/disaster_record";
-import { disasterRecordsTable } from "~/drizzle/schema";
+import { disasterRecordsTable } from "~/drizzle/schema/disasterRecordsTable";
 
 import { route } from "~/frontend/disaster-record/form";
 
@@ -39,7 +39,7 @@ export const action = async (args: ActionFunctionArgs) => {
 			console.log(`Post-processing record: ${id}`);
 			ContentRepeaterUploadFile.delete(data.attachments);
 		},
-		countryAccountsId
+		countryAccountsId,
 	});
 
 	return actionHandler(args);
