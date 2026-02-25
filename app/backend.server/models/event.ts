@@ -113,14 +113,16 @@ async function processValidationAssignmentWorkflow(
 }
 
 export interface HazardousEventFields
-	extends Omit<EventInsert, "id">,
+	extends
+		Omit<EventInsert, "id">,
 		Omit<InsertHazardousEvent, "id">,
 		ObjectWithImportId {
 	parent: string;
 	createdByUserId: string;
 	updatedByUserId: string;
-	submittedByUserId: string;
-	validatedByUserId: string;
+	submittedByUserId: string | null;
+	validatedByUserId: string | null;
+	publishedByUserId: string | null;
 }
 
 export function validate(
@@ -1272,6 +1274,7 @@ export async function hazardousEventById(
 export async function hazardousEventDelete(
 	ctx: BackendContext,
 	id: string,
+	countryAccountsId: string,
 ): Promise<DeleteResult> {
 	try {
 		// First check if there are any disaster events linked to this hazard event
@@ -1290,10 +1293,32 @@ export async function hazardousEventDelete(
 			};
 		}
 
+		const whereClause = and(
+					eq(hazardousEventTable.id, id),
+					eq(hazardousEventTable.countryAccountsId, countryAccountsId),
+				)
+
+		// Check if the record exists before deleting
+		const [existingRecord] = await dr
+			.select()
+			.from(hazardousEventTable)
+			.where(whereClause);
+
+		if (!existingRecord && countryAccountsId) {
+			return {
+				ok: false,
+				error: "Record not found or access denied",
+			};
+		}
+
 		await dr.transaction(async (tx) => {
 			await tx
 				.delete(hazardousEventTable)
-				.where(and(eq(hazardousEventTable.id, id)));
+				.where(
+					and(
+						eq(hazardousEventTable.id, id)
+					),
+				);
 
 			await tx
 				.delete(eventRelationshipTable)
@@ -1321,8 +1346,7 @@ export async function hazardousEventDelete(
 }
 
 export interface DisasterEventFields
-	extends Omit<EventInsert, "id">,
-		Omit<InsertDisasterEvent, "id"> {
+	extends Omit<EventInsert, "id">, Omit<InsertDisasterEvent, "id"> {
 	createdByUserId?: string;
 	updatedByUserId?: string;
 }

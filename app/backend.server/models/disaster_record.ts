@@ -25,8 +25,10 @@ import {
 import { deleteAllData as deleteAllDataHumanEffects } from "~/backend.server/handlers/human_effects";
 import { BackendContext } from "../context";
 
-export interface DisasterRecordsFields
-	extends Omit<SelectDisasterRecords, "id"> {}
+export interface DisasterRecordsFields extends Omit<
+	SelectDisasterRecords,
+	"id"
+> {}
 
 // do not change
 export function validate(
@@ -122,11 +124,27 @@ export async function disasterRecordsCreate(
 		return { ok: false, errors };
 	}
 
+	if (!fields.countryAccountsId){
+			return {
+				ok: false,
+				errors: {
+					fields: {},
+					form: [
+						"Missing country account id",
+					],
+				},
+			};
+	}
+
 	// Enforce tenant isolation for disaster event references
 	if (fields.disasterEventId) {
 		// Check if the referenced disaster event belongs to the same tenant
 		const disasterEventCheck = await tx.query.disasterEventTable.findFirst({
-			where: eq(disasterEventTable.id, fields.disasterEventId),
+			where: 
+				and(
+					eq(disasterEventTable.id, fields.disasterEventId),
+					eq(disasterEventTable.countryAccountsId, fields.countryAccountsId), 
+				)
 		});
 
 		if (!disasterEventCheck) {
@@ -334,33 +352,35 @@ export async function disasterRecordsBasicInfoById(idStr: string) {
 	return record[0];
 }
 
-export async function disasterRecordsById(idStr: string) {
-	return disasterRecordsByIdTx(dr, idStr);
+export async function disasterRecordsById(
+	idStr: string,
+	countryAccountsId: string,
+) {
+	return disasterRecordsByIdTx(dr, idStr, countryAccountsId);
 }
 
 export async function disasterRecordsByIdTx(
 	tx: Tx,
 	idStr: string,
-	// countryAccountsId: string
+	countryAccountsId: string,
 ) {
 	let id = idStr;
 
 	let record = await tx
 		.select()
 		.from(disasterRecordsTable)
-		.where(eq(disasterRecordsTable.id, id));
+		.where(
+			and(
+				eq(disasterRecordsTable.id, id),
+				eq(disasterRecordsTable.countryAccountsId, countryAccountsId),
+			),
+		);
 
 	if (record.length === 0) {
-		return null; // Return null instead of throwing error for better test handling
+		return null;
 	}
 
-	// Then fetch related data separately to avoid query argument limit
-	const disasterRecord = record[0];
-
-	// Add related data as needed with separate queries
-	// This approach avoids the "too many arguments" error by not using the complex "with" clause
-
-	return disasterRecord;
+	return record[0];
 }
 
 export async function disasterRecordsDeleteById(
@@ -368,8 +388,8 @@ export async function disasterRecordsDeleteById(
 	countryAccountsId: string,
 ): Promise<DeleteResult> {
 	// First verify the record belongs to the tenant
-	const record = await disasterRecordsById(idStr);
-	if (!record || record.countryAccountsId !== countryAccountsId) {
+	const record = await disasterRecordsById(idStr, countryAccountsId);
+	if (!record) {
 		return {
 			ok: false,
 			error: "Record not found or you don't have permission to delete it",
@@ -405,8 +425,12 @@ async function _getHumanEffectRecordsByIdTx(
 	countryAccountsId: string,
 ) {
 	// First verify the disaster record belongs to the tenant
-	const record = await disasterRecordsByIdTx(tx, disasterRecordidStr);
-	if (!record || record.countryAccountsId !== countryAccountsId) {
+	const record = await disasterRecordsByIdTx(
+		tx,
+		disasterRecordidStr,
+		countryAccountsId,
+	);
+	if (!record) {
 		throw new Error(
 			"Record not found or you don't have permission to access it",
 		);
