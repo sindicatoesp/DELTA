@@ -10,16 +10,15 @@ import { Errors, FormInputDef, hasErrors } from "~/frontend/form";
 import { deleteByIdForStringId } from "./common";
 import { BackendContext } from "../context";
 
-export interface AssetFields
-	extends Omit<
-		InsertAsset,
-		| "builtInName"
-		| "customName"
-		| "builtInCategory"
-		| "customCategory"
-		| "builtInNotes"
-		| "customNotes"
-	> {
+export interface AssetFields extends Omit<
+	InsertAsset,
+	| "builtInName"
+	| "customName"
+	| "builtInCategory"
+	| "customCategory"
+	| "builtInNotes"
+	| "customNotes"
+> {
 	name: string;
 	notes: string;
 	category: string;

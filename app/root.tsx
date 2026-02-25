@@ -266,9 +266,6 @@ export default function Screen() {
 	const isUrlPathUserInvite = matches.some((match) =>
 		match.pathname.startsWith(ctx.url("/user/accept-invite")),
 	);
-	const isUrlPathUserVerifyEmail = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/user/verify-email")),
-	);
 	const isUrlPathAdminRegistration = matches.some((match) =>
 		match.pathname.startsWith(ctx.url("/setup/admin-account")),
 	);
@@ -284,7 +281,6 @@ export default function Screen() {
 	if (
 		isUrlPathUserInvite ||
 		isUrlPathAdminRegistration ||
-		isUrlPathUserVerifyEmail ||
 		isUrlPathResetPassword ||
 		(isUrlSuperAdmin && !isSuperAdmin) // Only hide for super admin routes if not actually super admin
 	) {

@@ -15,8 +15,10 @@ import { userTable } from "~/drizzle/schema";
 export interface ApiKeyFields extends Omit<SelectApiKey, "id"> {}
 
 // NEW: Extended interface for user-centric token creation
-export interface UserCentricApiKeyFields
-	extends Omit<SelectApiKey, "id" | "secret" | "createdAt" | "updatedAt"> {
+export interface UserCentricApiKeyFields extends Omit<
+	SelectApiKey,
+	"id" | "secret" | "createdAt" | "updatedAt"
+> {
 	assignedToUserId?: string; // The actual user who will use this token
 }
 

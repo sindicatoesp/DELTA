@@ -241,8 +241,7 @@ export function fieldsDefView(
 	];
 }
 
-interface DisasterRecordsFormProps
-	extends UserFormProps<DisasterRecordsFields> {
+interface DisasterRecordsFormProps extends UserFormProps<DisasterRecordsFields> {
 	hip: Hip;
 	parent?: DisasterRecordsViewModel;
 	treeData: any[];
