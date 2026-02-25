@@ -4,9 +4,9 @@ import {
 	Link,
 	LoaderFunctionArgs,
 	redirectDocument,
+	useNavigation,
 } from "react-router";
 import { useLoaderData, useActionData } from "react-router";
-import { useState } from "react";
 import { errorToString, Form, Errors as FormErrors } from "~/frontend/form";
 import { formStringData } from "~/utils/httputil";
 import {
@@ -272,7 +272,10 @@ export default function Screen() {
 	const actionData = useActionData<ActionData>();
 
 	const errors = actionData?.errors || {};
-	const [loading] = useState(false);
+	const navigation = useNavigation();
+	const isSubmitting =
+		navigation.state === "submitting" &&
+		navigation.formData?.get("email") != null;
 
 	const { isFormAuthSupported, isSSOAuthSupported } = loaderData;
 
@@ -407,7 +410,7 @@ export default function Screen() {
 											msg: "Sign in",
 										})}
 										icon="pi pi-sign-in"
-										loading={loading}
+										loading={isSubmitting}
 										className="w-full mt-2"
 									/>
 								</div>
