@@ -1294,9 +1294,9 @@ export async function hazardousEventDelete(
 		}
 
 		const whereClause = and(
-					eq(hazardousEventTable.id, id),
-					eq(hazardousEventTable.countryAccountsId, countryAccountsId),
-				)
+			eq(hazardousEventTable.id, id),
+			eq(hazardousEventTable.countryAccountsId, countryAccountsId),
+		);
 
 		// Check if the record exists before deleting
 		const [existingRecord] = await dr
@@ -1314,11 +1314,7 @@ export async function hazardousEventDelete(
 		await dr.transaction(async (tx) => {
 			await tx
 				.delete(hazardousEventTable)
-				.where(
-					and(
-						eq(hazardousEventTable.id, id)
-					),
-				);
+				.where(and(eq(hazardousEventTable.id, id)));
 
 			await tx
 				.delete(eventRelationshipTable)

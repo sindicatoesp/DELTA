@@ -124,27 +124,24 @@ export async function disasterRecordsCreate(
 		return { ok: false, errors };
 	}
 
-	if (!fields.countryAccountsId){
-			return {
-				ok: false,
-				errors: {
-					fields: {},
-					form: [
-						"Missing country account id",
-					],
-				},
-			};
+	if (!fields.countryAccountsId) {
+		return {
+			ok: false,
+			errors: {
+				fields: {},
+				form: ["Missing country account id"],
+			},
+		};
 	}
 
 	// Enforce tenant isolation for disaster event references
 	if (fields.disasterEventId) {
 		// Check if the referenced disaster event belongs to the same tenant
 		const disasterEventCheck = await tx.query.disasterEventTable.findFirst({
-			where: 
-				and(
-					eq(disasterEventTable.id, fields.disasterEventId),
-					eq(disasterEventTable.countryAccountsId, fields.countryAccountsId), 
-				)
+			where: and(
+				eq(disasterEventTable.id, fields.disasterEventId),
+				eq(disasterEventTable.countryAccountsId, fields.countryAccountsId),
+			),
 		});
 
 		if (!disasterEventCheck) {
