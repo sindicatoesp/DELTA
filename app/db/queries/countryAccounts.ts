@@ -1,4 +1,4 @@
-import { userCountryAccounts } from "~/drizzle/schema/userCountryAccounts";
+import { userCountryAccounts } from "~/drizzle/schema/userCountryAccountsTable";
 import { countryAccounts } from "~/drizzle/schema/countryAccounts";
 import { and, eq } from "drizzle-orm";
 import { dr, Tx } from "~/db.server";

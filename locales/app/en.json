@@ -6706,5 +6706,15 @@
 		"id": "user_forgot_password.email_sent_inline_message",
 		"translation": "Please check your main box, we have sent a link on mail.",
 		"description": "A message when correct email format entered in forgot password page."
+	},
+	{
+		"id": "home",
+		"translation": "Home",
+		"description": "link to home page"
+	},
+	{
+		"id": "users.enter_your_first_name",
+		"translation": "Enter your first name",
+		"description": "place holder for enter your first name"
 	}
 ]

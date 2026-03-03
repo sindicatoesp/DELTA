@@ -20,7 +20,7 @@ import {
 } from "~/utils/session";
 import { dr } from "~/db.server";
 import { roleHasPermission } from "~/frontend/user/roles";
-import { userCountryAccounts } from "~/drizzle/schema/userCountryAccounts";
+import { userCountryAccounts } from "~/drizzle/schema/userCountryAccountsTable";
 import { eq } from "drizzle-orm";
 
 import { ViewContext } from "~/frontend/context";

@@ -21,7 +21,6 @@ import {
 	configAuthSupportedForm,
 } from "~/utils/config";
 import { getCountryAccountWithCountryById } from "~/db/queries/countryAccounts";
-import { countryAccountStatuses } from "~/drizzle/schema/countryAccounts";
 import { getUserCountryAccountsByUserId } from "~/db/queries/userCountryAccounts";
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
 import { createCSRFToken } from "~/utils/csrf";
@@ -39,6 +38,7 @@ import { Card } from "primereact/card";
 import { Message } from "primereact/message";
 import { Divider } from "primereact/divider";
 import { urlLang } from "~/utils/url";
+import { countryAccountStatuses } from "~/drizzle/schema";
 
 interface LoginFields {
 	email: string;
@@ -157,7 +157,9 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 		session.set("countrySettings", countrySettings);
 		const setCookie = await sessionCookie().commitSession(session);
 
-		redirectTo = replaceLang(redirectTo, countrySettings?.language || "en");
+		redirectTo =
+			replaceLang(redirectTo, countrySettings?.language || "en")
+		console.log("redirectTo=", redirectTo)
 		return redirectDocument(redirectTo, {
 			headers: { "Set-Cookie": setCookie },
 		});

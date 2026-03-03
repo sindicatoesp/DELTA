@@ -16,7 +16,7 @@ import { ListBox } from "~/components/ListBox";
 import { MainContainer } from "~/frontend/container";
 import { NavSettings } from "../settings/nav";
 
-import { SelectUserCountryAccounts } from "~/drizzle/schema/userCountryAccounts";
+import { SelectUserCountryAccounts } from "~/drizzle/schema/userCountryAccountsTable";
 import {
 	countryAccountTypesTable,
 	SelectCountryAccounts,

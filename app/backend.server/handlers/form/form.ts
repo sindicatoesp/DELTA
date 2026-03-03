@@ -724,7 +724,7 @@ export function createViewLoaderPublicApprovedWithAuditLog<
 					id: auditLogsTable.id,
 					action: auditLogsTable.action,
 					by: userTable.firstName,
-					organization: userTable.organization,
+					// organization: userTable.organization,
 					timestamp: auditLogsTable.timestamp,
 				})
 				.from(auditLogsTable)

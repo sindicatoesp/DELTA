@@ -8,7 +8,7 @@ import {
 import { countriesTable } from "./countriesTable";
 import { ourRandomUUID } from "../../utils/drizzleUtil";
 import { relations } from "drizzle-orm";
-import { userCountryAccounts } from "./userCountryAccounts";
+import { userCountryAccounts } from "./userCountryAccountsTable";
 
 ////////////////////////////////////////////////////////////////
 

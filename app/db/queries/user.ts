@@ -52,8 +52,6 @@ export async function createUser(
 		? { email, firstName, lastName, organization }
 		: { email };
 
-	console.log("creating user in db", values);
-
 	const result = await db
 		.insert(userTable)
 		.values(values)

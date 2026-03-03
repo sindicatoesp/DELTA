@@ -127,6 +127,13 @@
 			"when": 1771926803769,
 			"tag": "20260224095323_remove_email_verification_code_sent_at_and_expire_at_from_user_table",
 			"breakpoints": true
+		},
+		{
+			"idx": 18,
+			"version": "7",
+			"when": 1772264109947,
+			"tag": "20260228073509_reference_organization_column_in_user_to_organization_table",
+			"breakpoints": true
 		}
 	]
 }
