@@ -180,21 +180,24 @@ export default function Screen() {
 		<MainContainer
 			title={ctx.t({ code: "settings.access_mgmnt.add_user", msg: "Add user" })}
 		>
-			<Card className="w-full shadow-4 border-round-2xl">
-				<Form method="post" className="flex flex-column gap-4" noValidate>
-					<div className="flex flex-column gap-2">
-						<label htmlFor="email" className="font-semibold">
+			<Card className="w-full rounded-2xl shadow-xl p-6">
+				<Form method="post" className="flex flex-col gap-6" noValidate>
+
+					{/* Email */}
+					<div className="flex flex-col gap-2">
+						<label htmlFor="email" className="font-semibold text-gray-800">
 							{ctx.t({
 								code: "user_login.email_address",
 								msg: "Email address",
 							})}
-							<span style={{ color: "red" }}> *</span>
+							<span className="text-red-500"> *</span>
 						</label>
+
 						<InputText
 							id="email"
 							type="email"
 							name="email"
-							className={"w-20rem"}
+							className="w-full max-w-sm"
 							placeholder={ctx.t({
 								code: "common.enter_email",
 								msg: "Enter Email",
@@ -202,15 +205,22 @@ export default function Screen() {
 							required
 							invalid={!!errors?.email}
 						/>
+
 						{errors?.email && (
-							<small className="p-error">{errors?.email}</small>
+							<small className="text-sm text-red-500">
+								{errors.email}
+							</small>
 						)}
 					</div>
-					<div className="flex flex-column gap-2">
-						<label htmlFor="organization" className="font-semibold">
+
+					{/* Organization */}
+					<div className="flex flex-col gap-2">
+						<label htmlFor="organization" className="font-semibold text-gray-800">
 							{ctx.t({ code: "common.organization", msg: "Organization" })}
 						</label>
-						<Dropdown value={selectedOrganization}
+
+						<Dropdown
+							value={selectedOrganization}
 							name="organization"
 							onChange={(e) => setSelectedOrganization(e.value)}
 							options={loaderData.organizations}
@@ -218,14 +228,19 @@ export default function Screen() {
 							optionValue="id"
 							placeholder="Select an organization"
 							showClear
-							className="w-20rem lg:w-20rem" />
+							className="w-full max-w-sm"
+						/>
 					</div>
-					<div className="flex flex-column gap-2">
-						<label htmlFor="role" className="font-semibold">
+
+					{/* Role */}
+					<div className="flex flex-col gap-2">
+						<label htmlFor="role" className="font-semibold text-gray-800">
 							{ctx.t({ code: "common.role", msg: "Role" })}
-							<span style={{ color: "red" }}> *</span>
+							<span className="text-red-500"> *</span>
 						</label>
-						<Dropdown value={selectedRole}
+
+						<Dropdown
+							value={selectedRole}
 							name="role"
 							onChange={(e) => setSelectedRole(e.value)}
 							options={roles}
@@ -233,18 +248,18 @@ export default function Screen() {
 							optionValue="id"
 							showClear
 							placeholder="Select a role"
-							className="w-20rem lg:w-20rem"
+							className="w-full max-w-sm"
 							invalid={!!errors?.role}
 						/>
+
 						{errors?.role && (
-							<small className="p-error">{errors?.role}</small>
+							<small className="text-sm text-red-500">
+								{errors.role}
+							</small>
 						)}
 					</div>
-					<u>
-						<LangLink lang={ctx.lang} to="/settings/access-mgmnt/">
-							{ctx.t({ code: "common.back", msg: "Back" })}
-						</LangLink>
-					</u>
+
+					{/* Submit */}
 					<Button
 						type="submit"
 						label={ctx.t({
@@ -254,13 +269,25 @@ export default function Screen() {
 						icon="pi pi-sign-in"
 						loading={isSubmitting}
 						disabled={!!isSubmitting}
-						className="w-20rem lg:w-20rem"
+						className="w-full max-w-sm"
 					/>
+
+					{/* Back */}
+					<div>
+						<LangLink
+							lang={ctx.lang}
+							to="/settings/access-mgmnt/"
+							className="text-sm text-blue-600 underline hover:text-blue-800"
+						>
+							{ctx.t({ code: "common.back", msg: "Back" })}
+						</LangLink>
+					</div>
 				</Form>
 			</Card>
+
 			{/* Role Summary */}
-			<div className="dts-form__additional-content mg-grid__col--span-2">
-				<div className="dts-heading-5">
+			<div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-6">
+				<div className="text-lg font-semibold text-gray-800">
 					{ctx.t(
 						{
 							code: "settings.access_mgmnt.selected_role",
@@ -269,20 +296,23 @@ export default function Screen() {
 						{
 							role:
 								selectedRole || ctx.t({ code: "common.role", msg: "Role" }),
-						},
+						}
 					)}
 				</div>
+
 				{roleObj?.desc && (
-					<div>
+					<div className="mt-4 text-gray-700">
 						{ctx.t(
 							{
 								code: "user.role.can_do",
 								msg: "A {label} is able to:",
 							},
-							{ label: roleObj.label },
+							{ label: roleObj.label }
 						)}
 						<br />
-						<i>{roleObj.desc}</i>
+						<span className="italic text-gray-600">
+							{roleObj.desc}
+						</span>
 					</div>
 				)}
 			</div>

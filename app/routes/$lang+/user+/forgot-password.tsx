@@ -23,7 +23,6 @@ import { htmlTitle } from "~/utils/htmlmeta";
 import { Card } from "primereact/card";
 import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
-import { classNames } from "primereact/utils";
 import { Button } from "primereact/button";
 
 interface FormFields {
@@ -219,102 +218,119 @@ export default function Screen() {
 		navigation.formData?.get("email") != null;
 
 	return (
-		<>
-			<div className="flex align-items-center justify-content-center min-h-screen surface-ground">
-				<Card className="w-full md:w-6 lg:w-4 shadow-4 border-round-xl">
-					<div className="text-center mb-4">
-						<h2 className="m-2">
-							{ctx.t({
-								code: "user_forgot_password.forgot_password",
-								msg: "Forgot your password?",
-							})}
-						</h2>
+		<div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+			<Card className="w-full max-w-md rounded-2xl shadow-xl p-6">
+
+				{/* Header */}
+				<div className="mb-6 text-center">
+					<h2 className="mb-3 text-2xl font-semibold text-gray-800">
+						{ctx.t({
+							code: "user_forgot_password.forgot_password",
+							msg: "Forgot your password?",
+						})}
+					</h2>
+
+					<Message
+						severity="warn"
+						className="mb-3"
+						text={`* ${ctx.t({
+							code: "common.required_information",
+							desc: "Indicates required information on login form",
+							msg: "Required information",
+						})}`}
+					/>
+				</div>
+
+				{/* General Error */}
+				{errors.general && (
+					<div className="mb-4">
 						<Message
-							className="mb-2"
-							severity="warn"
-							text={`* ${ctx.t({
-								code: "common.required_information",
-								desc: "Indicates required information on login form",
-								msg: "Required information",
-							})}`}
+							severity="error"
+							text={errors.general}
 						/>
 					</div>
-					<div className="flex flex-column gap-1 align-items-start text-left w-full">
-						{errors.general && (
-							<Message
-								className="mb-2"
-								severity="error"
-								text={errors.general}
-							/>
-						)}
-					</div>
+				)}
 
-					<Form ctx={ctx} id="reset-password-form" errors={errors}>
-						<div className="flex flex-column gap-4">
-							<input
-								type="hidden"
-								name="csrfToken"
-								value={loaderData.csrfToken}
-							/>
+				<Form ctx={ctx} id="reset-password-form" errors={errors}>
+					<div className="flex flex-col gap-6">
 
-							<div className="flex flex-column gap-2">
-								<label htmlFor="email" className="font-semibold">
-									{ctx.t({
-										code: "user_login.email_address",
-										msg: "Email address",
-									})}
-									<span style={{ color: "red" }}> *</span>
-								</label>
-								<InputText
-									id="email"
-									type="email"
-									name="email"
-									className={classNames("w-full")}
-									placeholder={ctx.t({
-										code: "user_login.enter_your_email",
-										msg: "Enter your email",
-										desc: "Placeholder for email input text on login form",
-									})}
-									disabled={!!successMessage}
-									required
-								/>
-								{errors?.fields?.email && (
-									<div className="dts-form-component__hint--error">
-										{errorToString(errors.fields.email[0])}
-									</div>
-								)}
-							</div>
+						<input
+							type="hidden"
+							name="csrfToken"
+							value={loaderData.csrfToken}
+						/>
 
-							<Button
-								type="submit"
-								label={ctx.t({
-									code: "user_forgot_password.reset_password",
-									msg: "Reset Password",
+						{/* Email */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="email" className="font-semibold text-gray-800">
+								{ctx.t({
+									code: "user_login.email_address",
+									msg: "Email address",
 								})}
-								icon="pi pi-envelope"
-								loading={isSubmitting}
+								<span className="text-red-500"> *</span>
+							</label>
+
+							<InputText
+								id="email"
+								type="email"
+								name="email"
+								className="w-full"
+								placeholder={ctx.t({
+									code: "user_login.enter_your_email",
+									msg: "Enter your email",
+									desc: "Placeholder for email input text on login form",
+								})}
 								disabled={!!successMessage}
-								className="w-full mt-2"
+								required
 							/>
-							<u>
-								<LangLink lang={ctx.lang} to="/user/login">
-									{ctx.t({
-										code: "common.back",
-										msg: "Back",
-									})}
-								</LangLink>
-							</u>
-							{successMessage && (
+
+							{errors?.fields?.email && (
+								<div className="text-sm text-red-500">
+									{errorToString(errors.fields.email[0])}
+								</div>
+							)}
+						</div>
+
+						{/* Submit */}
+						<Button
+							type="submit"
+							label={ctx.t({
+								code: "user_forgot_password.reset_password",
+								msg: "Reset Password",
+							})}
+							icon="pi pi-envelope"
+							loading={isSubmitting}
+							disabled={!!successMessage}
+							className="w-full"
+						/>
+
+						{/* Back Link */}
+						<div>
+							<LangLink
+								lang={ctx.lang}
+								to="/user/login"
+								className="text-sm text-blue-600 underline hover:text-blue-800"
+							>
+								{ctx.t({
+									code: "common.back",
+									msg: "Back",
+								})}
+							</LangLink>
+						</div>
+
+						{/* Success */}
+						{successMessage && (
+							<div>
 								<Message
 									severity="success"
 									className="w-full"
 									text={successMessage}
 								/>
-							)}
-						</div>
-					</Form>
-				</Card>
-			</div>
-		</>
+							</div>
+						)}
+					</div>
+				</Form>
+			</Card>
+		</div>
 	);
 }

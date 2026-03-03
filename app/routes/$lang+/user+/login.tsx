@@ -31,7 +31,6 @@ import { LangLink } from "~/utils/link";
 import { BackendContext } from "~/backend.server/context";
 import { htmlTitle } from "~/utils/htmlmeta";
 import { InputText } from "primereact/inputtext";
-import { classNames } from "primereact/utils";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
@@ -282,30 +281,35 @@ export default function Screen() {
 	const { isFormAuthSupported, isSSOAuthSupported } = loaderData;
 
 	return (
-		<main className="flex align-items-center justify-content-center min-h-screen surface-ground">
-			<div className="w-full md:w-6 lg:w-4">
-				<div className="flex flex-column gap-4">
+		<main className="flex items-center justify-center min-h-screen bg-gray-100">
+			<div className="w-full md:w-1/2 lg:w-1/3">
+				<div className="flex flex-col gap-4">
 					{isFormAuthSupported && (
-						<Card className="w-full shadow-4 border-round-2xl">
-							<div className="text-center mb-5">
-								<i className="pi pi-lock text-4xl text-primary mb-3"></i>
-								<h2 className="m-0">
+						<Card className="w-full drop-shadow-xl rounded-2xl">
+							<div className="text-center mb-4">
+								<i
+									className="pi pi-lock block mb-4 text-gray-700"
+									style={{ fontSize: "2rem" }}
+								></i>
+
+								<h2 className="text-2xl font-semibold mb-2">
 									{ctx.t({
 										code: "user_login.sign_in",
 										msg: "Sign in",
 									})}
 								</h2>
+
 								<Message
 									className="mb-2"
 									severity="warn"
 									text={`* ${ctx.t({
 										code: "common.required_information",
-										desc: "Indicates required information on login form",
 										msg: "Required information",
 									})}`}
 								/>
 							</div>
-							<div className="flex flex-column gap-1 align-items-start text-left w-full">
+
+							<div className="flex flex-col gap-1 items-start text-left w-full mb-2">
 								{errors.general && (
 									<Message
 										className="mb-2"
@@ -316,92 +320,78 @@ export default function Screen() {
 							</div>
 
 							<Form ctx={ctx} id="login-form" errors={errors}>
-								<div className="flex flex-column gap-4">
-									<input
-										type="hidden"
-										name="redirectTo"
-										value={loaderData.redirectTo}
-									/>
-									<input
-										type="hidden"
-										name="csrfToken"
-										value={loaderData.csrfToken}
-									/>
+								<div className="flex flex-col gap-4">
+									<input type="hidden" name="redirectTo" value={loaderData.redirectTo} />
+									<input type="hidden" name="csrfToken" value={loaderData.csrfToken} />
 
-									<div className="flex flex-column gap-2">
+									{/* Email */}
+									<div className="flex flex-col gap-2">
 										<label htmlFor="email" className="font-semibold">
-											{ctx.t({
-												code: "user_login.email_address",
-												msg: "Email address",
-											})}
-											<span style={{ color: "red" }}> *</span>
+											{ctx.t({ code: "user_login.email_address", msg: "Email address" })}
+											<span className="text-red-500"> *</span>
 										</label>
+
 										<InputText
 											id="email"
 											type="email"
 											name="email"
-											className={classNames("w-full")}
+											className="w-full"
 											placeholder={ctx.t({
 												code: "user_login.enter_your_email",
 												msg: "Enter your email",
-												desc: "Placeholder for email input text on login form",
 											})}
 											required
 										/>
+
 										{errors?.fields?.email && (
-											<div className="dts-form-component__hint--error">
+											<div className="text-sm text-red-500">
 												{errorToString(errors.fields.email[0])}
 											</div>
 										)}
 									</div>
 
-									<div className="flex flex-column gap-2">
+									{/* Password */}
+									<div className="flex flex-col gap-2">
 										<label htmlFor="password" className="font-semibold">
-											{ctx.t({
-												code: "user_login.password",
-												msg: "Password",
-											})}
-											<span style={{ color: "red" }}> *</span>
+											{ctx.t({ code: "user_login.password", msg: "Password" })}
+											<span className="text-red-500"> *</span>
 										</label>
+
 										<Password
 											id="password"
 											name="password"
 											toggleMask
 											pt={{
-												iconField: {
-													root: { className: "w-full" },
-												},
+												iconField: { root: { className: "w-full" } },
 												input: { className: "w-full" },
 											}}
 											feedback={false}
 											placeholder={ctx.t({
 												code: "user_login.enter_your_password",
-												msg: "Enter your passowrd",
-												desc: "Placeholder for password input text on login form",
+												msg: "Enter your password",
 											})}
 											required
 										/>
+
 										{errors?.fields?.password && (
-											<div className="dts-form-component__hint--error">
+											<div className="text-sm text-red-500">
 												{errorToString(errors.fields.password[0])}
 											</div>
 										)}
 									</div>
+
 									<u>
 										<LangLink lang={ctx.lang} to="/user/forgot-password">
 											{ctx.t({
 												code: "user_login.forgot_password",
-												desc: "Link text for forgot password on login form",
 												msg: "Forgot password?",
 											})}
 										</LangLink>
 									</u>
+
 									<Button
 										type="submit"
-										label={ctx.t({
-											code: "user_login.sign_in",
-											msg: "Sign in",
-										})}
+										label={ctx.t({ code: "user_login.sign_in", msg: "Sign in" })}
 										icon="pi pi-sign-in"
 										loading={isSubmitting}
 										className="w-full mt-2"
@@ -414,22 +404,19 @@ export default function Screen() {
 					{/* Divider */}
 					{isFormAuthSupported && isSSOAuthSupported && (
 						<Divider align="center">
-							<span style={{ textTransform: "uppercase" }}>
-								{ctx.t({
-									code: "common.or",
-									msg: "Or",
-								})}
+							<span className="uppercase">
+								{ctx.t({ code: "common.or", msg: "Or" })}
 							</span>
 						</Divider>
 					)}
 
 					{isSSOAuthSupported && (
-						<div className="flex flex-column gap-4 text-center mb-5">
+						<div className="flex flex-col gap-4 text-center mb-5">
 							{ctx.t({
 								code: "user_login.intro_sso_only",
-								desc: "Login page intro text when only SSO auth is supported",
 								msg: "Use your organization's Single Sign-On to access your account.",
 							})}
+
 							<Link to={urlLang(ctx.lang, "/sso/azure-b2c/login")}>
 								<Button
 									label={ctx.t({

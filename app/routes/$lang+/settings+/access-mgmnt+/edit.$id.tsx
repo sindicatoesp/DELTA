@@ -299,21 +299,24 @@ export default function Screen() {
 					</button>
 				</div>
 
-				<Card className="w-full shadow-4 border-round-2xl">
-					<Form method="post" className="flex flex-column gap-4" noValidate>
-						<div className="flex flex-column gap-2">
-							<label htmlFor="email" className="font-semibold">
+				<Card className="w-full rounded-2xl shadow-xl p-6">
+					<Form method="post" className="flex flex-col gap-6" noValidate>
+
+						{/* Email */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="email" className="font-semibold text-gray-800">
 								{ctx.t({
 									code: "user_login.email_address",
 									msg: "Email address",
 								})}
-								<span style={{ color: "red" }}> *</span>
+								<span className="text-red-500"> *</span>
 							</label>
+
 							<InputText
 								id="email"
 								type="email"
 								name="email"
-								className={"w-20rem"}
+								className="w-full max-w-sm"
 								placeholder={ctx.t({
 									code: "common.enter_email",
 									msg: "Enter Email",
@@ -322,15 +325,22 @@ export default function Screen() {
 								required
 								defaultValue={loaderData.email}
 							/>
+
 							{errors?.email && (
-								<small className="p-error">{errors?.email}</small>
+								<small className="text-sm text-red-500">
+									{errors.email}
+								</small>
 							)}
 						</div>
-						<div className="flex flex-column gap-2">
-							<label htmlFor="organization" className="font-semibold">
+
+						{/* Organization */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="organization" className="font-semibold text-gray-800">
 								{ctx.t({ code: "common.organization", msg: "Organization" })}
 							</label>
-							<Dropdown value={selectedOrganization}
+
+							<Dropdown
+								value={selectedOrganization}
 								name="organization"
 								onChange={(e) => setSelectedOrganization(e.value)}
 								options={loaderData.organizations}
@@ -338,14 +348,19 @@ export default function Screen() {
 								optionValue="id"
 								placeholder="Select an organization"
 								showClear
-								className="w-20rem lg:w-20rem" />
+								className="w-full max-w-sm"
+							/>
 						</div>
-						<div className="flex flex-column gap-2">
-							<label htmlFor="role" className="font-semibold">
+
+						{/* Role */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="role" className="font-semibold text-gray-800">
 								{ctx.t({ code: "common.role", msg: "Role" })}
-								<span style={{ color: "red" }}> *</span>
+								<span className="text-red-500"> *</span>
 							</label>
-							<Dropdown value={selectedRole}
+
+							<Dropdown
+								value={selectedRole}
 								name="role"
 								onChange={(e) => setSelectedRole(e.value)}
 								options={roles}
@@ -353,18 +368,18 @@ export default function Screen() {
 								optionValue="id"
 								showClear
 								placeholder="Select a role"
-								className="w-20rem lg:w-20rem"
+								className="w-full max-w-sm"
 								invalid={!!errors?.role}
 							/>
+
 							{errors?.role && (
-								<small className="p-error">{errors?.role}</small>
+								<small className="text-sm text-red-500">
+									{errors.role}
+								</small>
 							)}
 						</div>
-						<u>
-							<LangLink lang={ctx.lang} to="/settings/access-mgmnt/">
-								{ctx.t({ code: "common.back", msg: "Back" })}
-							</LangLink>
-						</u>
+
+						{/* Submit */}
 						<Button
 							type="submit"
 							label={ctx.t({
@@ -374,8 +389,19 @@ export default function Screen() {
 							icon="pi pi-check"
 							loading={isSubmitting}
 							disabled={!!isSubmitting}
-							className="w-20rem lg:w-20rem"
+							className="w-full max-w-sm"
 						/>
+
+						{/* Back Link */}
+						<div>
+							<LangLink
+								lang={ctx.lang}
+								to="/settings/access-mgmnt/"
+								className="text-sm text-blue-600 underline hover:text-blue-800"
+							>
+								{ctx.t({ code: "common.back", msg: "Back" })}
+							</LangLink>
+						</div>
 					</Form>
 				</Card>
 

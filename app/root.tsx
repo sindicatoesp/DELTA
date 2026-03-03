@@ -41,7 +41,7 @@ import {
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
+// import "primeflex/primeflex.css";
 import { PrimeReactProvider } from "primereact/api";
 
 import { loadTranslations } from "./backend.server/translations";
@@ -158,7 +158,7 @@ function InactivityWarning(props: InactivityWarningProps) {
 			if (
 				minutesSinceLastActivity >
 				sessionActivityTimeoutMinutes -
-					sessionActivityWarningBeforeTimeoutMinutes
+				sessionActivityWarningBeforeTimeoutMinutes
 			) {
 				setShowWarning(true);
 				setExpiresInMinutes(

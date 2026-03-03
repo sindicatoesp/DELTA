@@ -14,7 +14,6 @@ import { htmlTitle } from "~/utils/htmlmeta";
 import { Card } from "primereact/card";
 import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
-import { classNames } from "primereact/utils";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { LangLink } from "~/utils/link";
@@ -200,284 +199,233 @@ export default function Screen() {
 		);
 	}
 	return (
-		<>
-			<div className="flex justify-content-center surface-ground min-h-screen">
-				<Card className="w-full md:w-6 lg:w-4 shadow-4 border-round-xl my-6">
-					<div className="text-center mb-4">
-						<h2 className="m-2">
-							{ctx.t({
-								code: "users.create_your_account_heading",
-								msg: "Create your account",
-							})}
-						</h2>
-						<p className="m-2">
-							{ctx.t({
-								code: "users.create_account_fill_details",
-								msg: "Create your account by filling in the required details.",
-							})}
-						</p>
-						<Message
-							className="mb-2"
-							severity="warn"
-							text={`* ${ctx.t({
-								code: "common.required_information",
-								desc: "Indicates required information on login form",
-								msg: "Required information",
-							})}`}
-						/>
-					</div>
+		<div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8">
+			<Card className="w-full max-w-lg rounded-2xl shadow-xl p-8">
 
-					<Form method="post" id="reset-password-form" noValidate>
-						<div className="flex flex-column gap-4">
-							<input
-								name="inviteCode"
-								type="hidden"
-								defaultValue={inviteCode}
-							></input>
-							<div className="flex flex-column gap-2">
-								<label htmlFor="email" className="font-semibold">
-									{ctx.t({
-										code: "user_login.email_address",
-										msg: "Email address",
-									})}
-									<span style={{ color: "red" }}> *</span>
-								</label>
-								<InputText
-									id="email"
-									type="email"
-									name="email"
-									className={classNames("w-full")}
-									placeholder={ctx.t({
-										code: "user_login.enter_your_email",
-										msg: "Enter your email",
-										desc: "Placeholder for email input text on login form",
-									})}
-									readOnly
-									required
-									defaultValue={email}
-								/>
-							</div>
-							<div className="flex flex-column gap-2">
-								<label htmlFor="firstName" className="font-semibold">
-									{ctx.t({
-										code: "users.first_name_placeholder",
-										msg: "First name",
-									})}
-									<span style={{ color: "red" }}> *</span>
-								</label>
-								<InputText
-									id="firstName"
-									type="text"
-									name="firstName"
-									className={classNames("w-full")}
-									placeholder={ctx.t({
-										code: "users.enter_your_first_name",
-										msg: "Enter your first name",
-										desc: "place holder for enter your first name",
-									})}
-									required
-									autoFocus
-									invalid={!!errors.firstName}
-								/>
-								{errors.firstName && (
-									<small className="p-error">{errors.firstName}</small>
-								)}
-							</div>
-							<div className="flex flex-column gap-2">
-								<label htmlFor="lastName" className="font-semibold">
-									{ctx.t({
-										code: "users.last_name_placeholder",
-										msg: "Last name",
-										desc: "place holder for enter your last name",
-									})}
-									<span style={{ color: "red" }}> *</span>
-								</label>
-								<InputText
-									id="lastName"
-									type="text"
-									name="lastName"
-									className={classNames("w-full")}
-									placeholder={ctx.t({
-										code: "users.enter_your_last_name",
-										msg: "Enter your last name",
-									})}
-									invalid={!!errors.lastName}
-									required
-								/>
-								{errors.lastName && (
-									<small className="p-error">{errors.lastName}</small>
-								)}
-							</div>
-							<div className="flex flex-column gap-2">
-								<label htmlFor="password" className="font-semibold">
-									{ctx.t({
-										code: "user_login.password",
-									})}
-									<span style={{ color: "red" }}> *</span>
-								</label>
-								<Password
-									id="password"
-									name="password"
-									toggleMask
-									pt={{
-										iconField: {
-											root: { className: "w-full" },
-										},
-										input: { className: "w-full" },
-									}}
-									feedback={false}
-									placeholder={ctx.t({
-										code: "users.enter_password_placeholder",
-										msg: "Enter password",
-									})}
-									minLength={12}
-									required
-									invalid={!!errors.password}
-								/>
-								{errors.password && (
-									<small className="p-error">{errors.password}</small>
-								)}
-							</div>
-							<div className="flex flex-column gap-2">
-								<label htmlFor="passwordRepeat" className="font-semibold">
-									{ctx.t({
-										code: "users.confirm_password_placeholder",
-										msg: "Confirm password",
-										desc: "confirm password",
-									})}
-									<span style={{ color: "red" }}> *</span>
-								</label>
-								<Password
-									id="passwordRepeat"
-									name="passwordRepeat"
-									toggleMask
-									pt={{
-										iconField: {
-											root: { className: "w-full" },
-										},
-										input: { className: "w-full" },
-									}}
-									feedback={false}
-									placeholder={ctx.t({
-										code: "users.enter_confirm_password",
-										msg: "Enter confirm password",
-										desc: "Place holder for enter confirm password",
-									})}
-									minLength={12}
-									required
-									invalid={!!errors.passwordRepeat}
-								/>
-								{errors.passwordRepeat && (
-									<small className="p-error">{errors.passwordRepeat}</small>
-								)}
-							</div>
-							<div className="flex flex-column gap-2">
-								<ul id="passwordDescription">
-									<li>
-										{ctx.t(
-											{
-												code: "users.password.min_characters",
-												desc: "Minimum character length for password is 12",
-												msg: "At least {min} characters long",
-											},
-											{ min: 12 },
-										)}
-									</li>
-									<li>
-										{ctx.t({
-											code: "users.password.two_conditions",
-											desc: "Password must include two of the specified character types",
-											msg: "Must include two of the following:",
-										})}
+				{/* Header */}
+				<div className="mb-8 text-center">
+					<h2 className="mb-3 text-2xl font-semibold text-gray-900">
+						{ctx.t({
+							code: "users.create_your_account_heading",
+							msg: "Create your account",
+						})}
+					</h2>
 
-										<ul>
-											<li>
-												{ctx.t({
-													code: "users.password.uppercase",
-													msg: "Uppercase letters",
-												})}
-											</li>
-											<li>
-												{ctx.t({
-													code: "users.password.lowercase",
-													msg: "Lowercase letters",
-												})}
-											</li>
-											<li>
-												{ctx.t({
-													code: "users.password.numbers",
-													msg: "Numbers",
-												})}
-											</li>
-											<li>
-												{ctx.t({
-													code: "users.password.special_characters",
-													msg: "Special characters",
-												})}
-											</li>
-										</ul>
-									</li>
-									<li>
-										{ctx.t({
-											code: "users.password.not_username",
-											msg: "Cannot be the same as the username",
-										})}
-									</li>
-									<li>
-										{ctx.t({
-											code: "users.password.not_common",
-											msg: "Should not be a simple or commonly used password",
-										})}
-									</li>
-								</ul>
-							</div>
-							<div>
-								<Button
-									type="submit"
-									label={ctx.t({
-										code: "users.setup_account",
-										msg: "Set up account",
-									})}
-									icon="pi pi-user-plus"
-									loading={isSubmitting}
-									className="w-full mt-2"
-									disabled={!!actionData?.ok}
-								/>
-							</div>
-							<div>
-								<u>
-									<LangLink lang={ctx.lang} to="/">
-										{ctx.t({
-											code: "home",
-											msg: "Home",
-										})}
-									</LangLink>
-								</u>
-								{actionData?.ok && (
-									<>
-										<Message
-											severity="success"
-											className="w-full"
-											text={ctx.t({
-												code: "your_account_has_been_set_up_successfully.",
-												msg: "Your account has been set up successfully. Click sign in below",
-											})}
-										/>
-										<u>
-											<LangLink lang={ctx.lang} to="/user/login">
-												{ctx.t({
-													code: "sign_in",
-													msg: "Sign in",
-												})}
-											</LangLink>
-										</u>
-									</>
-								)}
-							</div>
+					<p className="mb-4 text-gray-600">
+						{ctx.t({
+							code: "users.create_account_fill_details",
+							msg: "Create your account by filling in the required details.",
+						})}
+					</p>
+
+					<Message
+						severity="warn"
+						className="mb-4"
+						text={`* ${ctx.t({
+							code: "common.required_information",
+							desc: "Indicates required information on login form",
+							msg: "Required information",
+						})}`}
+					/>
+				</div>
+
+				<Form method="post" id="reset-password-form" noValidate>
+					<div className="flex flex-col gap-6">
+
+						<input name="inviteCode" type="hidden" defaultValue={inviteCode} />
+
+						{/* Email */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="email" className="font-semibold text-gray-800">
+								{ctx.t({ code: "user_login.email_address", msg: "Email address" })}
+								<span className="text-red-500"> *</span>
+							</label>
+
+							<InputText
+								id="email"
+								type="email"
+								name="email"
+								className="w-full"
+								placeholder={ctx.t({
+									code: "user_login.enter_your_email",
+									msg: "Enter your email",
+								})}
+								readOnly
+								required
+								defaultValue={email}
+							/>
 						</div>
-					</Form>
-				</Card>
-			</div>
-		</>
+
+						{/* First Name */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="firstName" className="font-semibold text-gray-800">
+								{ctx.t({ code: "users.first_name_placeholder", msg: "First name" })}
+								<span className="text-red-500"> *</span>
+							</label>
+
+							<InputText
+								id="firstName"
+								name="firstName"
+								className="w-full"
+								required
+								autoFocus
+								invalid={!!errors.firstName}
+							/>
+
+							{errors.firstName && (
+								<small className="text-sm text-red-500">
+									{errors.firstName}
+								</small>
+							)}
+						</div>
+
+						{/* Last Name */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="lastName" className="font-semibold text-gray-800">
+								{ctx.t({ code: "users.last_name_placeholder", msg: "Last name" })}
+								<span className="text-red-500"> *</span>
+							</label>
+
+							<InputText
+								id="lastName"
+								name="lastName"
+								className="w-full"
+								required
+								invalid={!!errors.lastName}
+							/>
+
+							{errors.lastName && (
+								<small className="text-sm text-red-500">
+									{errors.lastName}
+								</small>
+							)}
+						</div>
+
+						{/* Password */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="password" className="font-semibold text-gray-800">
+								{ctx.t({ code: "user_login.password" })}
+								<span className="text-red-500"> *</span>
+							</label>
+
+							<Password
+								id="password"
+								name="password"
+								toggleMask
+								feedback={false}
+								minLength={12}
+								required
+								invalid={!!errors.password}
+								pt={{
+									iconField: { root: { className: "w-full" } },
+									input: { className: "w-full" },
+								}}
+							/>
+
+
+							{errors.password && (
+								<small className="text-sm text-red-500">
+									{errors.password}
+								</small>
+							)}
+						</div>
+
+						{/* Confirm Password */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="passwordRepeat" className="font-semibold text-gray-800">
+								{ctx.t({ code: "users.confirm_password_placeholder", msg: "Confirm password" })}
+								<span className="text-red-500"> *</span>
+							</label>
+
+							<Password
+								id="passwordRepeat"
+								name="passwordRepeat"
+								toggleMask
+								feedback={false}
+								minLength={12}
+								required
+								invalid={!!errors.passwordRepeat}
+								pt={{
+									iconField: { root: { className: "w-full" } },
+									input: { className: "w-full" },
+								}}
+							/>
+
+							{errors.passwordRepeat && (
+								<small className="text-sm text-red-500">
+									{errors.passwordRepeat}
+								</small>
+							)}
+						</div>
+
+						{/* Password Rules */}
+						<div className="rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
+							<ul className="list-disc space-y-2 pl-5">
+								<li>
+									{ctx.t(
+										{ code: "users.password.min_characters", msg: "At least {min} characters long" },
+										{ min: 12 }
+									)}
+								</li>
+								<li>
+									{ctx.t({ code: "users.password.two_conditions", msg: "Must include two of the following:" })}
+									<ul className="mt-2 list-disc space-y-1 pl-5">
+										<li>{ctx.t({ code: "users.password.uppercase", msg: "Uppercase letters" })}</li>
+										<li>{ctx.t({ code: "users.password.lowercase", msg: "Lowercase letters" })}</li>
+										<li>{ctx.t({ code: "users.password.numbers", msg: "Numbers" })}</li>
+										<li>{ctx.t({ code: "users.password.special_characters", msg: "Special characters" })}</li>
+									</ul>
+								</li>
+								<li>{ctx.t({ code: "users.password.not_username", msg: "Cannot be the same as the username" })}</li>
+								<li>{ctx.t({ code: "users.password.not_common", msg: "Should not be a simple password" })}</li>
+							</ul>
+						</div>
+
+						{/* Submit */}
+						<Button
+							type="submit"
+							label={ctx.t({ code: "users.setup_account", msg: "Set up account" })}
+							icon="pi pi-user-plus"
+							loading={isSubmitting}
+							className="w-full"
+							disabled={!!actionData?.ok}
+						/>
+
+						{/* Footer */}
+						<div className="space-y-4 text-center">
+							<LangLink
+								lang={ctx.lang}
+								to="/"
+								className="text-sm text-blue-600 underline hover:text-blue-800"
+							>
+								{ctx.t({ code: "home", msg: "Home" })}
+							</LangLink>
+
+							{actionData?.ok && (
+								<>
+									<Message
+										severity="success"
+										className="w-full"
+										text={ctx.t({
+											code: "your_account_has_been_set_up_successfully.",
+											msg: "Your account has been set up successfully. Click sign in below",
+										})}
+									/>
+
+									<LangLink
+										lang={ctx.lang}
+										to="/user/login"
+										className="block text-sm text-blue-600 underline hover:text-blue-800"
+									>
+										{ctx.t({ code: "sign_in", msg: "Sign in" })}
+									</LangLink>
+								</>
+							)}
+						</div>
+
+					</div>
+				</Form>
+			</Card>
+		</div>
 	);
 }
