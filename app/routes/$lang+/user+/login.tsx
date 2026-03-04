@@ -281,7 +281,7 @@ export default function Screen() {
 	const { isFormAuthSupported, isSSOAuthSupported } = loaderData;
 
 	return (
-		<main className="flex items-center justify-center min-h-screen bg-gray-100">
+		<main className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
 			<div className="w-full md:w-1/2 lg:w-1/3">
 				<div className="flex flex-col gap-4">
 					{isFormAuthSupported && (
