@@ -1,4 +1,4 @@
-import { Form, MetaFunction, useNavigation } from "react-router";
+import { Form, MetaFunction, useNavigate, useNavigation } from "react-router";
 import {
 	useLoaderData,
 	useActionData,
@@ -12,8 +12,8 @@ import {
 	getCountryAccountsIdFromSession,
 } from "~/utils/session";
 import { format } from "date-fns";
-import { ConfirmDialog } from "~/frontend/components/ConfirmDialog";
-import { useRef, useState } from "react";
+// import { ConfirmDialog } from "~/frontend/components/ConfirmDialog";
+import { useEffect, useRef, useState } from "react";
 import { getUserCountryAccountsByUserIdAndCountryAccountsId, updateUserCountryAccountsById } from "~/db/queries/userCountryAccounts";
 
 import { ViewContext } from "~/frontend/context";
@@ -29,6 +29,7 @@ import { InputText } from "primereact/inputtext";
 import { getUserById } from "~/db/queries/user";
 import { getAllOrganizationsByCountryAccountsId } from "~/db/queries/organization";
 import { dr } from "~/db.server";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 
 export const meta: MetaFunction = () => {
 	const ctx = new ViewContext();
@@ -149,7 +150,6 @@ export default function Screen() {
 	const actionData = useActionData<typeof action>();
 	const ctx = new ViewContext();
 	const fetcher = useFetcher();
-	const dialogRef = useRef<HTMLDialogElement>(null);
 	const toast = useRef<Toast>(null);
 	const errors = actionData?.errors;
 	const [selectedRole, setSelectedRole] = useState(loaderData.role);
@@ -162,11 +162,38 @@ export default function Screen() {
 		navigation.state === "submitting";
 
 	const handleDeleteClick = () => {
-		dialogRef.current?.showModal();
+		confirmDialog({
+			message: ctx.t({
+				code: "settings.access_mgmnt.delete_user_confirmation",
+				msg: "This data cannot be recovered after being deleted.",
+			}),
+			header: ctx.t({
+				code: "settings.access_mgmnt.delete_user_title",
+				msg: "Are you sure you want to delete this user?",
+			}),
+			icon: 'pi pi-exclamation-triangle',
+			defaultFocus: 'reject',
+			acceptClassName: 'p-button-danger p-button-outlined ml-2',
+			rejectClassName: 'p-button-outlined ml-2',
+			acceptIcon: 'pi pi-trash',
+			acceptLabel: ctx.t({
+				code: "user.delete_user",
+				msg: "Delete user",
+			}),
+			rejectLabel: ctx.t({
+				code: "common.do_not_delete",
+				msg: "Do not delete",
+			}),
+			accept: handleConfirmDelete,
+			pt: {
+				footer: {
+					className: 'flex justify-end gap-x-3 sm:gap-x-4'
+				}
+			},
+		});
 	};
 
 	const handleConfirmDelete = () => {
-		dialogRef.current?.close();
 		fetcher.submit(
 			{},
 			{
@@ -178,34 +205,20 @@ export default function Screen() {
 		);
 	};
 
-	const handleCancelDelete = () => {
-		dialogRef.current?.close();
-	};
-
-	// useEffect(() => {
-	// 	if (fetcher.data && fetcher.state === "idle") {
-	// 		const data = fetcher.data as any;
-
-	// 		if (data.ok) {
-	// 			toast.current?.show({
-	// 				severity: "success",
-	// 				summary: "Success",
-	// 				detail: data.message || "The user has been deleted.",
-	// 				life: 5000,
-	// 			});
-
-	// 			// Navigate after showing toast
-	// 			navigate(ctx.url(`/settings/access-mgmnt/`), { replace: true });
-	// 		} else {
-	// 			toast.current?.show({
-	// 				severity: "error",
-	// 				summary: "Error",
-	// 				detail: data.error || "Something went wrong while deleting the user.",
-	// 				life: 8000,
-	// 			});
-	// 		}
-	// 	}
-	// }, [fetcher.data, fetcher.state, navigate]);
+	const navigate = useNavigate();
+	useEffect(() => {
+		if (fetcher.data && fetcher.state === "idle") {
+			const data = fetcher.data as any;
+			if (!data.ok) {
+				toast.current?.show({
+					severity: "error",
+					summary: "Error",
+					detail: data.error || "Something went wrong while deleting the user.",
+					life: 3000,
+				});
+			}
+		}
+	}, [fetcher.data, fetcher.state, navigate]);
 
 	return (
 		<MainContainer
@@ -282,21 +295,15 @@ export default function Screen() {
 							})}
 						</p>
 					</div>
-					<button
-						className="mg-button mg-button-system mg-button-system--transparent"
-						style={{ display: "flex", alignItems: "center" }}
+					<Button
 						onClick={handleDeleteClick}
-					>
-						<img
-							src="/assets/icons/trash-alt.svg"
-							alt="Trash Icon"
-							style={{ marginRight: "8px" }}
-						/>
-						{ctx.t({
+						severity="danger"
+						outlined
+						icon="pi pi-trash"
+						label={ctx.t({
 							code: "settings.access_mgmnt.delete_user",
 							msg: "Delete User",
-						})}
-					</button>
+						})} />
 				</div>
 
 				<Card className="w-full rounded-2xl shadow-xl p-6">
@@ -405,34 +412,7 @@ export default function Screen() {
 					</Form>
 				</Card>
 
-				<ConfirmDialog
-					ctx={ctx}
-					dialogRef={dialogRef}
-					confirmLabel={ctx.t({
-						code: "user.delete_user",
-						msg: "Delete user",
-					})}
-					cancelLabel={ctx.t({
-						code: "common.do_not_delete",
-						msg: "Do not delete",
-					})}
-					confirmIcon={
-						<svg aria-hidden="true" focusable="false" role="img">
-							<use href="/assets/icons/trash-alt.svg#delete" />
-						</svg>
-					}
-					confirmButtonFirst={false}
-					confirmMessage={ctx.t({
-						code: "settings.access_mgmnt.delete_user_confirmation",
-						msg: "This data cannot be recovered after being deleted.",
-					})}
-					title={ctx.t({
-						code: "settings.access_mgmnt.delete_user_title",
-						msg: "Are you sure you want to delete this user?",
-					})}
-					onConfirm={handleConfirmDelete}
-					onCancel={handleCancelDelete}
-				/>
+				<ConfirmDialog />
 			</>
 		</MainContainer>
 	);
