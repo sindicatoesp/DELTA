@@ -10,7 +10,6 @@ import {
 	getUserFromSession,
 	getUserRoleFromSession,
 	sessionMarkTotpAuthed,
-	superAdminSessionCookie,
 	getSuperAdminSession,
 	UserSession,
 	getCountryAccountsIdFromSession,
@@ -420,6 +419,12 @@ export function authActionWithPerm<T extends ActionFunction>(
 		}
 
 		// Regular user flow
+		const countryAccountsId = await getCountryAccountsIdFromSession(
+			args.request,
+		);
+		if (!countryAccountsId) {
+			throw redirectLangFromRoute(args, "/user/select-instance");
+		}
 		const userSession = await requireUser(args);
 		const userRole = await getUserRoleFromSession(args.request);
 		if (!roleHasPermission(userRole, permission)) {
@@ -472,22 +477,22 @@ export function authActionGetAuth(args: any): UserSession {
 	return args.userSession;
 }
 
-export async function requireSuperAdmin(args: RouteArgs) {
-	const { request } = args;
-	// Use the super admin session cookie instead of the regular session cookie
-	const session = await superAdminSessionCookie().getSession(
-		request.headers.get("Cookie"),
-	);
-	const superAdminId = session.get("superAdminId") as string | undefined;
+// export async function requireSuperAdmin(args: RouteArgs) {
+// 	const { request } = args;
+// 	// Use the super admin session cookie instead of the regular session cookie
+// 	const session = await superAdminSessionCookie().getSession(
+// 		request.headers.get("Cookie"),
+// 	);
+// 	const superAdminId = session.get("superAdminId") as string | undefined;
 
-	if (!superAdminId) {
-		// Get the current URL to include as redirectTo parameter
-		const url = new URL(request.url);
-		const redirectTo = url.pathname + url.search;
-		throw redirectLangFromRoute(
-			args,
-			`/admin/login?redirectTo=${encodeURIComponent(redirectTo)}`,
-		);
-	}
-	return superAdminId;
-}
+// 	if (!superAdminId) {
+// 		// Get the current URL to include as redirectTo parameter
+// 		const url = new URL(request.url);
+// 		const redirectTo = url.pathname + url.search;
+// 		throw redirectLangFromRoute(
+// 			args,
+// 			`/admin/login?redirectTo=${encodeURIComponent(redirectTo)}`,
+// 		);
+// 	}
+// 	return superAdminId;
+// }

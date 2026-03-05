@@ -1,13 +1,15 @@
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import path from "path";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
 	ssr: {
-		noExternal: ["primereact", "primeflex", "primeicons"],
+		noExternal: ["primereact", "primeicons"],
 	},
 	plugins: [
 		reactRouter(),
+		tailwindcss(),
 		{
 			name: "custom-security-headers",
 			configureServer(server) {

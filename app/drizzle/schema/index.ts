@@ -35,5 +35,5 @@ export * from "./sectorDisasterRecordsRelationTable";
 export * from "./sectorTable";
 export * from "./sessionTable";
 export * from "./superAdminUsersTable";
-export * from "./userCountryAccounts";
+export * from "./userCountryAccountsTable";
 export * from "./userTable";

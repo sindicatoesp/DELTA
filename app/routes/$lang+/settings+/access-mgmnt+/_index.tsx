@@ -51,7 +51,6 @@ export const loader = authLoaderWithPerm("ViewUsers", async (loaderArgs) => {
 		pagination.query.take,
 		countryAccountsId,
 	);
-
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
@@ -98,7 +97,7 @@ export default function Settings() {
 		setOrganizationFilter(value);
 		setFilteredItems(
 			items.filter((item) =>
-				item.user.organization.toLowerCase().includes(value),
+				item.organization?.name.toLowerCase().includes(value),
 			),
 		);
 	};
@@ -157,7 +156,7 @@ export default function Settings() {
 					</a>
 					<LangLink
 						lang={ctx.lang}
-						to="/settings/access-mgmnt/invite"
+						to="/settings/access-mgmnt/new"
 						className="mg-button mg-button-secondary"
 					>
 						{ctx.t({ code: "settings.access_mgmnt.add_user", msg: "Add user" })}
@@ -279,7 +278,7 @@ export default function Settings() {
 									{ctx.t({ code: "common.organization", msg: "Organization" })}
 								</th>
 								<th>{ctx.t({ code: "common.role", msg: "Role" })}</th>
-								<th>{ctx.t({ code: "common.modified", msg: "Modified" })}</th>
+								<th>{ctx.t({ code: "common.addedAt", msg: "Added At" })}</th>
 								<th>{ctx.t({ code: "common.actions", msg: "Actions" })}</th>
 							</tr>
 						</thead>
@@ -288,18 +287,17 @@ export default function Settings() {
 								<tr key={index}>
 									<td>
 										<span
-											className={`dts-access-management__status-dot ${
-												item.user.emailVerified
-													? "dts-access-management__status-dot--activated"
-													: "dts-access-management__status-dot--pending"
-											}`}
+											className={`dts-access-management__status-dot ${item.user.emailVerified
+												? "dts-access-management__status-dot--activated"
+												: "dts-access-management__status-dot--pending"
+												}`}
 										>
 											<span className="dts-access-management__tooltip-text">
 												{item.user.emailVerified
 													? ctx.t({
-															code: "common.activated",
-															msg: "Activated",
-														})
+														code: "common.activated",
+														msg: "Activated",
+													})
 													: ctx.t({ code: "common.pending", msg: "Pending" })}
 											</span>
 											<span className="dts-access-management__tooltip-pointer"></span>
@@ -316,19 +314,19 @@ export default function Settings() {
 										</LangLink>
 									</td>
 									<td>{item.user.email}</td>
-									<td>{item.user.organization}</td>
+									<td>{item.organization?.name}</td>
 									{/* Updated Role Column with Badge */}
 									<td>
 										<span>
 											{(() => {
 												const roleObj = getCountryRole(ctx, item.role);
 												return roleObj ? roleObj.label : item.role;
-											})()}{" "}
+											})()}{" "}{item.isPrimaryAdmin ? "(Primary Admin)" : ""}
 										</span>
 									</td>
 									<td>
-										{item.user.updatedAt &&
-											format(item.user.updatedAt, "dd-MM-yyyy")}
+										{item.addedAt &&
+											format(item.addedAt, "dd-MM-yyyy")}
 									</td>
 									<td>
 										<LangLink

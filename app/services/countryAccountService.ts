@@ -104,13 +104,12 @@ export async function createCountryAccountService(
 			user = await createUser(email, tx);
 		}
 		const role = "admin";
-		await createUserCountryAccounts(
-			user.id,
-			countryAccount.id,
+		await createUserCountryAccounts({
+			userId: user.id,
+			countryAccountsId: countryAccount.id,
 			role,
 			isPrimaryAdmin,
-			tx,
-		);
+		});
 
 		const country = await getCountryById(countryId);
 		if (!country) {

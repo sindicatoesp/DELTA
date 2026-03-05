@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { userCountryAccounts } from "~/drizzle/schema/userCountryAccounts";
+import { userCountryAccounts } from "~/drizzle/schema/userCountryAccountsTable";
 import { countryAccounts } from "~/drizzle/schema/countryAccounts";
 import { instanceSystemSettingsTable } from "~/drizzle/schema/instanceSystemSettingsTable";
 import { disasterRecordsTable } from "~/drizzle/schema/disasterRecordsTable";

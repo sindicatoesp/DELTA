@@ -61,3 +61,7 @@ export async function sendEmail(
 		throw new Error(`Failed to send email to ${to}: ${error.message}`);
 	}
 }
+
+export function isValidEmail(email: string) {
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}

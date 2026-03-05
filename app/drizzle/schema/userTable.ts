@@ -7,7 +7,7 @@ import {
 	zeroTimestamp,
 	createdUpdatedTimestamps,
 } from "../../utils/drizzleUtil";
-import { userCountryAccounts } from "./userCountryAccounts";
+import { userCountryAccounts } from "./userCountryAccountsTable";
 
 export const userTable = pgTable("user", {
 	id: ourRandomUUID(),
@@ -24,7 +24,6 @@ export const userTable = pgTable("user", {
 	totpEnabled: zeroBool("totp_enabled"),
 	totpSecret: zeroText("totp_secret"),
 	totpSecretUrl: zeroText("totp_secret_url"),
-	organization: zeroText("organization"),
 	hydrometCheUser: zeroBool("hydromet_che_user"),
 	authType: text("auth_type").notNull().default("form"),
 	...createdUpdatedTimestamps,

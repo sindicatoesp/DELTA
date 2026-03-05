@@ -1,5 +1,10 @@
-import { redirectDefaultLang } from "~/utils/url.backend";
+import PreventionWebLandingPageWidget from "~/components/PreventionWebLandingPageWidget";
 
-export const loader = async () => {
-	return redirectDefaultLang("/");
-};
+export default function Home() {
+	return (
+		<PreventionWebLandingPageWidget
+			pageId="97629"
+			activeDomain="syndication.preventionweb.net"
+		/>
+	);
+}

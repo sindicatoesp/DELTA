@@ -12,16 +12,7 @@ import { randomBytes } from "crypto";
 
 import { validateName, validatePassword } from "./user_utils";
 import { passwordHash } from "../../../utils/passwordUtil";
-import {
-	createUserCountryAccounts,
-	doesUserCountryAccountExistByEmailAndCountryAccountsId,
-} from "~/db/queries/userCountryAccounts";
 import { BackendContext } from "~/backend.server/context";
-import { createUser, getUserByEmail } from "~/db/queries/user";
-
-type AdminInviteUserResult =
-	| { ok: true }
-	| { ok: false; errors: Errors<AdminInviteUserFields> };
 
 export interface AdminInviteUserFields {
 	firstName: string;
@@ -30,120 +21,6 @@ export interface AdminInviteUserFields {
 	organization: string;
 	hydrometCheUser: boolean;
 	role: string;
-}
-
-export function adminInviteUserFieldsFromMap(data: {
-	[key: string]: string;
-}): AdminInviteUserFields {
-	const fields: (keyof AdminInviteUserFields)[] = [
-		"email",
-		"firstName",
-		"lastName",
-		"organization",
-		"role",
-	];
-	let res = Object.fromEntries(
-		fields.map((field) => [field, data[field] || ""]),
-	) as Omit<AdminInviteUserFields, "hydrometCheUser">;
-	const result: AdminInviteUserFields = {
-		...res,
-		hydrometCheUser: data.hydrometCheUser === "on",
-	};
-	return result;
-}
-
-export async function adminInviteUser(
-	ctx: BackendContext,
-	fields: AdminInviteUserFields,
-	countryAccountsId: string,
-	siteName: string,
-	countryName: string,
-	countryAccountType: string,
-): Promise<AdminInviteUserResult> {
-	let errors: Errors<AdminInviteUserFields> = {};
-	errors.form = [];
-	errors.fields = {};
-
-	if (!fields.firstName || fields.firstName.trim() === "") {
-		errors.fields.firstName = ["First name is required"];
-	}
-	if (!fields.email || fields.email.trim() === "") {
-		errors.fields.email = ["Email is required"];
-	}
-	if (fields.role == "") {
-		errors.fields.role = ["Role is required"];
-	}
-	if (!fields.organization || fields.organization.trim() === "") {
-		errors.fields.organization = ["Organisation is required"];
-	}
-
-	const emailAndCountryIdExist =
-		await doesUserCountryAccountExistByEmailAndCountryAccountsId(
-			fields.email,
-			countryAccountsId,
-		);
-
-	if (emailAndCountryIdExist) {
-		errors.fields.email = ["A user with this email already exists"];
-	}
-
-	if (hasErrors(errors)) {
-		return { ok: false, errors };
-	}
-
-	const user = await getUserByEmail(fields.email);
-	if (!user) {
-		//create new user
-		//create new user country account with it
-		//send invitation for new user
-		await dr.transaction(async (tx) => {
-			const newUser = await createUser(
-				fields.email,
-				tx,
-				fields.firstName,
-				fields.lastName,
-				fields.organization,
-			);
-			await createUserCountryAccounts(
-				newUser.id,
-				countryAccountsId,
-				fields.role,
-				false,
-				tx,
-			);
-			await sendInviteForNewUser(
-				ctx,
-				newUser,
-				siteName,
-				fields.role,
-				countryName,
-				countryAccountType,
-				tx,
-			);
-		});
-	} else {
-		//create new user country accounts associate to it
-		//send invitation for existing user
-		await dr.transaction(async (tx) => {
-			await createUserCountryAccounts(
-				user.id,
-				countryAccountsId,
-				fields.role,
-				false,
-				tx,
-			);
-			await sendInviteForExistingUser(
-				ctx,
-				user,
-				siteName,
-				fields.role,
-				countryName,
-				countryAccountType,
-			);
-		});
-	}
-
-	return { ok: true };
 }
 
 export async function sendInviteForNewUser(
@@ -155,8 +32,13 @@ export async function sendInviteForNewUser(
 	countryAccountType: string,
 	tx?: Tx,
 ) {
-	const inviteCode = randomBytes(32).toString("hex");
-	const expirationTime = addHours(new Date(), 7 * 24);
+	// console.debug("current invite code = ", user.inviteCode);
+	// we want to keep same invite code if it already is there
+	const EXPIRATION_DAYS = 14;
+	const inviteCode = user.inviteCode?.trim()
+		? user.inviteCode
+		: randomBytes(32).toString("hex");
+	const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
 
 	const db = tx || dr;
 	await db

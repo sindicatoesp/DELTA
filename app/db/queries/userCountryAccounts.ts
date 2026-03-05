@@ -2,7 +2,7 @@ import {
 	InsertUserCountryAccounts,
 	SelectUserCountryAccounts,
 	userCountryAccounts,
-} from "~/drizzle/schema/userCountryAccounts";
+} from "~/drizzle/schema/userCountryAccountsTable";
 import { userTable } from "~/drizzle/schema";
 import { and, eq, sql } from "drizzle-orm";
 import { dr, Tx } from "~/db.server";
@@ -18,22 +18,13 @@ export async function getUserCountryAccountsByUserId(
 }
 
 export async function createUserCountryAccounts(
-	userId: string,
-	countryAccountsId: string,
-	role: string,
-	isPrimaryAdmin: boolean,
+	data: Omit<InsertUserCountryAccounts, "id" | "addedAt">,
 	tx?: Tx,
 ): Promise<SelectUserCountryAccounts> {
-	const newUserCountryAccounts: InsertUserCountryAccounts = {
-		userId,
-		countryAccountsId,
-		role,
-		isPrimaryAdmin,
-	};
 	const db = tx || dr;
 	const result = await db
 		.insert(userCountryAccounts)
-		.values(newUserCountryAccounts)
+		.values({ ...data, organizationId: data.organizationId ?? null })
 		.returning()
 		.execute();
 	return result[0];
@@ -50,7 +41,21 @@ export async function getUserCountryAccountsWithUserByCountryAccountsId(
 		limit: pageSize,
 		offset: offset,
 		with: {
-			user: true,
+			user: {
+				columns: {
+					id: true,
+					firstName: true,
+					lastName: true,
+					email: true,
+					emailVerified: true,
+				},
+			},
+			organization: {
+				columns: {
+					id: true,
+					name: true,
+				},
+			},
 		},
 	});
 	const total = await dr.$count(
@@ -127,10 +132,9 @@ export async function getUserCountryAccountsByUserIdAndCountryAccountsId(
 	const result = await db
 		.select()
 		.from(userCountryAccounts)
-		.innerJoin(userTable, eq(userTable.id, userCountryAccounts.userId))
 		.where(
 			and(
-				eq(userTable.id, userId),
+				eq(userCountryAccounts.userId, userId),
 				eq(userCountryAccounts.countryAccountsId, countryAccountsId),
 			),
 		)
@@ -167,7 +171,7 @@ export async function getUserCountryAccountsWithValidatorRole(
 			lastName: userTable.lastName,
 			role: userCountryAccounts.role,
 			isPrimaryAdmin: userCountryAccounts.isPrimaryAdmin,
-			organization: userTable.organization,
+			// organization: userTable.organization,
 		})
 		.from(userCountryAccounts)
 		.where(
@@ -181,4 +185,25 @@ export async function getUserCountryAccountsWithValidatorRole(
 		.orderBy(userTable.firstName, userTable.lastName);
 
 	return users;
+}
+
+export async function updateUserCountryAccountsById(
+	id: string,
+	data: Partial<Omit<InsertUserCountryAccounts, "id">>,
+	tx?: Tx,
+): Promise<InsertUserCountryAccounts> {
+	const db = tx || dr;
+	const [updatedUserCountryAccounts] = await db
+		.update(userCountryAccounts)
+		.set({
+			...data,
+			organizationId: data.organizationId ?? null,
+		})
+		.where(eq(userCountryAccounts.id, id))
+		.returning();
+	if (!updatedUserCountryAccounts) {
+		throw new Error(`UserCountryAccount with id ${id} not found`);
+	}
+
+	return updatedUserCountryAccounts;
 }

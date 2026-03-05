@@ -41,7 +41,6 @@ import {
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
 import { PrimeReactProvider } from "primereact/api";
 
 import { loadTranslations } from "./backend.server/translations";
@@ -52,7 +51,7 @@ import { isAdminRoute } from "./utils/url.backend";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
 
 export const links: LinksFunction = () => [
-	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250532" },
+	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250630" },
 	{ rel: "stylesheet", href: allStylesHref },
 ];
 
@@ -158,7 +157,7 @@ function InactivityWarning(props: InactivityWarningProps) {
 			if (
 				minutesSinceLastActivity >
 				sessionActivityTimeoutMinutes -
-					sessionActivityWarningBeforeTimeoutMinutes
+				sessionActivityWarningBeforeTimeoutMinutes
 			) {
 				setShowWarning(true);
 				setExpiresInMinutes(
