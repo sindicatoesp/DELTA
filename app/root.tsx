@@ -9,27 +9,22 @@ import {
 	Scripts,
 	useNavigation,
 	useFetcher,
-	useMatches,
 } from "react-router";
 
-import { ToastContainer } from "react-toastify/unstyled"; // Import ToastContainer for notifications
+import { ToastContainer } from "react-toastify/unstyled";
 
 import {
 	sessionCookie,
 	getFlashMessage,
 	getUserFromSession,
 	getCountrySettingsFromSession,
-	getSuperAdminSession, // Added import for super admin session detection
+	getSuperAdminSession,
+	getCountryAccountsIdFromSession,
 } from "~/utils/session";
 
 import { useEffect, useRef, useState } from "react";
 
 import allStylesHref from "./styles/all.css?url";
-
-import { Header } from "~/frontend/header/header";
-import { Footer } from "~/frontend/footer/footer";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { configAuthSupportedForm } from "~/utils/config";
 
@@ -49,6 +44,7 @@ import { ViewContext } from "./frontend/context";
 import { isAdminRoute } from "./utils/url.backend";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
 import { Toast } from "primereact/toast";
+import MainMenuBar from "./components/MainMenuBar";
 
 export const links: LinksFunction = () => [
 	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250630" },
@@ -61,12 +57,13 @@ export const loader = async (
 	const { request } = routeArgs;
 
 	const user = await getUserFromSession(request);
-	const superAdminSession = await getSuperAdminSession(request); // Add super admin session detection
+	const superAdminSession = await getSuperAdminSession(request);
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
 	const message = getFlashMessage(session);
 	const userRole = session.get("userRole");
+	const isCountryAccountSelected = await getCountryAccountsIdFromSession(request) ? true : false;
 	const isFormAuthSupported = configAuthSupportedForm();
 
 	// Determine if this is a super admin session and on an admin route
@@ -83,7 +80,7 @@ export const loader = async (
 		settings = await getCountrySettingsFromSession(request);
 	}
 
-	const websiteName = settings ? settings.websiteName : "DELTA Resilience";
+	const websiteName = settings ? settings.websiteName : undefined;
 	const websiteLogo = settings
 		? settings.websiteLogo
 		: "/assets/country-instance-logo.png";
@@ -108,8 +105,8 @@ export const loader = async (
 				user: userForFrontend,
 			},
 			translations,
-			hasPublicSite: true,
-			loggedIn: !!user || (!!superAdminSession && isAdminRoute(request)),
+			isLoggedIn: !!user || (!!superAdminSession && isAdminRoute(request)),
+			isCountryAccountSelected,
 			userRole: effectiveUserRole || "",
 			isSuperAdmin: isSuperAdmin,
 			isFormAuthSupported: isFormAuthSupported,
@@ -231,61 +228,24 @@ function InactivityWarning(props: InactivityWarningProps) {
 	);
 }
 
-// Create a new QueryClient instance outside of component to ensure consistent instance
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			refetchOnWindowFocus: false,
-			retry: false,
-			staleTime: 30000,
-		},
-	},
-});
-
 export default function Screen() {
 	const loaderData = useLoaderData();
 	let ctx = new ViewContext();
 
 	const {
-		hasPublicSite,
-		loggedIn,
+		isLoggedIn,
 		flashMessage,
 		confSiteName,
-		confSiteLogo,
-		confFooterURLPrivPolicy,
-		confFooterURLTermsConds,
+		// confSiteLogo,
+		// confFooterURLPrivPolicy,
+		// confFooterURLTermsConds,
 		userRole,
-		isSuperAdmin,
-		isFormAuthSupported,
+		// isSuperAdmin,
+		// isFormAuthSupported,
 		lang,
 		translations,
+		isCountryAccountSelected
 	} = loaderData;
-	let boolShowHeaderFooter: boolean = true;
-	const matches = useMatches();
-	const isUrlPathUserInvite = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/user/accept-invite")),
-	);
-	const isUrlPathAdminRegistration = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/setup/admin-account")),
-	);
-	const isUrlPathResetPassword = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/user/forgot-password")),
-	);
-	const isUrlSuperAdmin = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/admin")),
-	);
-
-	// Do not show header and footer for certain pages [user invitation | admin registration]
-	// But show header for super admin pages if the user is a super admin
-	if (
-		isUrlPathUserInvite ||
-		isUrlPathAdminRegistration ||
-		isUrlPathResetPassword ||
-		(isUrlSuperAdmin && !isSuperAdmin) // Only hide for super admin routes if not actually super admin
-	) {
-		boolShowHeaderFooter = false;
-	}
-
 	// Display toast for flash messages
 	const toast = useRef<Toast>(null);
 	useEffect(() => {
@@ -312,57 +272,78 @@ export default function Screen() {
 				/>
 			</head>
 			<body>
-				<QueryClientProvider client={queryClient}>
-					<ToastContainer
-						position="top-center"
-						autoClose={5000}
-						hideProgressBar={false}
-						newestOnTop={true}
-						closeOnClick={true}
-						pauseOnHover={true}
-						draggable={false}
-						toastClassName="custom-toast"
-					/>
-					<Toast ref={toast} />
-					<InactivityWarning ctx={ctx} loggedIn={loggedIn} />
-					<div className="dts-page-container">
-						{(hasPublicSite || loggedIn) && boolShowHeaderFooter && (
-							<header>
-								<div className="mg-container">
-									<Header
-										ctx={ctx}
-										loggedIn={loggedIn}
+				<ToastContainer
+					position="top-center"
+					autoClose={5000}
+					hideProgressBar={false}
+					newestOnTop={true}
+					closeOnClick={true}
+					pauseOnHover={true}
+					draggable={false}
+					toastClassName="custom-toast"
+				/>
+				<Toast ref={toast} />
+				<PrimeReactProvider
+					value={{
+						ripple: true,
+					}}
+				>
+					<InactivityWarning ctx={ctx} loggedIn={isLoggedIn} />
+					<div className="min-h-screen flex flex-col bg-gray-50">
+
+						{/* Header */}
+						<header className="w-full bg-white border-b border-gray-200 shadow-sm">
+							<div className="mx-auto w-full max-w-[1440px] px-4 lg:px-8 py-4">
+								<h1 className="text-xl font-semibold text-gray-900">
+									<MainMenuBar
+										isLoggedIn={isLoggedIn}
 										userRole={userRole}
-										siteName={confSiteName}
-										siteLogo={confSiteLogo}
-										isSuperAdmin={isSuperAdmin}
-										isFormAuthSupported={isFormAuthSupported}
-									/>
+										isCountryAccountSelected={isCountryAccountSelected}
+										siteName={confSiteName} />
+								</h1>
+							</div>
+						</header>
+
+						{/* Main Content */}
+						<main className="flex-1 w-full">
+							<div className="mx-auto w-full max-w-[1440px] px-4 lg:px-8 py-8">
+								<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+									<div>
+										<Outlet />
+									</div>
 								</div>
-							</header>
-						)}
-						<main className="dts-main-container">
-							<PrimeReactProvider
-								value={{
-									ripple: true,
-								}}
-							>
-								<Outlet />
-							</PrimeReactProvider>
+							</div>
 						</main>
-						<footer>
-							{boolShowHeaderFooter && (
-								<Footer
-									ctx={ctx}
-									siteName={confSiteName}
-									urlPrivacyPolicy={confFooterURLPrivPolicy}
-									urlTermsConditions={confFooterURLTermsConds}
-								/>
-							)}
+
+						{/* Footer */}
+						<footer className="bg-slate-900 text-white py-16">
+							<div className="container mx-auto px-4">
+								<div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+									<div>
+										<h3 className="mb-6 font-bold text-lg">Quick start</h3>
+										<ul className="space-y-4 text-slate-400">
+											<li><a href="#" className="hover:text-white transition-colors">Getting started guide</a></li>
+											<li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
+										</ul>
+									</div>
+									<div>
+										<h3 className="mb-6 font-bold text-lg">What's new</h3>
+										<ul className="space-y-4 text-slate-400">
+											<li><a href="#" className="hover:text-white transition-colors">Latest updates</a></li>
+											<li><a href="#" className="hover:text-white transition-colors">Release notes</a></li>
+										</ul>
+									</div>
+								</div>
+								<div className="border-t border-slate-800 mt-12 pt-8 text-center text-slate-500">
+									<p>&copy; {new Date().getFullYear()} United Nations Office for Disaster Risk Reduction. All rights reserved.</p>
+								</div>
+							</div>
 						</footer>
 					</div>
-					<Scripts />
-				</QueryClientProvider>
+
+
+				</PrimeReactProvider>
+				<Scripts />
 			</body>
 		</html>
 	);

@@ -33,11 +33,11 @@ import { htmlTitle } from "~/utils/htmlmeta";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import { Card } from "primereact/card";
 import { Message } from "primereact/message";
 import { Divider } from "primereact/divider";
 import { urlLang } from "~/utils/url";
 import { countryAccountStatuses } from "~/drizzle/schema";
+import { Card } from "primereact/card";
 
 interface LoginFields {
 	email: string;
@@ -281,7 +281,7 @@ export default function Screen() {
 	const { isFormAuthSupported, isSSOAuthSupported } = loaderData;
 
 	return (
-		<main className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+		<div className="flex items-center justify-center min-h-screen  bg-gray-50 px-4">
 			<div className="w-full md:w-1/2 lg:w-1/3">
 				<div className="flex flex-col gap-4">
 					{isFormAuthSupported && (
@@ -358,9 +358,12 @@ export default function Screen() {
 											id="password"
 											name="password"
 											toggleMask
+											autoComplete="true"
 											pt={{
 												iconField: { root: { className: "w-full" } },
 												input: { className: "w-full" },
+												hideIcon: { className: "ltr:!right-3 rtl:left-3 rtl:right-auto" },
+												showIcon: { className: "ltr:!right-3 rtl:left-3 rtl:right-auto" },
 											}}
 											feedback={false}
 											placeholder={ctx.t({
@@ -429,6 +432,6 @@ export default function Screen() {
 					)}
 				</div>
 			</div>
-		</main>
+		</div>
 	);
 }

@@ -8,9 +8,7 @@ import { join } from "path";
 import { TParams, Translation, TranslationGetter } from "~/utils/translator";
 import path from "path";
 
-// const __dirname = dirname(fileURLToPath(import.meta.url));
 const __dirname = path.resolve(process.cwd());
-console.log("__dirname ", __dirname);
 
 // Cache loaded languages
 // file -> lang -> value

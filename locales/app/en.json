@@ -5311,8 +5311,8 @@
 	},
 	{
 		"description": "File: frontend/header/header.tsx:339",
-		"id": "nav.your_profile",
-		"translation": "Your profile"
+		"id": "nav.profile",
+		"translation": "Profile"
 	},
 	{
 		"description": "File: routes/$lang+/disaster-record+/edit.$id.tsx:803",

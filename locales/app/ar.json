@@ -2467,7 +2467,7 @@
 	{
 		"id": "nav.totp_2fa",
 		"description": "File: frontend/header/header.tsx:206",
-		"translation": "TOTP (2FA)"
+		"translation": "التحقق بخطوتين (TOTP)"
 	},
 	{
 		"id": "nav.user",
@@ -2490,9 +2490,9 @@
 		"translation": "تسجيل خروج المستخدم"
 	},
 	{
-		"id": "nav.your_profile",
+		"id": "nav.profile",
 		"description": "File: frontend/header/header.tsx:338",
-		"translation": "ملفك الشخصي"
+		"translation": "الملف الشخصي"
 	},
 	{
 		"id": "non_economic_losses",

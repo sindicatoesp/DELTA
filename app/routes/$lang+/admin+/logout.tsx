@@ -1,12 +1,12 @@
-import type { ActionFunction, LoaderFunctionArgs } from "react-router";
+import type { ActionFunction } from "react-router";
 import { LangRouteParam } from "~/utils/lang.backend";
 import { superAdminSessionCookie } from "~/utils/session";
 import { redirectLangFromRoute } from "~/utils/url.backend";
 
 // Handle both GET and POST requests for logout
-export const loader = async (loaderArgs: LoaderFunctionArgs) => {
-	return await handleLogout(loaderArgs);
-};
+// export const loader = async (loaderArgs: LoaderFunctionArgs) => {
+// 	return await handleLogout(loaderArgs);
+// };
 
 export const action: ActionFunction = async (actionArgs) => {
 	return await handleLogout(actionArgs);
@@ -23,9 +23,4 @@ async function handleLogout(routeArgs: { request: Request } & LangRouteParam) {
 			"Set-Cookie": await superAdminSessionCookie().destroySession(session),
 		},
 	});
-}
-
-// This component won't be rendered since we always redirect
-export default function SuperAdminLogout() {
-	return null;
 }

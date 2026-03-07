@@ -241,9 +241,9 @@ const Filters: React.FC<FiltersProps> = ({
 				const transformedData: HazardTypesResponse = {
 					hazardTypes: Array.isArray(hazardTypesDataProp.hazardTypes)
 						? hazardTypesDataProp.hazardTypes.map((hazard: any) => ({
-								...hazard,
-								id: String(hazard.id), // Ensure ID is string to match Hazard interface
-							}))
+							...hazard,
+							id: String(hazard.id), // Ensure ID is string to match Hazard interface
+						}))
 						: [],
 				};
 				setHazardTypesData(transformedData);
@@ -415,9 +415,9 @@ const Filters: React.FC<FiltersProps> = ({
 					const filteredHazards = hazardsArray.filter((hazard: any) => {
 						const hazardClusterId = String(
 							hazard.hazardClusterId ||
-								hazard.cluster_id ||
-								hazard.clusterId ||
-								"",
+							hazard.cluster_id ||
+							hazard.clusterId ||
+							"",
 						);
 						const filterClusterId = String(filters.hazardClusterId);
 						return hazardClusterId === filterClusterId;
@@ -439,9 +439,9 @@ const Filters: React.FC<FiltersProps> = ({
 							id: String(hazard.id), // Ensure ID is string
 							hazardClusterId: String(
 								hazard.hazardClusterId ||
-									hazard.cluster_id ||
-									hazard.clusterId ||
-									"",
+								hazard.cluster_id ||
+								hazard.clusterId ||
+								"",
 							),
 							hazardTypeId: String(
 								hazard.hazardTypeId || hazard.type_id || hazard.typeId || "",
@@ -839,76 +839,79 @@ const Filters: React.FC<FiltersProps> = ({
 	) => {
 		const filteredItems = items.filter(
 			(item) =>
-				item.name.toLowerCase().includes(displayValues[field].toLowerCase()) || // Match by name
-				item.id
-					.toString()
-					.toLowerCase()
-					.includes(displayValues[field].toLowerCase()), // Match by ID
+				item.name.toLowerCase().includes(displayValues[field].toLowerCase()) ||
+				item.id.toString().toLowerCase().includes(displayValues[field].toLowerCase()),
 		);
 
 		return (
-			<>
-				<label htmlFor={`${field}-input`}>{title}</label>
-				<span>{title}</span>
-				<div style={{ position: "relative" }}>
+			<div className="flex flex-col gap-1">
+				<label htmlFor={`${field}-input`} className="text-sm font-medium">
+					{title}
+				</label>
+
+				<div className="relative">
 					<input
 						id={`${field}-input`}
 						type="text"
-						className="filter-search"
+						className="w-full border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						placeholder={placeholderText}
-						value={displayValues[field]} // Use displayValues from state
+						value={displayValues[field]}
 						onChange={(e) => {
 							setDisplayValues((prev) => ({
 								...prev,
 								[field]: e.target.value,
 							}));
 
-							if (searchTimeout) {
-								clearTimeout(searchTimeout); // Clear the previous timeout
-							}
+							if (searchTimeout) clearTimeout(searchTimeout);
 
 							const newTimeout = window.setTimeout(() => {
 								setSearchQuery(e.target.value);
-							}, 300); // Debounce: Wait 300ms before updating search
+							}, 300);
 
-							setSearchTimeout(newTimeout); // Save the timeout ID
+							setSearchTimeout(newTimeout);
 
 							toggleDropdown(field, true);
 						}}
 						onFocus={() => toggleDropdown(field, true)}
 						onBlur={() => toggleDropdown(field, false)}
 					/>
-					<AiOutlineSearch className="search-icon" />
+
+					<AiOutlineSearch className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+
 					{loading && (
-						<p style={{ color: "blue", fontStyle: "italic" }}>Loading...</p>
+						<p className="mt-1 text-sm text-blue-600 italic">Loading...</p>
 					)}
+
 					{!loading && dropdownVisibility[field] && (
-						<ul className="autocomplete-list">
+						<ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
 							{filteredItems.length > 0 ? (
 								filteredItems.map((item) => (
 									<li
 										key={item.id}
+										className="px-3 py-2 cursor-pointer hover:bg-gray-100"
 										onMouseDown={() => {
 											setFilters((prev) => ({
 												...prev,
 												[field]: item.id,
 											}));
-											// Trigger the back-propagation for Specific hazard
+
 											if (field === "specificHazardId") {
 												handleSpecificHazardSelection(item.id.toString());
 											}
+
 											setDisplayValues((prev) => ({
 												...prev,
-												[field]: item.name, // Display the name in the input
+												[field]: item.name,
 											}));
+
 											toggleDropdown(field, false);
 										}}
 									>
-										{item.name} {/* Only display the name */}
+										{item.name}
 									</li>
 								))
 							) : (
-								<li className="no-results">
+								<li className="px-3 py-2 text-gray-500">
 									{ctx.t({
 										code: "common.no_match_found",
 										msg: "No match found",
@@ -918,7 +921,7 @@ const Filters: React.FC<FiltersProps> = ({
 						</ul>
 					)}
 				</div>
-			</>
+			</div>
 		);
 	};
 
@@ -943,13 +946,13 @@ const Filters: React.FC<FiltersProps> = ({
 					<option value="" disabled>
 						{sectorsLoading
 							? ctx.t({
-									code: "analysis.loading_sectors",
-									msg: "Loading sectors...",
-								})
+								code: "analysis.loading_sectors",
+								msg: "Loading sectors...",
+							})
 							: ctx.t({
-									code: "analysis.select_sector",
-									msg: "Select sector",
-								})}
+								code: "analysis.select_sector",
+								msg: "Select sector",
+							})}
 					</option>
 					{processedSectors.length === 0 ? (
 						<option disabled>
@@ -985,13 +988,13 @@ const Filters: React.FC<FiltersProps> = ({
 					<option value="" disabled>
 						{filters.sectorId
 							? ctx.t({
-									code: "analysis.select_sub_sector",
-									msg: "Select sub sector",
-								})
+								code: "analysis.select_sub_sector",
+								msg: "Select sub sector",
+							})
 							: ctx.t({
-									code: "analysis.select_sector_first",
-									msg: "Select sector first",
-								})}
+								code: "analysis.select_sector_first",
+								msg: "Select sector first",
+							})}
 					</option>
 					{(() => {
 						const selectedSector = processedSectors.find(

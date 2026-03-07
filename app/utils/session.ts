@@ -257,30 +257,26 @@ export async function getCountrySettingsFromSession(request: Request) {
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
-	const countrySettings = session.get("countrySettings");
-	return countrySettings;
+	return session.get("countrySettings");
 }
 
 export async function getUserRoleFromSession(request: Request) {
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
-	const countrySettings = session.get("userRole");
-	return countrySettings;
+	return session.get("userRole");
 }
 
 export async function getCountryAccountsIdFromSession(request: Request) {
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
-	const countryAccountsId = session.get("countryAccountsId");
-	return countryAccountsId;
+	return session.get("countryAccountsId");
 }
 
 export async function getUserIdFromSession(request: Request) {
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
-	const userId = session.get("userId");
-	return userId;
+	return session.get("userId");
 }

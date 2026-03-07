@@ -16,7 +16,6 @@ import { LoaderFunctionArgs } from "react-router";
 
 import { ViewContext } from "~/frontend/context";
 
-import { LangLink } from "~/utils/link";
 import { BackendContext } from "~/backend.server/context";
 import { htmlTitle } from "~/utils/htmlmeta";
 import { Card } from "primereact/card";
@@ -118,7 +117,7 @@ export default function Screen() {
 				<Card className="w-full max-w-xl rounded-2xl shadow-xl p-8">
 
 					{/* Back Button */}
-					<div className="mb-6">
+					{/* <div className="mb-6">
 						<LangLink lang={ctx.lang} to="/user/settings">
 							<Button
 								type="button"
@@ -128,7 +127,7 @@ export default function Screen() {
 								outlined
 							/>
 						</LangLink>
-					</div>
+					</div> */}
 
 					{/* Intro */}
 					<div className="mb-6 space-y-2">

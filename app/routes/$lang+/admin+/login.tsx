@@ -445,7 +445,7 @@ export default function Screen() {
 	}
 
 	return (
-		<div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+		<div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
 			<div className="w-full md:w-1/2 lg:w-1/3">
 				<div className="flex flex-col gap-4">
 					{isFormAuthSupported && (
@@ -522,6 +522,7 @@ export default function Screen() {
 											id="password"
 											name="password"
 											toggleMask
+											autoComplete="true"
 											pt={{
 												iconField: { root: { className: "w-full" } },
 												input: { className: "w-full" },
@@ -546,6 +547,7 @@ export default function Screen() {
 										label={ctx.t({ code: "user_login.sign_in", msg: "Sign in" })}
 										icon="pi pi-sign-in"
 										loading={isSubmitting}
+										disabled={isSubmitting}
 										className="w-full mt-2"
 									/>
 								</div>

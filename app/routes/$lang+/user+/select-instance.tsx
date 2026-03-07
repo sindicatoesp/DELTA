@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, redirect, useActionData } from "react-router";
+import { ActionFunctionArgs, redirect, useActionData, useNavigation } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { Form, redirectDocument, useLoaderData } from "react-router";
 import { LoaderFunctionArgs } from "react-router";
@@ -24,7 +24,6 @@ import {
 import { SelectCountries } from "~/drizzle/schema/countriesTable";
 import Tag from "~/components/Tag";
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
-// import { Toast, ToastRef } from "~/components/Toast";
 import { redirectLangFromRoute, replaceLang } from "~/utils/url.backend";
 
 import { ViewContext } from "~/frontend/context";
@@ -152,6 +151,9 @@ export default function SelectInstance() {
 		useState<LoaderDataType | null>(null);
 	const toast = useRef<Toast>(null);
 	const [isRtl, setIsRtl] = useState(false);
+	const navigation = useNavigation();
+	const isSubmitting =
+		navigation.state === "submitting"
 
 	useEffect(() => {
 		setIsRtl(document.dir === "rtl");
@@ -284,9 +286,9 @@ export default function SelectInstance() {
 
 						{/* Actions */}
 						<div className="flex justify-end">
-							<Button
-								type="submit"
-							>
+							<Button type="submit"
+								disabled={isSubmitting}
+								loading={isSubmitting} >
 								{ctx.t({ code: "common.go", msg: "Go" })}
 							</Button>
 						</div>
