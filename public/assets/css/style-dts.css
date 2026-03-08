@@ -262,14 +262,6 @@ html[lang="ar"] {
 	}
 }
 
-.overflow-hidden {
-	overflow: hidden;
-}
-
-.hidden {
-	display: none;
-}
-
 .mg-u-sr-only {
 	position: absolute;
 	width: 1px !important;
@@ -1618,7 +1610,7 @@ header .mg-container {
 	cursor: not-allowed;
 }
 
-[dir="rtl"] select {
+[dir="rtl"] .dts-form-component select {
 	background-position: top 48% left 0.57rem;
 	padding: 5px 0.8rem 3px 1.71rem;
 }
