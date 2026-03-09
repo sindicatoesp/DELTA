@@ -32,7 +32,6 @@ import {
 	sessionActivityTimeoutMinutes,
 	sessionActivityWarningBeforeTimeoutMinutes,
 } from "~/utils/session-activity-config";
-import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { PrimeReactProvider } from "primereact/api";
@@ -50,6 +49,7 @@ import { isRouteErrorResponse, useRouteError } from "react-router";
 export const links: LinksFunction = () => [
 	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250630" },
 	{ rel: "stylesheet", href: allStylesHref },
+	{ rel: "stylesheet", href: "/assets/themes/lara-light-blue/theme.css" },
 ];
 
 export const loader = async (
