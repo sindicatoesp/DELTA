@@ -104,13 +104,16 @@ export async function createCountryAccountService(
 			user = await createUser(email, tx);
 		}
 		const role = "admin";
-		await createUserCountryAccounts({
-			userId: user.id,
-			countryAccountsId: countryAccount.id,
-			role,
-			isPrimaryAdmin,
-		});
-
+		console.log(" ... creating usercountryaccount");
+		await createUserCountryAccounts(
+			{
+				userId: user.id,
+				countryAccountsId: countryAccount.id,
+				role,
+				isPrimaryAdmin,
+			},
+			tx,
+		);
 		const country = await getCountryById(countryId);
 		if (!country) {
 			errors.push(`Country with ID ${countryId} not found.`);
@@ -123,10 +126,13 @@ export async function createCountryAccountService(
 			tx,
 		);
 
+		const EXPIRATION_DAYS = 14;
+
 		if (isNewUser) {
 			const inviteCode = randomBytes(32).toString("hex");
-			const expirationTime = addHours(new Date(), 7 * 24);
+			const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
 
+			// update user with invitation code
 			updateUserById(
 				user.id,
 				{
@@ -136,6 +142,7 @@ export async function createCountryAccountService(
 				},
 				tx,
 			);
+			// send email with invitation code in it
 			await sendInviteForNewCountryAccountAdminUser(
 				ctx,
 				user,
@@ -146,14 +153,44 @@ export async function createCountryAccountService(
 				inviteCode,
 			);
 		} else {
-			await sendInviteForExistingCountryAccountAdminUser(
-				ctx,
-				user,
-				"DELTA Resilience",
-				"Admin",
-				country.name,
-				countryAccountType,
-			);
+			// here we need to check if the account is already verified
+			if (user.emailVerified) {
+				// user is already verified, sending email without verification code
+				await sendInviteForExistingCountryAccountAdminUser(
+					ctx,
+					user,
+					"DELTA Resilience",
+					"Admin",
+					country.name,
+					countryAccountType,
+				);
+			} else {
+				// user is not verified, update expiration and send email
+				// update expiration
+				const inviteCode = randomBytes(32).toString("hex");
+				const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
+
+				// update user with invitation code
+				updateUserById(
+					user.id,
+					{
+						inviteSentAt: new Date(),
+						inviteCode: inviteCode,
+						inviteExpiresAt: expirationTime,
+					},
+					tx,
+				);
+				// send email
+				await sendInviteForNewCountryAccountAdminUser(
+					ctx,
+					user,
+					"DELTA Resilience",
+					role,
+					country.name,
+					countryAccountType,
+					inviteCode,
+				);
+			}
 		}
 		return { countryAccount, user, instanceSystemSetting };
 	});

@@ -14,7 +14,7 @@ import { NavSettings } from "../settings/nav";
 import { authLoaderWithPerm, authActionWithPerm } from "~/utils/auth";
 import { useEffect, useRef, useState } from "react";
 import Dialog from "~/components/Dialog";
-import { getCountries } from "~/db/queries/countries";
+import { getCountries, getCountryById } from "~/db/queries/countries";
 import {
 	CountryAccountStatus,
 	countryAccountStatuses,
@@ -36,6 +36,13 @@ import { ViewContext } from "~/frontend/context";
 import { BackendContext } from "~/backend.server/context";
 import { DContext } from "~/utils/dcontext";
 import { htmlTitle } from "~/utils/htmlmeta";
+import {
+	sendInviteForExistingCountryAccountAdminUser,
+	sendInviteForNewCountryAccountAdminUser,
+} from "~/backend.server/models/user/invite";
+import { getUserById, updateUserById } from "~/db/queries/user";
+import { SelectUser } from "~/drizzle/schema/userTable";
+import { addHours } from "date-fns/addHours";
 
 export const meta: MetaFunction = () => {
 	const ctx = new ViewContext();
@@ -77,7 +84,7 @@ export const loader = authLoaderWithPerm(
 type ActionData =
 	| {
 			success: true;
-			operation: "create" | "update";
+			operation: "create" | "update" | "resend_email";
 	  }
 	| {
 			errors: string[];
@@ -95,33 +102,88 @@ export const action = authActionWithPerm(
 		const { request } = actionArgs;
 		const ctx = new BackendContext(actionArgs);
 		const formData = await request.formData();
+		const intent = formData.get("intent");
 		const countryId = formData.get("countryId") as string;
+		var countryName = "" as string;
 		const status = formData.get("status");
 		const email = formData.get("email") as string;
 		const shortDescription = formData.get("shortDescription") as string;
 		const countryAccountType = formData.get("countryAccountType") as string;
 		const id = formData.get("id") as string;
+		const userAdminId = formData.get("adminUserId") as string;
 
 		try {
-			if (id) {
-				// Update existing account
-				await updateCountryAccountStatusService(
-					id,
-					Number(status),
-					shortDescription,
-				);
-				return { success: true, operation: "update" } satisfies ActionData;
+			if (intent === "resend_email") {
+				const country = await getCountryById(countryId);
+				if (!country) {
+					// TODO throw error
+					countryName = `Country with ID ${countryId} not found.`;
+				} else {
+					countryName = country.name;
+				}
+				const userAdmin = (await getUserById(userAdminId)) as SelectUser;
+				if (!userAdmin) {
+					// TODO throw error
+					countryName = `User with ID ${userAdminId} not found.`;
+				}
+
+				// is user already verified?
+				if (userAdmin.emailVerified) {
+					// we just send the basic invite without invite code
+					await sendInviteForExistingCountryAccountAdminUser(
+						ctx,
+						userAdmin,
+						"DELTA Resilience",
+						"Admin",
+						countryName,
+						countryAccountType,
+					);
+				} else {
+					// we renew invite code expiration and send the  invite with invite code
+					const EXPIRATION_DAYS = 14;
+					const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
+
+					updateUserById(userAdmin.id, {
+						inviteSentAt: new Date(),
+						inviteExpiresAt: expirationTime,
+					});
+
+					await sendInviteForNewCountryAccountAdminUser(
+						ctx,
+						userAdmin,
+						"DELTA Resilience",
+						"Admin",
+						countryName,
+						countryAccountType,
+						userAdmin.inviteCode,
+					);
+				}
+
+				return {
+					success: true,
+					operation: "resend_email",
+				} satisfies ActionData;
 			} else {
-				// Create new account
-				await createCountryAccountService(
-					ctx,
-					countryId,
-					shortDescription,
-					email,
-					Number(status),
-					countryAccountType,
-				);
-				return { success: true, operation: "create" } satisfies ActionData;
+				if (id) {
+					// Update existing account
+					await updateCountryAccountStatusService(
+						id,
+						Number(status),
+						shortDescription,
+					);
+					return { success: true, operation: "update" } satisfies ActionData;
+				} else {
+					// Create new account
+					await createCountryAccountService(
+						ctx,
+						countryId,
+						shortDescription,
+						email,
+						Number(status),
+						countryAccountType,
+					);
+					return { success: true, operation: "create" } satisfies ActionData;
+				}
 			}
 		} catch (error) {
 			let errors = {};
@@ -173,6 +235,7 @@ export default function CountryAccounts() {
 		countryAccountTypesTable.OFFICIAL,
 	);
 	const [email, setEmail] = useState("");
+	const [adminUserId, setAdminUserId] = useState("");
 	const [status, setStatus] = useState<CountryAccountStatus>(
 		countryAccountStatuses.ACTIVE,
 	);
@@ -202,6 +265,7 @@ export default function CountryAccounts() {
 		setStatus(countryAccount.status as CountryAccountStatus);
 		setType(countryAccount.type as CountryAccountType);
 		setEmail(countryAccount.userCountryAccounts[0].user.email);
+		setAdminUserId(countryAccount.userCountryAccounts[0].user.id);
 		setShortDescription(countryAccount.shortDescription);
 		setIsAddCountryAccountDialogOpen(true);
 	}
@@ -215,6 +279,7 @@ export default function CountryAccounts() {
 		setStatus(countryAccountStatuses.ACTIVE);
 		setType(countryAccountTypesTable.OFFICIAL);
 		setEmail("");
+		setAdminUserId("");
 		setShortDescription("");
 		navigate(".", { replace: true });
 	}
@@ -237,10 +302,15 @@ export default function CountryAccounts() {
 									code: "admin.country_account_updated",
 									msg: "Country account updated successfully",
 								})
-							: ctx.t({
-									code: "admin.country_account_created",
-									msg: "Country account created successfully",
-								}),
+							: actionData.operation === "create"
+								? ctx.t({
+										code: "admin.country_account_created",
+										msg: "Country account created successfully",
+									})
+								: ctx.t({
+										code: "admin.invitation_resent",
+										msg: "Invitation email sent successfully",
+									}),
 				});
 			}
 		}
@@ -566,6 +636,33 @@ export default function CountryAccounts() {
 									disabled={editingCountryAccount?.id ? true : false}
 								></input>
 							</label>
+							{editingCountryAccount?.id && (
+								<div className="dts-form-component">
+									<button
+										type="submit"
+										name="intent"
+										value="resend_email"
+										className="mg-button mg-button-outline"
+									>
+										{ctx.t({
+											code: "admin.resend_email",
+											msg: "Resend invitation email",
+										})}
+									</button>
+									<input type="hidden" name="email" value={email} />
+									<input
+										type="hidden"
+										name="countryId"
+										value={selectedCountryId}
+									/>
+									<input type="hidden" name="adminUserId" value={adminUserId} />
+									<input
+										type="hidden"
+										name="countryAccountType"
+										value={editingCountryAccount?.type}
+									/>
+								</div>
+							)}
 						</div>
 						<div className="dts-form-component">
 							<Fieldset
