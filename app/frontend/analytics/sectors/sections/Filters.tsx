@@ -1132,7 +1132,7 @@ const Filters: React.FC<FiltersProps> = ({
 							msg: "Search for disaster events",
 						})}
 						type="text"
-						className="filter-search w-full pr-9"
+						className="filter-search w-full pe-9"
 						placeholder={ctx.t({
 							code: "disaster_event.search_by_name_id_glide_placeholder",
 							msg: "Type to search by name, ID, GLIDE number...",
@@ -1143,7 +1143,7 @@ const Filters: React.FC<FiltersProps> = ({
 							setShowResults(true);
 						}}
 					/>
-					<AiOutlineSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+					<AiOutlineSearch className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
 
 					{eventsLoading ? (
 						<div className="mt-2 text-blue-800 text-sm">
