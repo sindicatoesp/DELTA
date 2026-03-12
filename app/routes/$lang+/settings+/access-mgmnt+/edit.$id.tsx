@@ -14,7 +14,7 @@ import {
 import { format } from "date-fns";
 // import { ConfirmDialog } from "~/frontend/components/ConfirmDialog";
 import { useEffect, useRef, useState } from "react";
-import { getUserCountryAccountsByUserIdAndCountryAccountsId, updateUserCountryAccountsById } from "~/db/queries/userCountryAccounts";
+import { getUserCountryAccountsByUserIdAndCountryAccountsId, updateUserCountryAccountsById } from "~/db/queries/userCountryAccountsRepository";
 
 import { ViewContext } from "~/frontend/context";
 
@@ -26,8 +26,8 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
-import { getUserById } from "~/db/queries/user";
-import { getAllOrganizationsByCountryAccountsId } from "~/db/queries/organization";
+import { UserRepository } from "~/db/queries/UserRepository";
+import { OrganizationRepository } from "~/db/queries/organizationRepository";
 import { dr } from "~/db.server";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 
@@ -60,7 +60,7 @@ export const loader = authLoaderWithPerm("EditUsers", async (loaderArgs) => {
 	if (!id) {
 		throw new Response("Missing user ID", { status: 404 });
 	}
-	const user = await getUserById(id);
+	const user = await UserRepository.getById(id);
 	if (!user) {
 		throw new Response(`User not found with id :${id}`)
 	}
@@ -69,7 +69,7 @@ export const loader = authLoaderWithPerm("EditUsers", async (loaderArgs) => {
 		id,
 		countryAccountsId,
 	);
-	const organizations = await getAllOrganizationsByCountryAccountsId(countryAccountsId);
+	const organizations = await OrganizationRepository.getByCountryAccountsId(countryAccountsId);
 
 	if (!userCountryAccount) {
 		throw new Response(
@@ -101,7 +101,7 @@ export const action = authActionWithPerm("EditUsers", async (actionArgs) => {
 		throw new Response("Missing ID", { status: 400 });
 	}
 	//check if user exist
-	const user = await getUserById(id);
+	const user = await UserRepository.getById(id);
 	if (!user) {
 		throw new Response(`User not found with id: ${id}`)
 	}

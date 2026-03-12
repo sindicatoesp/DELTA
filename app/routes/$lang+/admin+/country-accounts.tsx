@@ -4,6 +4,7 @@ import {
 	useNavigate,
 	MetaFunction,
 	useLoaderData,
+	useFetcher,
 } from "react-router";
 import {
 	CountryAccountWithCountryAndPrimaryAdminUser,
@@ -14,7 +15,7 @@ import { NavSettings } from "../settings/nav";
 import { authLoaderWithPerm, authActionWithPerm } from "~/utils/auth";
 import { useEffect, useRef, useState } from "react";
 import Dialog from "~/components/Dialog";
-import { getCountries, getCountryById } from "~/db/queries/countries";
+import { CountryRepository } from "~/db/queries/countriesRepository";
 import {
 	CountryAccountStatus,
 	countryAccountStatuses,
@@ -24,13 +25,13 @@ import {
 import {
 	CountryAccountValidationError,
 	createCountryAccountService,
+	resetInstanceData,
 	updateCountryAccountStatusService,
 } from "~/services/countryAccountService";
 import Messages from "~/components/Messages";
 import { RadioButton } from "~/components/RadioButton";
 import { Fieldset } from "~/components/FieldSet";
 import Tag from "~/components/Tag";
-import { Toast, ToastRef } from "~/components/Toast";
 import { ViewContext } from "~/frontend/context";
 
 import { BackendContext } from "~/backend.server/context";
@@ -40,9 +41,12 @@ import {
 	sendInviteForExistingCountryAccountAdminUser,
 	sendInviteForNewCountryAccountAdminUser,
 } from "~/backend.server/models/user/invite";
-import { getUserById, updateUserById } from "~/db/queries/user";
+import { UserRepository } from "~/db/queries/UserRepository";
 import { SelectUser } from "~/drizzle/schema/userTable";
 import { addHours } from "date-fns/addHours";
+import { Button } from "primereact/button";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { Toast } from "primereact/toast";
 
 export const meta: MetaFunction = () => {
 	const ctx = new ViewContext();
@@ -72,7 +76,7 @@ export const loader = authLoaderWithPerm(
 	async () => {
 		const countryAccounts =
 			await getCountryAccountsWithUserCountryAccountsAndUser();
-		const countries = await getCountries();
+		const countries = await CountryRepository.getAll();
 
 		return {
 			countryAccounts,
@@ -83,26 +87,27 @@ export const loader = authLoaderWithPerm(
 
 type ActionData =
 	| {
-			success: true;
-			operation: "create" | "update" | "resend_email";
-	  }
+		success: true;
+		operation: "create" | "update" | "resend_email" | "reset";
+	}
 	| {
-			errors: string[];
-			formValues?: {
-				id?: string;
-				countryId?: string;
-				status?: FormDataEntryValue | null;
-				email?: string;
-				countryAccountType?: string;
-			};
-	  };
+		errors: string[];
+		formValues?: {
+			id?: string;
+			countryId?: string;
+			status?: FormDataEntryValue | null;
+			email?: string;
+			countryAccountType?: string;
+		};
+	};
+
 export const action = authActionWithPerm(
 	"manage_country_accounts",
 	async (actionArgs) => {
 		const { request } = actionArgs;
 		const ctx = new BackendContext(actionArgs);
 		const formData = await request.formData();
-		const intent = formData.get("intent");
+		const intent = formData.get("intent") as string;
 		const countryId = formData.get("countryId") as string;
 		var countryName = "" as string;
 		const status = formData.get("status");
@@ -114,14 +119,14 @@ export const action = authActionWithPerm(
 
 		try {
 			if (intent === "resend_email") {
-				const country = await getCountryById(countryId);
+				const country = await CountryRepository.getById(countryId);
 				if (!country) {
 					// TODO throw error
 					countryName = `Country with ID ${countryId} not found.`;
 				} else {
 					countryName = country.name;
 				}
-				const userAdmin = (await getUserById(userAdminId)) as SelectUser;
+				const userAdmin = (await UserRepository.getById(userAdminId)) as SelectUser;
 				if (!userAdmin) {
 					// TODO throw error
 					countryName = `User with ID ${userAdminId} not found.`;
@@ -143,7 +148,7 @@ export const action = authActionWithPerm(
 					const EXPIRATION_DAYS = 14;
 					const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
 
-					updateUserById(userAdmin.id, {
+					UserRepository.updateById(userAdmin.id, {
 						inviteSentAt: new Date(),
 						inviteExpiresAt: expirationTime,
 					});
@@ -164,6 +169,12 @@ export const action = authActionWithPerm(
 					operation: "resend_email",
 				} satisfies ActionData;
 			} else {
+				if (intent === "reset") {
+					await resetInstanceData(id);
+					console.log(id)
+					return { success: true, operation: "reset" } satisfies ActionData;
+				}
+
 				if (id) {
 					// Update existing account
 					await updateCountryAccountStatusService(
@@ -227,6 +238,7 @@ export default function CountryAccounts() {
 	const { countryAccounts, countries } = ld;
 
 	const actionData = useActionData<ActionData>();
+	const resetFetcher = useFetcher<ActionData>();
 
 	const [editingCountryAccount, setEditingCountryAccount] =
 		useState<CountryAccountWithCountryAndPrimaryAdminUser | null>(null);
@@ -246,7 +258,7 @@ export default function CountryAccounts() {
 
 	const formRef = useRef<HTMLFormElement>(null);
 	const navigate = useNavigate();
-	const toast = useRef<ToastRef>(null);
+	const toast = useRef<Toast>(null);
 
 	function addCountryAccount() {
 		resetForm();
@@ -284,6 +296,52 @@ export default function CountryAccounts() {
 		navigate(".", { replace: true });
 	}
 
+	function handleResetInstanceData(
+		countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
+	) {
+		confirmDialog({
+			message: ctx.t({
+				code: "admin.reset_instance_data_confirm_message",
+				msg: "Are you sure you want to reset all instance data? This action cannot be undone.",
+			}),
+			header: ctx.t({
+				code: "admin.reset_instance_data_confirm_header",
+				msg: "Reset All Instance Data",
+			}),
+			icon: "pi pi-exclamation-triangle",
+			acceptIcon: 'pi pi-replay',
+			rejectClassName: 'p-button-outlined ml-2',
+			acceptClassName: "p-button-danger p-button-outlined",
+			defaultFocus: 'reject',
+			acceptLabel: ctx.t({ code: "common.yes", msg: "Yes" }),
+			rejectLabel: ctx.t({ code: "common.no", msg: "No" }),
+			accept: () => {
+				resetFetcher.submit(
+					{ intent: "reset", id: countryAccount.id },
+					{ method: "post" },
+				);
+			},
+		});
+	}
+
+	// Show toast after reset completes
+	useEffect(() => {
+		if (
+			resetFetcher.data &&
+			"success" in resetFetcher.data &&
+			resetFetcher.data.operation === "reset"
+		) {
+			toast.current?.show({
+				severity: "info",
+				summary: ctx.t({ code: "common.success", msg: "Success" }),
+				detail: ctx.t({
+					code: "admin.instance_data_reset",
+					msg: "Instance data has been reset successfully",
+				}),
+			});
+		}
+	}, [resetFetcher.data]);
+
 	useEffect(() => {
 		if (actionData && "success" in actionData) {
 			setIsAddCountryAccountDialogOpen(false);
@@ -299,18 +357,18 @@ export default function CountryAccounts() {
 					detail:
 						actionData.operation === "update"
 							? ctx.t({
-									code: "admin.country_account_updated",
-									msg: "Country account updated successfully",
-								})
+								code: "admin.country_account_updated",
+								msg: "Country account updated successfully",
+							})
 							: actionData.operation === "create"
 								? ctx.t({
-										code: "admin.country_account_created",
-										msg: "Country account created successfully",
-									})
+									code: "admin.country_account_created",
+									msg: "Country account created successfully",
+								})
 								: ctx.t({
-										code: "admin.invitation_resent",
-										msg: "Invitation email sent successfully",
-									}),
+									code: "admin.invitation_resent",
+									msg: "Invitation email sent successfully",
+								}),
 				});
 			}
 		}
@@ -349,6 +407,9 @@ export default function CountryAccounts() {
 			})}
 			headerExtra={<NavSettings ctx={ctx} />}
 		>
+			{/* ConfirmDialog must be mounted in the tree to render the dialog */}
+			<ConfirmDialog />
+
 			<div className="card flex justify-content-center">
 				<Toast ref={toast} />
 			</div>
@@ -426,13 +487,13 @@ export default function CountryAccounts() {
 							<td>
 								{countryAccount.status === countryAccountStatuses.ACTIVE
 									? ctx.t({
-											code: "common.active",
-											msg: "Active",
-										})
+										code: "common.active",
+										msg: "Active",
+									})
 									: ctx.t({
-											code: "common.inactive",
-											msg: "Inactive",
-										})}
+										code: "common.inactive",
+										msg: "Inactive",
+									})}
 							</td>
 							<td>
 								{countryAccount.type === countryAccountTypesTable.OFFICIAL ? (
@@ -469,6 +530,17 @@ export default function CountryAccounts() {
 										<use href="/assets/icons/edit.svg#edit"></use>
 									</svg>
 								</button>
+								{countryAccount.country.name === "Disaster Land" &&
+									<Button
+										tooltip="Reset all instance data"
+										loading={resetFetcher.state === "submitting"}
+										onClick={() => {
+											handleResetInstanceData(countryAccount);
+										}}
+										className="mg-button mg-button-table"
+									>
+										<i className="pi pi-replay" style={{ fontSize: '1rem' }}></i>
+									</Button>}
 							</td>
 						</tr>
 					))}
@@ -481,13 +553,13 @@ export default function CountryAccounts() {
 				header={
 					editingCountryAccount
 						? ctx.t({
-								code: "admin.edit_country_account",
-								msg: "Edit country account",
-							})
+							code: "admin.edit_country_account",
+							msg: "Edit country account",
+						})
 						: ctx.t({
-								code: "admin.create_country_account",
-								msg: "Create country account",
-							})
+							code: "admin.create_country_account",
+							msg: "Create country account",
+						})
 				}
 				onClose={() => setIsAddCountryAccountDialogOpen(false)}
 				footer={footerContent}
@@ -681,7 +753,7 @@ export default function CountryAccounts() {
 										checked={
 											type === countryAccountTypesTable.OFFICIAL ||
 											editingCountryAccount?.type ===
-												countryAccountTypesTable.OFFICIAL
+											countryAccountTypesTable.OFFICIAL
 										}
 										label={ctx.t({
 											code: "admin.instance_type_official",
@@ -697,7 +769,7 @@ export default function CountryAccounts() {
 										checked={
 											type === countryAccountTypesTable.TRAINING ||
 											editingCountryAccount?.type ===
-												countryAccountTypesTable.TRAINING
+											countryAccountTypesTable.TRAINING
 										}
 										label={ctx.t({
 											code: "admin.instance_type_training",

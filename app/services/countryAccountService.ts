@@ -6,16 +6,40 @@ import {
 	sendInviteForNewCountryAccountAdminUser,
 } from "~/backend.server/models/user/invite";
 import { dr } from "~/db.server";
-import { getCountryById } from "~/db/queries/countries";
+import { AffectedRepository } from "~/db/queries/affectedRepository";
+import { ApiKeyRepository } from "~/db/queries/apiKeyRepository";
+import { AssetRepository } from "~/db/queries/assetRepository";
+import { AuditLogsRepository } from "~/db/queries/auditLogsRepository";
+import { CountryRepository } from "~/db/queries/countriesRepository";
 import {
 	countryAccountWithTypeExists,
 	createCountryAccount,
 	getCountryAccountWithCountryById,
 	updateCountryAccount,
 } from "~/db/queries/countryAccounts";
+import { DamagesRepository } from "~/db/queries/damagesRepository";
+import { DeathRepository } from "~/db/queries/deathRepository";
+import { DevExample1Repository } from "~/db/queries/devExample1Repository";
+import { DisasterEventRepository } from "~/db/queries/disasterEventRepository";
+import { DisasterRecordsRepository } from "~/db/queries/disasterRecordsRepository";
+import { DisplacedRepository } from "~/db/queries/displacedRepository";
+import { DisruptionRepository } from "~/db/queries/disruptionRepository";
+import { divisionRepository } from "~/db/queries/divisonRepository";
+import { EntityValidationAssignmentRepository } from "~/db/queries/entityValidationAssignmentRepository";
+import { EntityValidationRejectionRepository } from "~/db/queries/entityValidationRejectionRepository";
+import { HazardousEventRepository } from "~/db/queries/hazardousEventRepository";
+import { HumanCategoryPresenceRepository } from "~/db/queries/humanCategoryPresenceRepository";
+import { HumanDsgConfigRepository } from "~/db/queries/humanDsgConfigRepository";
+import { HumanDsgRepository } from "~/db/queries/humanDsgRepository";
+import { InjuredRepository } from "~/db/queries/injuredRepository";
 import { createInstanceSystemSetting } from "~/db/queries/instanceSystemSetting";
-import { createUser, getUserByEmail, updateUserById } from "~/db/queries/user";
-import { createUserCountryAccounts } from "~/db/queries/userCountryAccounts";
+import { LossesRepository } from "~/db/queries/lossesRepository";
+import { MissingRepository } from "~/db/queries/missingRepository";
+import { NonEcoLossesRepository } from "~/db/queries/nonEcoLossesRepository";
+import { OrganizationRepository } from "~/db/queries/organizationRepository";
+import { SectorDisasterRecordsRelationRepository } from "~/db/queries/sectorDisasterRecordsRelationRepository";
+import { UserRepository } from "~/db/queries/UserRepository";
+import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import {
 	CountryAccountStatus,
 	countryAccountStatuses,
@@ -69,7 +93,7 @@ export async function createCountryAccountService(
 	if (
 		countryId &&
 		countryId !== "-1" &&
-		(await getCountryById(countryId)) == null
+		(await CountryRepository.getById(countryId)) == null
 	) {
 		errors.push("Invalid country Id");
 	}
@@ -97,15 +121,20 @@ export async function createCountryAccountService(
 			shortDescription,
 			tx,
 		);
+		console.log("countryAccount.id =", countryAccount.id);
 		let isNewUser = false;
-		let user = await getUserByEmail(email);
+		let user = await UserRepository.getByEmail(email);
 		if (!user) {
 			isNewUser = true;
-			user = await createUser(email, tx);
+			user = await UserRepository.create(
+				{
+					email,
+				},
+				tx,
+			);
 		}
 		const role = "admin";
-		console.log(" ... creating usercountryaccount");
-		await createUserCountryAccounts(
+		await UserCountryAccountRepository.create(
 			{
 				userId: user.id,
 				countryAccountsId: countryAccount.id,
@@ -114,7 +143,8 @@ export async function createCountryAccountService(
 			},
 			tx,
 		);
-		const country = await getCountryById(countryId);
+
+		const country = await CountryRepository.getById(countryId);
 		if (!country) {
 			errors.push(`Country with ID ${countryId} not found.`);
 			throw new CountryAccountValidationError(errors);
@@ -133,7 +163,7 @@ export async function createCountryAccountService(
 			const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
 
 			// update user with invitation code
-			updateUserById(
+			UserRepository.updateById(
 				user.id,
 				{
 					inviteSentAt: new Date(),
@@ -171,7 +201,7 @@ export async function createCountryAccountService(
 				const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
 
 				// update user with invitation code
-				updateUserById(
+				UserRepository.updateById(
 					user.id,
 					{
 						inviteSentAt: new Date(),
@@ -223,4 +253,125 @@ export async function updateCountryAccountStatusService(
 		shortDescription,
 	);
 	return { updatedCountryAccount };
+}
+
+export async function resetInstanceData(countryAccountId: string) {
+	console.log("Resetting instance data for:", countryAccountId);
+	return dr.transaction(async (tx) => {
+		// 1. Get all disaster records for this country account
+		const disasterRecords =
+			await DisasterRecordsRepository.getByCountryAccountsId(
+				countryAccountId,
+				tx,
+			);
+		const recordIds = disasterRecords.map((r) => r.id);
+
+		const hazardousEvents =
+			await HazardousEventRepository.getByCountryAccountsId(
+				countryAccountId,
+				tx,
+			);
+		const hazardousEventIds = hazardousEvents.map((r) => r.id);
+
+		const disasterEvents = await DisasterEventRepository.getByCountryAccountsId(
+			countryAccountId,
+			tx,
+		);
+		const disasterEventIds = disasterEvents.map((r) => r.id);
+
+		if (recordIds.length > 0) {
+			// 1. delete records from tables related to human_dsg — needs dsg ids first
+			const dsgRecords = await HumanDsgRepository.getByRecordIds(recordIds, tx);
+			const dsgIds = dsgRecords.map((d) => d.id);
+
+			if (dsgIds.length > 0) {
+				await AffectedRepository.deleteByDsgIds(dsgIds, tx);
+				await DisplacedRepository.deleteByDsgIds(dsgIds, tx);
+				await DeathRepository.deleteByDsgIds(dsgIds, tx);
+				await MissingRepository.deleteByDsgIds(dsgIds, tx);
+				await InjuredRepository.deleteByDsgIds(dsgIds, tx);
+			}
+
+			// 2. delete records in tables related to disaster records.
+			await HumanDsgRepository.deleteByRecordIds(recordIds, tx);
+			await DisruptionRepository.deleteByRecordIds(recordIds, tx);
+			await HumanCategoryPresenceRepository.deleteByRecordIds(recordIds, tx);
+			await NonEcoLossesRepository.deleteByRecordIds(recordIds, tx);
+			await SectorDisasterRecordsRelationRepository.deleteByRecordIds(
+				recordIds,
+				tx,
+			);
+			await LossesRepository.deleteByRecordIds(recordIds, tx);
+			await DamagesRepository.deleteByRecordIds(recordIds, tx);
+
+			EntityValidationAssignmentRepository.deleteByEntityIdsAndEntityType(
+				recordIds,
+				"disaster_records",
+			);
+			EntityValidationRejectionRepository.deleteByEntityIdsAndEntityType(
+				recordIds,
+				"disaster_records",
+				tx,
+			);
+		}
+		if (hazardousEventIds.length > 0) {
+			EntityValidationAssignmentRepository.deleteByEntityIdsAndEntityType(
+				recordIds,
+				"hazardous_event",
+				tx,
+			);
+			EntityValidationRejectionRepository.deleteByEntityIdsAndEntityType(
+				recordIds,
+				"hazardous_event",
+				tx,
+			);
+		}
+		if (disasterEventIds.length > 0) {
+			EntityValidationAssignmentRepository.deleteByEntityIdsAndEntityType(
+				recordIds,
+				"disaster_event",
+				tx,
+			);
+			EntityValidationRejectionRepository.deleteByEntityIdsAndEntityType(
+				recordIds,
+				"disaster_event",
+				tx,
+			);
+		}
+		await AssetRepository.deleteByCountryAccountIdAndIsBuiltIn(
+			countryAccountId,
+			false,
+			tx,
+		);
+		await ApiKeyRepository.deleteByCountryAccountId(countryAccountId, tx);
+		await AuditLogsRepository.deleteByCountryAccountId(countryAccountId, tx);
+		await HumanDsgConfigRepository.deleteByCountryAccountId(
+			countryAccountId,
+			tx,
+		);
+		await divisionRepository.deleteByCountryAccountId(countryAccountId, tx);
+		await UserCountryAccountRepository.deleteByCountryAccountIdAndIsPrimaryAdmin(
+			countryAccountId,
+			false,
+			tx,
+		);
+		await OrganizationRepository.deleteByCountryAccountId(countryAccountId, tx);
+		await DevExample1Repository.deleteByCountryAccountId(countryAccountId, tx);
+
+		// 3. Delete all disaster records for this country account
+		await DisasterRecordsRepository.deleteByCountryAccountId(
+			countryAccountId,
+			tx,
+		);
+		await DisasterEventRepository.deleteByCountryAccountId(
+			countryAccountId,
+			tx,
+		);
+		await HazardousEventRepository.deleteByCountryAccountId(
+			countryAccountId,
+			tx,
+		);
+
+		return true;
+	});
 }

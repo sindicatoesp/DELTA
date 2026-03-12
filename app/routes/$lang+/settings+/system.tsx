@@ -10,7 +10,7 @@ import { getSystemInfo } from "~/db/queries/dtsSystemInfo";
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 import { getCountryAccountById } from "~/db/queries/countryAccounts";
-import { getCountryById } from "~/db/queries/countries";
+import { CountryRepository } from "~/db/queries/countriesRepository";
 import {
 	SettingsValidationError,
 	updateSettingsService,
@@ -49,7 +49,7 @@ export const loader = authLoaderWithPerm(
 		const countryAccount = await getCountryAccountById(countryAccountsId);
 		let country = null;
 		if (countryAccount) {
-			country = await getCountryById(countryAccount.countryId);
+			country = await CountryRepository.getById(countryAccount.countryId);
 		}
 		const dtsSystemInfo = await getSystemInfo();
 
@@ -421,9 +421,10 @@ export default function Settings() {
 						code: "settings.system.edit_settings",
 						msg: "Edit Settings",
 					})}
+					style={{ width: "50vw" }}
+					breakpoints={{ '960px': '75vw', '641px': '50vw' }}
 					visible={isDialogOpen}
 					onHide={handleCloseDialog}
-					style={{ width: "640px" }}
 					modal
 				>
 					<Form method="post" id="addCountryAccountForm" ref={formRef}>
