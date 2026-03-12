@@ -275,12 +275,11 @@ export const action = authActionWithPerm(
 				const updatedData = {
 					...fields,
 					countryAccountsId,
-					createdBy: userSession.user.id,
-					updatedBy: userSession.user.id,
+					createdByUserId: userSession.user.id,
 					updatedByUserId: userSession.user.id,
 				};
 				// Save normal for data to database using the disasterRecordsCreate function
-				const returnValue = await disasterRecordsCreate(ctx, tx, fields);
+				const returnValue = await disasterRecordsCreate(ctx, tx, updatedData);
 
 				// continue to approval workflow processing if update is successful
 				if (returnValue.ok === true) {

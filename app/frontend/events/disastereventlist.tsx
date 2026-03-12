@@ -123,6 +123,8 @@ export function ListView(props: ListViewProps) {
 					fromDate={filters.fromDate}
 					toDate={filters.toDate}
 					recordStatus={filters.recordStatus}
+					viewMyRecords={filters.viewMyRecords}
+					pendingMyAction={filters.pendingMyAction}
 				/>
 
 				<section className="dts-page-section">

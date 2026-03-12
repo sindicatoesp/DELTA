@@ -72,11 +72,6 @@ export async function handleApprovalWorkflowService(
 		);
 	}
 
-	console.log(
-		"userCountryAccounts",
-		userCountryAccounts.user_country_accounts.role,
-	);
-
 	if (
 		"tempAction" in formData &&
 		formData.tempAction &&

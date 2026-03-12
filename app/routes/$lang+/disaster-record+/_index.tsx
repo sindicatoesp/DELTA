@@ -152,6 +152,8 @@ export default function Data() {
 					sectors={ld.sectors}
 					sectorId={ld.filters.sectorId}
 					subSectorId={ld.filters.subSectorId}
+					viewMyRecords={ld.filters.viewMyRecords}
+					pendingMyAction={ld.filters.pendingMyAction}
 				/>
 
 				<section className="dts-page-section">

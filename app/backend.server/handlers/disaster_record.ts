@@ -11,17 +11,19 @@ import {
 	OffsetLimit,
 } from "~/frontend/pagination/api.server";
 
-import { and, eq, desc, sql, ilike } from "drizzle-orm";
+import { and, eq, desc, sql, ilike, or } from "drizzle-orm";
 
 import { LoaderFunctionArgs } from "react-router";
 import { approvalStatusIds } from "~/frontend/approval";
 import {
 	getCountryAccountsIdFromSession,
 	getCountrySettingsFromSession,
+	getUserIdFromSession,
 } from "~/utils/session";
 import { getSectorByLevel } from "~/db/queries/sector";
 
 import { BackendContext } from "../context";
+import { entityValidationAssignmentTable } from "~/drizzle/schema/entityValidationAssignmentTable";
 
 interface disasterRecordLoaderArgs {
 	loaderArgs: LoaderFunctionArgs;
@@ -31,12 +33,15 @@ export async function disasterRecordLoader(args: disasterRecordLoaderArgs) {
 	const { loaderArgs } = args;
 	const ctx = new BackendContext(loaderArgs);
 	const { request } = loaderArgs;
+	const userId = (await getUserIdFromSession(request)) as string;
 
 	const url = new URL(request.url);
 	const extraParams = [
 		"disasterEventUUID",
 		"disasterRecordUUID",
 		"recordStatus",
+		"viewMyRecords",
+		"pendingMyAction",
 	];
 	const filters: {
 		approvalStatus?: approvalStatusIds;
@@ -48,6 +53,9 @@ export async function disasterRecordLoader(args: disasterRecordLoaderArgs) {
 		toDate: string;
 		sectorId: string;
 		subSectorId: string;
+		viewMyRecords?: boolean;
+		pendingMyAction?: boolean;
+		userId?: string; // For user-specific filters
 	} = {
 		approvalStatus: "published",
 		disasterEventUUID: url.searchParams.get("disasterEventUUID") || "",
@@ -58,6 +66,8 @@ export async function disasterRecordLoader(args: disasterRecordLoaderArgs) {
 		toDate: url.searchParams.get("toDate") || "",
 		sectorId: url.searchParams.get("sectorId") || "",
 		subSectorId: url.searchParams.get("subSectorId") || "",
+		viewMyRecords: url.searchParams.get("viewMyRecords") === "on",
+		pendingMyAction: url.searchParams.get("pendingMyAction") === "on",
 	};
 	const isPublic = authLoaderIsPublic(loaderArgs);
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
@@ -72,6 +82,8 @@ export async function disasterRecordLoader(args: disasterRecordLoaderArgs) {
 	if (!isPublic) {
 		filters.approvalStatus = undefined;
 	}
+
+	filters.userId = userId;
 
 	filters.disasterEventName = filters.disasterEventName.trim();
 
@@ -96,6 +108,38 @@ export async function disasterRecordLoader(args: disasterRecordLoaderArgs) {
 		filters.recordStatus !== ""
 			? sql`${disasterRecordsTable.approvalStatus}::text ILIKE ${searchRecordStatus}`
 			: undefined,
+
+		// User-specific filters - Note: These fields may need to be added to schema
+		// For now, commenting out until proper user tracking fields are available
+		filters.viewMyRecords && filters.userId
+			? or(
+					eq(disasterRecordsTable.createdByUserId, filters.userId),
+					eq(disasterRecordsTable.validatedByUserId, filters.userId),
+					eq(disasterRecordsTable.publishedByUserId, filters.userId),
+				)
+			: undefined,
+
+		// Pending action filter - simplified for now
+		filters.pendingMyAction && filters.userId
+			? or(
+					and(
+						eq(disasterRecordsTable.approvalStatus, "needs-revision"),
+						eq(disasterRecordsTable.submittedByUserId, filters.userId),
+					),
+					and(
+						eq(disasterRecordsTable.approvalStatus, "waiting-for-validation"),
+						sql`EXISTS (
+						SELECT 1 FROM ${entityValidationAssignmentTable}
+						WHERE (
+							entity_validation_assignment.entity_Id = ${disasterRecordsTable.id}
+							AND entity_validation_assignment.entity_type = 'disaster_records'
+							AND entity_validation_assignment.assigned_to_user_id = ${filters.userId}
+						)
+					)`,
+					),
+				)
+			: undefined,
+
 		filters.fromDate
 			? and(
 					sql`${disasterRecordsTable.startDate} != ''`,

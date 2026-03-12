@@ -87,8 +87,7 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 			const updatedData = {
 				...data,
 				countryAccountsId,
-				createdBy: userSession.user.id,
-				updatedBy: userSession.user.id,
+				createdByUserId: userSession.user.id,
 				updatedByUserId: userSession.user.id,
 			};
 			if (id) {
