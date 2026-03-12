@@ -1,7 +1,4 @@
-// interface HomeProps {
-// 	onNavigate: (view: string) => void;
-// }
-
+import { Link } from "react-router";
 
 export default function Home() {
 
@@ -32,11 +29,14 @@ export default function Home() {
 					</p>
 
 					<div className="flex flex-wrap gap-4">
-						<button className="px-6 py-2 bg-white text-sky-800 rounded-md text-sm font-medium">
+						<Link
+							to="/en/user/login"
+							className="px-6 py-2 bg-white text-sky-800 rounded-md text-sm font-medium cursor-pointer inline-block"
+						>
 							Log in
-						</button>
+						</Link>
 
-						<button className="px-6 py-2 border border-zinc-300 text-white rounded-md text-sm font-medium">
+						<button className="px-6 py-2 border border-zinc-300 text-white rounded-md text-sm font-medium cursor-pointer">
 							View documentation
 						</button>
 					</div>
@@ -53,7 +53,7 @@ export default function Home() {
 							How it works
 						</h2>
 
-						<button className="px-4 py-2 border border-sky-950 rounded-md text-sky-950 text-sm font-medium w-fit">
+						<button className="px-4 py-2 border border-sky-950 rounded-md text-sky-950 text-sm font-medium w-fit cursor-pointer">
 							Learn more
 						</button>
 					</div>
@@ -137,7 +137,7 @@ export default function Home() {
 							Key Features
 						</h2>
 
-						<button className="px-4 py-2 border border-sky-950 rounded-md text-sky-950 text-sm font-medium w-fit">
+						<button className="px-4 py-2 border border-sky-950 rounded-md text-sky-950 text-sm font-medium w-fit cursor-pointer">
 							Learn more
 						</button>
 					</div>
@@ -238,7 +238,7 @@ export default function Home() {
 						Learn more about the system
 					</h2>
 
-					<button className="px-6 py-2 border border-white rounded-md text-white text-sm font-medium">
+					<button className="px-6 py-2 border border-white rounded-md text-white text-sm font-medium cursor-pointer">
 						View documentation
 					</button>
 

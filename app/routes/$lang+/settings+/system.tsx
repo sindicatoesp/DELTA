@@ -421,9 +421,10 @@ export default function Settings() {
 						code: "settings.system.edit_settings",
 						msg: "Edit Settings",
 					})}
+					style={{ width: "50vw" }}
+					breakpoints={{ '960px': '75vw', '641px': '50vw' }}
 					visible={isDialogOpen}
 					onHide={handleCloseDialog}
-					style={{ width: "640px" }}
 					modal
 				>
 					<Form method="post" id="addCountryAccountForm" ref={formRef}>
