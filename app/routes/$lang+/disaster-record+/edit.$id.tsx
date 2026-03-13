@@ -272,7 +272,7 @@ export default function Screen() {
 				)}
 			/>
 			{ld.item && (
-				<>
+				<div className="mg-container">
 					<div>&nbsp;</div>
 					<section>
 						<div className="mx-auto px-4">
@@ -607,8 +607,9 @@ export default function Screen() {
 							</fieldset>
 						</div>
 					</section>
-				</>
-			)}
+				</div >
+			)
+			}
 		</>
 	);
 }
