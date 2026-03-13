@@ -16,13 +16,19 @@ import { getTableName } from "drizzle-orm";
 import { dr } from "~/db.server";
 import { contentPickerConfig } from "./content-picker-config";
 import { sql, eq } from "drizzle-orm";
-import { optionalUser } from "~/utils/auth";
+import {
+	authActionGetAuth,
+	authActionWithPerm,
+	optionalUser,
+} from "~/utils/auth";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 import { useLoaderData } from "react-router";
 import { ViewContext } from "~/frontend/context";
 
 import { LoaderFunctionArgs } from "react-router";
 import { BackendContext } from "~/backend.server/context";
+import { updateDisasterRecordStatusService } from "~/services/disasterRecordService";
+import { processApprovalStatusActionService } from "~/services/approvalStatusWorkflowService";
 
 export const loader = async (args: LoaderFunctionArgs) => {
 	const { request, params } = args;
@@ -119,6 +125,26 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		item: extendedItem,
 	};
 };
+
+export const action = authActionWithPerm("EditData", async (actionArgs) => {
+	const { request } = actionArgs;
+	const ctx = new BackendContext(actionArgs);
+	const countryAccountsId = await getCountryAccountsIdFromSession(request);
+	const userSession = authActionGetAuth(actionArgs);
+	const formData = await request.formData();
+
+	const result = await processApprovalStatusActionService({
+		ctx,
+		request,
+		formData,
+		countryAccountsId,
+		userId: userSession.user.id,
+		recordType: "disaster_records",
+		updateStatusService: updateDisasterRecordStatusService,
+	});
+
+	return Response.json(result);
+});
 
 export default function Screen() {
 	const ld = useLoaderData<typeof loader>();

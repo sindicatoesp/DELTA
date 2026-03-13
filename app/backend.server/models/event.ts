@@ -1458,6 +1458,100 @@ export async function disasterEventUpdateByIdAndCountryAccountsId(
 	return { ok: true };
 }
 
+export async function disasterEventUpdateApprovalStatus(
+	id: string,
+	status: approvalStatusIds,
+): Promise<UpdateResult<DisasterEventFields>> {
+	await dr
+		.update(disasterEventTable)
+		.set({ approvalStatus: status, updatedAt: new Date() })
+		.where(eq(disasterEventTable.id, id))
+		.returning();
+
+	return { ok: true };
+}
+
+export async function disasterEventUpdateApprovalStatusOnGoing(
+	id: string,
+	status: "draft" | "waiting-for-validation" | "needs-revision",
+): Promise<UpdateResult<DisasterEventFields>> {
+	await dr
+		.update(disasterEventTable)
+		.set({
+			approvalStatus: status,
+			submittedByUserId: null,
+			submittedAt: null,
+			validatedByUserId: null,
+			validatedAt: null,
+			publishedByUserId: null,
+			publishedAt: null,
+			updatedAt: new Date(),
+		})
+		.where(eq(disasterEventTable.id, id))
+		.returning();
+
+	return { ok: true };
+}
+
+export async function disasterEventUpdateApprovalStatusNeedRevision(
+	id: string,
+): Promise<UpdateResult<DisasterEventFields>> {
+	await dr
+		.update(disasterEventTable)
+		.set({
+			approvalStatus: "needs-revision",
+			validatedByUserId: null,
+			validatedAt: null,
+			publishedByUserId: null,
+			publishedAt: null,
+			updatedAt: new Date(),
+		})
+		.where(eq(disasterEventTable.id, id))
+		.returning();
+
+	return { ok: true };
+}
+
+export async function disasterEventUpdateApprovalStatusValidate(
+	id: string,
+	validatedByUserId: string,
+): Promise<UpdateResult<DisasterEventFields>> {
+	await dr
+		.update(disasterEventTable)
+		.set({
+			approvalStatus: "validated",
+			validatedByUserId: validatedByUserId,
+			validatedAt: new Date(),
+			publishedByUserId: null,
+			publishedAt: null,
+			updatedAt: new Date(),
+		})
+		.where(eq(disasterEventTable.id, id))
+		.returning();
+
+	return { ok: true };
+}
+
+export async function disasterEventUpdateApprovalStatusPublish(
+	id: string,
+	publishedByUserId: string,
+): Promise<UpdateResult<DisasterEventFields>> {
+	await dr
+		.update(disasterEventTable)
+		.set({
+			approvalStatus: "published",
+			validatedByUserId: publishedByUserId,
+			validatedAt: new Date(),
+			publishedByUserId: publishedByUserId,
+			publishedAt: new Date(),
+			updatedAt: new Date(),
+		})
+		.where(eq(disasterEventTable.id, id))
+		.returning();
+
+	return { ok: true };
+}
+
 export async function disasterEventIdByImportId(tx: Tx, importId: string) {
 	const res = await tx
 		.select({

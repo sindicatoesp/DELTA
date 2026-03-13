@@ -16,7 +16,6 @@ import {
 	UserFormProps,
 	FormInputDef,
 	FieldsView,
-	ViewComponent,
 	FormView,
 	FieldErrors,
 	Field,
@@ -46,6 +45,7 @@ import {
 	SaveAction,
 	UserValidator,
 } from "~/frontend/components/approval-workflow/SaveSubmitDialog";
+import { ViewComponentMainDataCollection } from "../components/data-collection/View";
 
 export const route = "/disaster-event";
 
@@ -1401,7 +1401,8 @@ export function DisasterEventView(props: DisasterEventViewProps) {
 	};
 
 	return (
-		<ViewComponent
+		<ViewComponentMainDataCollection
+			approvalStatus={item?.approvalStatus}
 			ctx={props.ctx}
 			isPublic={props.isPublic}
 			path={route}
@@ -1431,6 +1432,6 @@ export function DisasterEventView(props: DisasterEventViewProps) {
 					<AuditLogHistory ctx={ctx} auditLogs={auditLogs} />
 				</>
 			)}
-		</ViewComponent>
+		</ViewComponentMainDataCollection>
 	);
 }

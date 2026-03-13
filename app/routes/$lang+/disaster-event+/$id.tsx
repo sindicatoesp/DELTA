@@ -10,7 +10,11 @@ import {
 import { ViewScreenPublicApproved } from "~/frontend/form";
 import { getTableName } from "drizzle-orm";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { optionalUser } from "~/utils/auth";
+import {
+	authActionGetAuth,
+	authActionWithPerm,
+	optionalUser,
+} from "~/utils/auth";
 
 import { dr } from "~/db.server";
 import { sql } from "drizzle-orm";
@@ -19,6 +23,9 @@ import { ViewContext } from "~/frontend/context";
 import { useLoaderData } from "react-router";
 
 import { LoaderFunctionArgs } from "react-router";
+import { BackendContext } from "~/backend.server/context";
+import { updateDisasterEventStatusService } from "~/services/disasterEventService";
+import { processApprovalStatusActionService } from "~/services/approvalStatusWorkflowService";
 
 export const loader = async (args: LoaderFunctionArgs) => {
 	const { request, params } = args;
@@ -133,6 +140,27 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		},
 	};
 };
+
+export const action = authActionWithPerm("EditData", async (actionArgs) => {
+	const { request } = actionArgs;
+
+	const countryAccountsId = await getCountryAccountsIdFromSession(request);
+	const userSession = authActionGetAuth(actionArgs);
+	const formData = await request.formData();
+	const ctx = new BackendContext(actionArgs);
+
+	const result = await processApprovalStatusActionService({
+		ctx,
+		request,
+		formData,
+		countryAccountsId,
+		userId: userSession.user.id,
+		recordType: "disaster_event",
+		updateStatusService: updateDisasterEventStatusService,
+	});
+
+	return Response.json(result);
+});
 
 export default function Screen() {
 	const ld = useLoaderData<typeof loader>();

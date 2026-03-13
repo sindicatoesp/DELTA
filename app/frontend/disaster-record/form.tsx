@@ -12,7 +12,6 @@ import {
 	FormView,
 	FieldErrors,
 	Field,
-	ViewComponent,
 	WrapInputBasic,
 } from "~/frontend/form";
 
@@ -43,6 +42,7 @@ import {
 	SaveAction,
 	UserValidator,
 } from "~/frontend/components/approval-workflow/SaveSubmitDialog";
+import { ViewComponentMainDataCollection } from "../components/data-collection/View";
 
 export const route = "/disaster-record";
 
@@ -639,7 +639,8 @@ export function DisasterRecordsView(props: DisasterRecordsViewProps) {
 	const dataSource = (item as any)?.disasterRecord || [];
 
 	return (
-		<ViewComponent
+		<ViewComponentMainDataCollection
+			approvalStatus={item?.approvalStatus}
 			ctx={props.ctx}
 			isPublic={props.isPublic}
 			path={route}
@@ -754,6 +755,6 @@ export function DisasterRecordsView(props: DisasterRecordsViewProps) {
 					<AuditLogHistory ctx={ctx} auditLogs={auditLogs} />
 				</>
 			)}
-		</ViewComponent>
+		</ViewComponentMainDataCollection>
 	);
 }
