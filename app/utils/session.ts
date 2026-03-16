@@ -110,7 +110,6 @@ export async function createUserSession(userId: string) {
 
 	const session = await sessionCookie().getSession();
 	session.set("sessionId", sessionId);
-	session.set("userId", res[0].userId);
 
 	const setCookie = await sessionCookie().commitSession(session);
 	return {
@@ -275,8 +274,6 @@ export async function getCountryAccountsIdFromSession(request: Request) {
 }
 
 export async function getUserIdFromSession(request: Request) {
-	const session = await sessionCookie().getSession(
-		request.headers.get("Cookie"),
-	);
-	return session.get("userId");
+	const userSession = await getUserFromSession(request);
+	return userSession?.user?.id;
 }
