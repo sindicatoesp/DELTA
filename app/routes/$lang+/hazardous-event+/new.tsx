@@ -14,7 +14,7 @@ import { dr } from "~/db.server";
 import {
 	getUserCountryAccountsWithValidatorRole,
 	getUserCountryAccountsWithAdminRole,
-} from "~/db/queries/userCountryAccounts";
+} from "~/db/queries/userCountryAccountsRepository";
 import { divisionTable } from "~/drizzle/schema/divisionTable";
 import { ViewContext } from "~/frontend/context";
 import {

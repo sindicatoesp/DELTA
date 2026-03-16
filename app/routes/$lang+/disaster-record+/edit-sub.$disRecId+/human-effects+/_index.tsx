@@ -38,9 +38,9 @@ export const loader = authLoaderWithPerm("EditData", async (args) => {
 	let tblStr = url.searchParams.get("tbl") || "";
 
 	// Tenant check for disaster record
-	const record = await disasterRecordsById(recordId);
+	const record = await disasterRecordsById(recordId, countryAccountsId);
 
-	if (!record || record.countryAccountsId !== countryAccountsId) {
+	if (!record) {
 		throw new Response("Unauthorized", { status: 401 });
 	}
 
@@ -98,16 +98,18 @@ export default function Screen() {
 		<MainContainer
 			title={ctx.t({ code: "human_effects", msg: "Human effects" })}
 		>
-			<LangLink lang={ctx.lang} to={"/disaster-record/edit/" + ld.recordId}>
+			<LangLink lang={ctx.lang} to={"/disaster-record/edit/" + ld.recordId}
+				className="text-[#00afae] hover:text-blue-800 underline mb-4 inline-block">
 				{ctx.t({
 					code: "common.back_to_disaster_record",
 					msg: "Back to disaster record",
 				})}
 			</LangLink>
-			<p>{data.tbl.label}</p>
+			<div className="font-bold">{data.tbl.label}</div>
 			<Form>
 				<select
 					name="tbl"
+					className="border border-gray-300 rounded-md px-3 py-2 mb-2 inline-block"
 					value={data.tblId}
 					onChange={(e) => {
 						submit(

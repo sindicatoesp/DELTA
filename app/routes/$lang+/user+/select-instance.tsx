@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, redirect } from "react-router";
+import { ActionFunctionArgs, redirect, useActionData, useNavigation } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { Form, redirectDocument, useLoaderData } from "react-router";
 import { LoaderFunctionArgs } from "react-router";
@@ -9,27 +9,28 @@ import {
 	sessionCookie,
 } from "~/utils/session";
 import { getSafeRedirectTo } from "./login";
-import { getUserCountryAccountsByUserId } from "~/db/queries/userCountryAccounts";
+import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { getCountryAccountById } from "~/db/queries/countryAccounts";
-import { getCountryById } from "~/db/queries/countries";
-import { ListBox } from "~/components/ListBox";
+import { CountryRepository } from "~/db/queries/countriesRepository";
 import { MainContainer } from "~/frontend/container";
 import { NavSettings } from "../settings/nav";
 
-import { SelectUserCountryAccounts } from "~/drizzle/schema/userCountryAccounts";
+import { SelectUserCountryAccounts } from "~/drizzle/schema/userCountryAccountsTable";
 import {
 	countryAccountTypesTable,
 	SelectCountryAccounts,
 } from "~/drizzle/schema/countryAccounts";
 import { SelectCountries } from "~/drizzle/schema/countriesTable";
-import Tag from "~/components/Tag";
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
-import { Toast, ToastRef } from "~/components/Toast";
 import { redirectLangFromRoute, replaceLang } from "~/utils/url.backend";
 
 import { ViewContext } from "~/frontend/context";
 
 import { BackendContext } from "~/backend.server/context";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import { ListBox } from "primereact/listbox";
+import Tag from "~/components/Tag";
 
 type LoaderDataType = SelectUserCountryAccounts & {
 	countryAccount: Partial<SelectCountryAccounts> & {
@@ -54,7 +55,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		return redirect(redirectTo);
 	}
 
-	const userCountryAccounts = await getUserCountryAccountsByUserId(
+	const userCountryAccounts = await UserCountryAccountRepository.getByUserId(
 		userSession.user.id,
 	);
 
@@ -71,7 +72,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 				);
 				if (!countryAccount) return null;
 
-				const country = await getCountryById(countryAccount.countryId);
+				const country = await CountryRepository.getById(countryAccount.countryId);
 				if (!country) return null;
 
 				return {
@@ -104,9 +105,16 @@ export const action = async (args: ActionFunctionArgs) => {
 	const userRole = formData.get("userRole");
 	const ctx = new BackendContext(args);
 
+	const errors: Record<string, string> = {};
 	if (!countryAccountsId || typeof countryAccountsId !== "string") {
-		return new Response("Instance not selected", { status: 400 });
+		// return new Response("Instance not selected", { status: 400 });
+		errors.countryInstance = "Select an instance first";
+		return {
+			ok: false,
+			errors
+		}
 	}
+
 	const url = new URL(request.url);
 	let redirectTo = url.searchParams.get("redirectTo") || "/";
 	if (redirectTo === "/") {
@@ -136,16 +144,33 @@ export const action = async (args: ActionFunctionArgs) => {
 
 export default function SelectInstance() {
 	const ld = useLoaderData<typeof loader>();
+	const actionData = useActionData<typeof action>();
 	const { data } = ld;
 	const ctx = new ViewContext();
 	const [selectedCountryAccounts, setSelectedCountryAccounts] =
 		useState<LoaderDataType | null>(null);
-	const toast = useRef<ToastRef>(null);
+	const toast = useRef<Toast>(null);
 	const [isRtl, setIsRtl] = useState(false);
+	const navigation = useNavigation();
+	const isSubmitting =
+		navigation.state === "submitting"
 
 	useEffect(() => {
 		setIsRtl(document.dir === "rtl");
 	}, []);
+	useEffect(() => {
+		if (actionData?.ok === false && actionData.errors?.countryInstance) {
+			toast.current?.show({
+				severity: "error",
+				summary: ctx.t({ code: "common.error", msg: "Error" }),
+				detail: ctx.t({
+					code: "user_select_instance.select_instance_first",
+					msg: "Select an instance first.",
+				}),
+				life: 4000,
+			});
+		}
+	}, [actionData]);
 
 	const countryTemplate = (option: LoaderDataType) => {
 		const instanceType = option.countryAccount.type;
@@ -222,33 +247,23 @@ export default function SelectInstance() {
 				</div>
 				<Form
 					method="POST"
-					className="dts-form"
-					onSubmit={(e) => {
-						if (!selectedCountryAccounts) {
-							e.preventDefault();
-							toast.current?.show({
-								severity: "error",
-								summary: ctx.t({ code: "common.error", msg: "Error" }),
-								detail: ctx.t({
-									code: "user_select_instance.select_instance_first",
-									msg: "Select an instance first.",
-								}),
-							});
-						}
-					}}
+					className="flex flex-col gap-6"
 				>
-					<div className="dts-form__intro">
-						<h2 className="dts-heading-2">
+					{/* Intro */}
+					<div>
+						<h2 className="text-2xl font-semibold text-gray-800">
 							{ctx.t(
 								{
 									code: "user_select_instance.instances_found",
 									msg: "We found {n} instance(s) associated with your email ID. Please select the instance you want to review.",
 								},
-								{ n: data.length },
+								{ n: data.length }
 							)}
 						</h2>
 					</div>
-					<div className="dts-form__body">
+
+					{/* Body */}
+					<div className="flex flex-col gap-4">
 						<input
 							type="hidden"
 							name="countryAccountsId"
@@ -259,21 +274,28 @@ export default function SelectInstance() {
 							name="userRole"
 							value={selectedCountryAccounts?.role ?? ""}
 						/>
+
 						<ListBox
 							value={selectedCountryAccounts}
 							onChange={(e) => setSelectedCountryAccounts(e.value)}
 							options={data}
-							className="w-full md:w-80"
+							className="w-full "
 							itemTemplate={countryTemplate}
 							listStyle={{ maxHeight: "250px" }}
 						/>
-						<div className="dts-form__actions dts-form__actions--bottom">
-							<button className="mg-button mg-button-primary" type="submit">
+
+						{/* Actions */}
+						<div className="flex justify-end">
+							<Button type="submit"
+								disabled={isSubmitting}
+								loading={isSubmitting} >
 								{ctx.t({ code: "common.go", msg: "Go" })}
-							</button>
+							</Button>
 						</div>
 					</div>
-					<div>
+
+					{/* Footer Message */}
+					<div className="text-base text-gray-600">
 						{ctx.t({
 							code: "user_select_instance.no_instance_message",
 							msg: "Don't see the right instance? Contact your team admin to get access.",

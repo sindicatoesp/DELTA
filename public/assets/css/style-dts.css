@@ -3,197 +3,60 @@
 Document
 ========
 */
-/**
-Use a better box model (opinionated).
-*/
-*,
-::before,
-::after {
-	box-sizing: border-box;
-}
 
 html {
 	/* Improve consistency of default fonts in all browsers. (https://github.com/sindresorhus/modern-normalize/issues/3) */
 	font-family:
 		system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
 		"Apple Color Emoji", "Segoe UI Emoji";
-	line-height: 1.15;
+	/* line-height: 1.15; */
 	/* 1. Correct the line height in all browsers. */
-	-webkit-text-size-adjust: 100%;
+	/* -webkit-text-size-adjust: 100%; */
 	/* 2. Prevent adjustments of font size after orientation changes in iOS. */
-	tab-size: 4;
+	/* tab-size: 4; */
 
 	font-size: 14px;
-	-webkit-tap-highlight-color: transparent;
+	/* -webkit-tap-highlight-color: transparent; */
 	/* 3. Use a more readable tab size (opinionated). */
 }
-
-/*
-Sections
-========
-*/
-body {
-	margin: 0;
-	padding: 0 !important;
-	font-family: "Roboto", "Noto Sans SC", "Noto Sans Arabic", sans-serif;
-	color: #181823;
+html[lang="ar"] {
+	--font-family: "Cairo", sans-serif;
+	font-family: "Cairo", sans-serif;
 }
 
-/*
-Text-level semantics
-====================
-*/
-/**
-Add the correct font weight in Chrome and Safari.
-*/
-b,
-strong {
-	font-weight: bolder;
+/* Move the eye icon to the left of primereact Password component */
+[dir="rtl"] .p-icon-field-right > .p-input-icon {
+	right: auto !important;
+	left: 0.75rem !important;
 }
 
-/**
-1. Improve consistency of default fonts in all browsers. (https://github.com/sindresorhus/modern-normalize/issues/3)
-2. Correct the odd 'em' font sizing in all browsers.
-*/
-code,
-kbd,
-samp,
-pre {
-	font-family:
-		ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
-	/* 1 */
-	font-size: 1em;
-	/* 2 */
+/* Swap padding so text doesn't hide behind the icon in primereact Password component */
+[dir="rtl"] .p-icon-field-right > input {
+	padding-right: 0.75rem !important;
+	padding-left: 2.5rem !important;
 }
 
-/**
-Add the correct font size in all browsers.
-*/
-small {
-	font-size: 80%;
+/* Fix rtl with the menubar */
+[dir="rtl"] .p-menubar .p-menubar-end {
+	margin-left: 0 !important;
+	margin-right: auto !important;
 }
 
-/**
-Prevent 'sub' and 'sup' elements from affecting the line height in all browsers.
-*/
-sub,
-sup {
-	font-size: 75%;
-	line-height: 0;
-	position: relative;
-	vertical-align: baseline;
+[dir="rtl"] .p-menubar .p-menuitem-icon {
+	margin-right: 0 !important;
+	margin-left: 0.5rem !important;
 }
-
-sub {
-	bottom: -0.25em;
+[dir="rtl"] .p-menu .p-menuitem-icon {
+	margin-right: 0 !important;
+	margin-left: 0.5rem !important;
 }
-
-sup {
-	top: -0.5em;
+@font-face {
+	font-family: "Cairo";
+	src: url("/assets/fonts/cairo/static/Cairo-SemiBold.ttf") format("woff2");
+	font-weight: 200 1000;
+	font-style: normal;
+	font-display: swap;
 }
-
-/*
-Tabular data
-============
-*/
-/**
-Correct table border color inheritance in Chrome and Safari. (https://issues.chromium.org/issues/40615503, https://bugs.webkit.org/show_bug.cgi?id=195016)
-*/
-table {
-	border-color: currentcolor;
-}
-
-/*
-Forms
-=====
-*/
-/**
-1. Change the font styles in all browsers.
-2. Remove the margin in Firefox and Safari.
-*/
-button,
-input,
-optgroup,
-select,
-textarea {
-	font-family: inherit;
-	font-size: 100%;
-	line-height: 1.15;
-	margin: 0;
-}
-
-/**
-Correct the inability to style clickable types in iOS and Safari.
-*/
-button,
-[type="button"],
-[type="reset"],
-[type="submit"] {
-	-webkit-appearance: button;
-}
-
-/**
-Remove the padding so developers are not caught out when they zero out 'fieldset' elements in all browsers.
-*/
-legend {
-	padding: 0;
-}
-
-/**
-Add the correct vertical alignment in Chrome and Firefox.
-*/
-progress {
-	vertical-align: baseline;
-}
-
-/**
-Correct the cursor style of increment and decrement buttons in Safari.
-*/
-::-webkit-inner-spin-button,
-::-webkit-outer-spin-button {
-	height: auto;
-}
-
-/**
-1. Correct the odd appearance in Chrome and Safari.
-2. Correct the outline style in Safari.
-*/
-[type="search"] {
-	-webkit-appearance: textfield;
-	/* 1 */
-	outline-offset: -2px;
-	/* 2 */
-}
-
-/**
-Remove the inner padding in Chrome and Safari on macOS.
-*/
-::-webkit-search-decoration {
-	-webkit-appearance: none;
-}
-
-/**
-1. Correct the inability to style clickable types in iOS and Safari.
-2. Change font properties to 'inherit' in Safari.
-*/
-::-webkit-file-upload-button {
-	-webkit-appearance: button;
-	/* 1 */
-	font: inherit;
-	/* 2 */
-}
-
-/*
-Interactive
-===========
-*/
-/*
-Add the correct display in Chrome and Safari.
-*/
-summary {
-	display: list-item;
-}
-
 /* roboto-regular - cyrillic_latin */
 @font-face {
 	font-display: swap;
@@ -399,14 +262,6 @@ summary {
 	}
 }
 
-.overflow-hidden {
-	overflow: hidden;
-}
-
-.hidden {
-	display: none;
-}
-
 .mg-u-sr-only {
 	position: absolute;
 	width: 1px !important;
@@ -426,34 +281,6 @@ summary {
 	content: "";
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	margin-top: 0;
-}
-
-p {
-	margin: 0 0 1.14rem;
-}
-
-hr {
-	border: none;
-	border-top: 1px solid #cccccc;
-	margin: 1.14rem 0;
-}
-
-a {
-	color: #007b7a;
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-
 .dts-svg-24 {
 	width: 1.71rem;
 	height: 1.71rem;
@@ -467,7 +294,7 @@ svg.dts-icon--ocha {
 	justify-content: center;
 }
 
-mark {
+/* mark {
 	background-color: #b5d2d2;
 	padding: 0.29rem 0.57rem;
 }
@@ -476,7 +303,7 @@ nav ul {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-}
+} */
 
 .dts-page-container {
 	display: flex;
@@ -894,9 +721,6 @@ nav ul {
 	padding: 0 1.14rem;
 	margin: 0 auto;
 	max-width: 100%;
-	/* medium design - 1024px up */
-	/* large design - 1164px up */
-	/* xlarge design - 1440px up */
 }
 
 @media (width >=1024px) {
@@ -1786,7 +1610,7 @@ header .mg-container {
 	cursor: not-allowed;
 }
 
-[dir="rtl"] select {
+[dir="rtl"] .dts-form-component select {
 	background-position: top 48% left 0.57rem;
 	padding: 5px 0.8rem 3px 1.71rem;
 }
@@ -3498,5 +3322,3 @@ header .mg-container {
 	font-size: 1.14rem;
 	line-height: 1.375;
 }
-
-/*# sourceMappingURL=style-dts.css.map */

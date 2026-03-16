@@ -12,7 +12,7 @@ import {
 	EntityValidationAssignmentFields,
 } from "../models/entity_validation_assignment";
 import { emailAssignedValidators } from "./emailValidationWorkflowService";
-import { getUserCountryAccountsByUserIdAndCountryAccountsId } from "~/db/queries/userCountryAccounts";
+import { getUserCountryAccountsByUserIdAndCountryAccountsId } from "~/db/queries/userCountryAccountsRepository";
 
 export type ApprovalAction =
 	| "submit-validation"
@@ -94,7 +94,7 @@ export async function handleApprovalWorkflowService(
 				(currentRecordStatus === "draft" ||
 					currentRecordStatus === "needs-revision")) ||
 			(action === "submit-publish" &&
-				userCountryAccounts.user_country_accounts.role === "admin" &&
+				userCountryAccounts.role === "admin" &&
 				(currentRecordStatus === "draft" ||
 					currentRecordStatus === "needs-revision"));
 

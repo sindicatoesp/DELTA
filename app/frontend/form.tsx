@@ -383,6 +383,7 @@ export interface FormInputDef<T> {
 	required?: boolean;
 	tooltip?: string;
 	description?: string;
+	mcpDescription?: string;
 	enumData?: readonly EnumEntry[];
 	psqlType?: string;
 	uiRow?: UIRow;

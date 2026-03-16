@@ -9,28 +9,22 @@ import {
 	Scripts,
 	useNavigation,
 	useFetcher,
-	useMatches,
 } from "react-router";
 
-import { ToastContainer } from "react-toastify/unstyled"; // Import ToastContainer for notifications
+import { ToastContainer } from "react-toastify/unstyled";
 
 import {
 	sessionCookie,
 	getFlashMessage,
 	getUserFromSession,
 	getCountrySettingsFromSession,
-	getSuperAdminSession, // Added import for super admin session detection
+	getSuperAdminSession,
+	getCountryAccountsIdFromSession,
 } from "~/utils/session";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import allStylesHref from "./styles/all.css?url";
-
-import { Header } from "~/frontend/header/header";
-import { Footer } from "~/frontend/footer/footer";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { notifyError, notifyInfo } from "./frontend/utils/notifications";
 
 import { configAuthSupportedForm } from "~/utils/config";
 
@@ -38,10 +32,8 @@ import {
 	sessionActivityTimeoutMinutes,
 	sessionActivityWarningBeforeTimeoutMinutes,
 } from "~/utils/session-activity-config";
-import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
 import { PrimeReactProvider } from "primereact/api";
 
 import { loadTranslations } from "./backend.server/translations";
@@ -50,10 +42,15 @@ import { getLanguageAllowDefault } from "./utils/lang.backend";
 import { ViewContext } from "./frontend/context";
 import { isAdminRoute } from "./utils/url.backend";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
+import { Toast } from "primereact/toast";
+import MainMenuBar from "./components/MainMenuBar";
+import { isRouteErrorResponse, useRouteError } from "react-router";
+import { Footer } from "./frontend/footer/footer";
 
 export const links: LinksFunction = () => [
-	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250532" },
+	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250630" },
 	{ rel: "stylesheet", href: allStylesHref },
+	{ rel: "stylesheet", href: "/assets/themes/lara-light-blue/theme.css" },
 ];
 
 export const loader = async (
@@ -62,12 +59,13 @@ export const loader = async (
 	const { request } = routeArgs;
 
 	const user = await getUserFromSession(request);
-	const superAdminSession = await getSuperAdminSession(request); // Add super admin session detection
+	const superAdminSession = await getSuperAdminSession(request);
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
 	const message = getFlashMessage(session);
 	const userRole = session.get("userRole");
+	const isCountryAccountSelected = await getCountryAccountsIdFromSession(request) ? true : false;
 	const isFormAuthSupported = configAuthSupportedForm();
 
 	// Determine if this is a super admin session and on an admin route
@@ -84,7 +82,7 @@ export const loader = async (
 		settings = await getCountrySettingsFromSession(request);
 	}
 
-	const websiteName = settings ? settings.websiteName : "DELTA Resilience";
+	const websiteName = settings ? settings.websiteName : undefined;
 	const websiteLogo = settings
 		? settings.websiteLogo
 		: "/assets/country-instance-logo.png";
@@ -109,8 +107,8 @@ export const loader = async (
 				user: userForFrontend,
 			},
 			translations,
-			hasPublicSite: true,
-			loggedIn: !!user || (!!superAdminSession && isAdminRoute(request)),
+			isLoggedIn: !!user || (!!superAdminSession && isAdminRoute(request)),
+			isCountryAccountSelected,
 			userRole: effectiveUserRole || "",
 			isSuperAdmin: isSuperAdmin,
 			isFormAuthSupported: isFormAuthSupported,
@@ -158,7 +156,7 @@ function InactivityWarning(props: InactivityWarningProps) {
 			if (
 				minutesSinceLastActivity >
 				sessionActivityTimeoutMinutes -
-					sessionActivityWarningBeforeTimeoutMinutes
+				sessionActivityWarningBeforeTimeoutMinutes
 			) {
 				setShowWarning(true);
 				setExpiresInMinutes(
@@ -232,73 +230,29 @@ function InactivityWarning(props: InactivityWarningProps) {
 	);
 }
 
-// Create a new QueryClient instance outside of component to ensure consistent instance
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			refetchOnWindowFocus: false,
-			retry: false,
-			staleTime: 30000,
-		},
-	},
-});
-
 export default function Screen() {
 	const loaderData = useLoaderData();
 	let ctx = new ViewContext();
 
 	const {
-		hasPublicSite,
-		loggedIn,
+		isLoggedIn,
 		flashMessage,
 		confSiteName,
-		confSiteLogo,
+		// confSiteLogo,
 		confFooterURLPrivPolicy,
 		confFooterURLTermsConds,
 		userRole,
-		isSuperAdmin,
-		isFormAuthSupported,
+		// isSuperAdmin,
+		// isFormAuthSupported,
 		lang,
 		translations,
+		isCountryAccountSelected
 	} = loaderData;
-	let boolShowHeaderFooter: boolean = true;
-	const matches = useMatches();
-	const isUrlPathUserInvite = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/user/accept-invite")),
-	);
-	const isUrlPathUserVerifyEmail = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/user/verify-email")),
-	);
-	const isUrlPathAdminRegistration = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/setup/admin-account")),
-	);
-	const isUrlPathResetPassword = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/user/forgot-password")),
-	);
-	const isUrlSuperAdmin = matches.some((match) =>
-		match.pathname.startsWith(ctx.url("/admin")),
-	);
-
-	// Do not show header and footer for certain pages [user invitation | admin registration]
-	// But show header for super admin pages if the user is a super admin
-	if (
-		isUrlPathUserInvite ||
-		isUrlPathAdminRegistration ||
-		isUrlPathUserVerifyEmail ||
-		isUrlPathResetPassword ||
-		(isUrlSuperAdmin && !isSuperAdmin) // Only hide for super admin routes if not actually super admin
-	) {
-		boolShowHeaderFooter = false;
-	}
-
 	// Display toast for flash messages
+	const toast = useRef<Toast>(null);
 	useEffect(() => {
 		if (flashMessage) {
-			if (flashMessage.type === "error") {
-				notifyError(flashMessage.text);
-			} else {
-				notifyInfo(flashMessage.text);
-			}
+			toast?.current?.show({ severity: flashMessage.type, detail: flashMessage.text });
 		}
 	}, [flashMessage]);
 
@@ -320,56 +274,139 @@ export default function Screen() {
 				/>
 			</head>
 			<body>
-				<QueryClientProvider client={queryClient}>
-					<ToastContainer
-						position="top-center"
-						autoClose={5000}
-						hideProgressBar={false}
-						newestOnTop={true}
-						closeOnClick={true}
-						pauseOnHover={true}
-						draggable={false}
-						toastClassName="custom-toast"
-					/>
-					<InactivityWarning ctx={ctx} loggedIn={loggedIn} />
-					<div className="dts-page-container">
-						{(hasPublicSite || loggedIn) && boolShowHeaderFooter && (
-							<header>
-								<div className="mg-container">
-									<Header
-										ctx={ctx}
-										loggedIn={loggedIn}
+				<ToastContainer
+					position="top-center"
+					autoClose={5000}
+					hideProgressBar={false}
+					newestOnTop={true}
+					closeOnClick={true}
+					pauseOnHover={true}
+					draggable={false}
+					toastClassName="custom-toast"
+				/>
+				<Toast ref={toast} />
+				<PrimeReactProvider
+					value={{
+						ripple: true,
+					}}
+				>
+					<InactivityWarning ctx={ctx} loggedIn={isLoggedIn} />
+					<div className="min-h-screen flex flex-col  bg-gray-50">
+
+						{/* Header */}
+						<header className="w-full bg-white border-b border-gray-200">
+							<div className="mx-auto max-w-8xl px-4 md:px-6 lg:px-8 py-4">
+								<h1 className="text-xl font-semibold text-gray-900">
+									<MainMenuBar
+										isLoggedIn={isLoggedIn}
 										userRole={userRole}
-										siteName={confSiteName}
-										siteLogo={confSiteLogo}
-										isSuperAdmin={isSuperAdmin}
-										isFormAuthSupported={isFormAuthSupported}
-									/>
-								</div>
-							</header>
-						)}
-						<main className="dts-main-container">
-							<PrimeReactProvider
-								value={{
-									ripple: true,
-								}}
-							>
+										isCountryAccountSelected={isCountryAccountSelected}
+										siteName={confSiteName} />
+								</h1>
+							</div>
+						</header>
+
+						{/* Main Content */}
+						<main className="flex-1 w-full">
+							<div className="w-full py-8">
 								<Outlet />
-							</PrimeReactProvider>
+							</div>
 						</main>
+
+						{/* Footer */}
 						<footer>
-							{boolShowHeaderFooter && (
-								<Footer
-									ctx={ctx}
-									siteName={confSiteName}
-									urlPrivacyPolicy={confFooterURLPrivPolicy}
-									urlTermsConditions={confFooterURLTermsConds}
-								/>
-							)}
+							<Footer
+								ctx={ctx}
+								siteName={confSiteName}
+								urlPrivacyPolicy={confFooterURLPrivPolicy}
+								urlTermsConditions={confFooterURLTermsConds}
+							/>
 						</footer>
 					</div>
-					<Scripts />
-				</QueryClientProvider>
+
+
+				</PrimeReactProvider>
+				<Scripts />
+			</body>
+		</html>
+	);
+}
+
+export function ErrorBoundary() {
+	const error = useRouteError();
+
+	const isDev = process.env.NODE_ENV === "development";
+
+	let title = "Unexpected Error";
+	let message = "Something went wrong. Please try again later.";
+
+	if (isRouteErrorResponse(error)) {
+		title = `${error.status} ${error.statusText}`;
+		if (isDev) {
+			message = String(error.data);
+		}
+	} else if (error instanceof Error) {
+		if (isDev) {
+			message = error.message;
+		}
+	}
+
+	return (
+		<html>
+			<head>
+				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width,initial-scale=1" />
+				<title>Error</title>
+				<Meta />
+				<Links />
+			</head>
+			<body>
+				<div className="min-h-screen bg-gray-50 px-8 py-12">
+					<div className="w-full bg-white shadow-sm border border-gray-200 rounded-xl p-8">
+
+						<div className="flex items-start gap-4 mb-6">
+							<i className="pi pi-exclamation-triangle text-3xl text-red-500"></i>
+
+							<div>
+								<h1 className="text-2xl font-semibold text-gray-900">
+									{title}
+								</h1>
+
+								<p className="text-gray-600 mt-2">
+									{message}
+								</p>
+							</div>
+						</div>
+
+						<a
+							href="/"
+							className="inline-block bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+						>
+							Return to Home
+						</a>
+
+						{/* Support Contact */}
+						<div className="mt-8 border-t pt-6 text-sm text-gray-600">
+							If the problem persists, please contact support at{" "}
+							<a
+								href="mailto:support@example.org"
+								className="text-blue-600 hover:underline font-medium"
+							>
+								support@example.org
+							</a>
+							.
+						</div>
+
+						{isDev && error instanceof Error && (
+							<pre className="mt-8 text-xs bg-gray-100 p-4 rounded overflow-auto border">
+								{error.stack}
+							</pre>
+						)}
+
+					</div>
+				</div>
+
+				<Scripts />
 			</body>
 		</html>
 	);

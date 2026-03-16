@@ -6,7 +6,7 @@ import {
 import {
 	deleteUserCountryAccountsByUserIdAndCountryAccountsId,
 	getUserCountryAccountsByUserIdAndCountryAccountsId,
-} from "~/db/queries/userCountryAccounts";
+} from "~/db/queries/userCountryAccountsRepository";
 import { BackendContext } from "~/backend.server/context";
 
 export const action = authActionWithPerm("EditUsers", async (actionArgs) => {
@@ -45,7 +45,7 @@ export const action = authActionWithPerm("EditUsers", async (actionArgs) => {
 		);
 	}
 
-	if (userToDelete.user_country_accounts.isPrimaryAdmin) {
+	if (userToDelete.isPrimaryAdmin) {
 		return Response.json(
 			{ ok: false, error: "You cannot delete the primary admin user." },
 			{ status: 403 },

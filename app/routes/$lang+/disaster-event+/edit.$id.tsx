@@ -43,7 +43,7 @@ import { BackendContext } from "~/backend.server/context";
 import {
 	getUserCountryAccountsWithValidatorRole,
 	getUserCountryAccountsWithAdminRole,
-} from "~/db/queries/userCountryAccounts";
+} from "~/db/queries/userCountryAccountsRepository";
 import { handleApprovalWorkflowService } from "~/backend.server/services/approvalWorkflowService";
 
 // Helper function to get country ISO3 code

@@ -22,7 +22,7 @@ export async function updateDisasterRecordStatusService({
 	countryAccountsId: string;
 	userId: string;
 }) {
-	const record = await disasterRecordsById(id);
+	const record = await disasterRecordsById(id, countryAccountsId);
 	if (!record) {
 		return {
 			ok: false,

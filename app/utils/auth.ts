@@ -10,7 +10,6 @@ import {
 	getUserFromSession,
 	getUserRoleFromSession,
 	sessionMarkTotpAuthed,
-	superAdminSessionCookie,
 	getSuperAdminSession,
 	UserSession,
 	getCountryAccountsIdFromSession,
@@ -84,9 +83,6 @@ export async function requireUser(routeArgs: RouteArgs) {
 		);
 	}
 	const { user, session } = userSession;
-	if (!user.emailVerified) {
-		throw redirectLangFromRoute(routeArgs, "/user/verify-email");
-	}
 	if (user.totpEnabled && !session.totpAuthed) {
 		throw redirectLangFromRoute(routeArgs, "/user/totp-login");
 	}
@@ -100,9 +96,6 @@ export async function optionalUser(routeArgs: RouteArgs) {
 		return null;
 	}
 	const { user, session } = userSession;
-	if (!user.emailVerified) {
-		throw redirectLangFromRoute(routeArgs, "/user/verify-email");
-	}
 	if (user.totpEnabled && !session.totpAuthed) {
 		throw redirectLangFromRoute(routeArgs, "/user/totp-login");
 	}
@@ -123,10 +116,6 @@ export async function requireUserAllowNoTotp(routeArgs: RouteArgs) {
 	const userSession = await getUserFromSession(request);
 	if (!userSession) {
 		throw redirectLangFromRoute(routeArgs, "/user/login");
-	}
-	const { user } = userSession;
-	if (!user.emailVerified) {
-		throw redirectLangFromRoute(routeArgs, "/user/verify-email");
 	}
 	return userSession;
 }
@@ -425,14 +414,22 @@ export function authActionWithPerm<T extends ActionFunction>(
 					userSession: mockUserSession,
 				});
 			} else {
+				console.log("1");
 				throw new Response("Forbidden", { status: 403 });
 			}
 		}
 
 		// Regular user flow
+		const countryAccountsId = await getCountryAccountsIdFromSession(
+			args.request,
+		);
+		if (!countryAccountsId) {
+			throw redirectLangFromRoute(args, "/user/select-instance");
+		}
 		const userSession = await requireUser(args);
 		const userRole = await getUserRoleFromSession(args.request);
 		if (!roleHasPermission(userRole, permission)) {
+			console.log("2");
 			throw new Response("Forbidden", { status: 403 });
 		}
 		return fn({
@@ -482,22 +479,22 @@ export function authActionGetAuth(args: any): UserSession {
 	return args.userSession;
 }
 
-export async function requireSuperAdmin(args: RouteArgs) {
-	const { request } = args;
-	// Use the super admin session cookie instead of the regular session cookie
-	const session = await superAdminSessionCookie().getSession(
-		request.headers.get("Cookie"),
-	);
-	const superAdminId = session.get("superAdminId") as string | undefined;
+// export async function requireSuperAdmin(args: RouteArgs) {
+// 	const { request } = args;
+// 	// Use the super admin session cookie instead of the regular session cookie
+// 	const session = await superAdminSessionCookie().getSession(
+// 		request.headers.get("Cookie"),
+// 	);
+// 	const superAdminId = session.get("superAdminId") as string | undefined;
 
-	if (!superAdminId) {
-		// Get the current URL to include as redirectTo parameter
-		const url = new URL(request.url);
-		const redirectTo = url.pathname + url.search;
-		throw redirectLangFromRoute(
-			args,
-			`/admin/login?redirectTo=${encodeURIComponent(redirectTo)}`,
-		);
-	}
-	return superAdminId;
-}
+// 	if (!superAdminId) {
+// 		// Get the current URL to include as redirectTo parameter
+// 		const url = new URL(request.url);
+// 		const redirectTo = url.pathname + url.search;
+// 		throw redirectLangFromRoute(
+// 			args,
+// 			`/admin/login?redirectTo=${encodeURIComponent(redirectTo)}`,
+// 		);
+// 	}
+// 	return superAdminId;
+// }

@@ -40,7 +40,7 @@ import { BackendContext } from "~/backend.server/context";
 import {
 	getUserCountryAccountsWithValidatorRole,
 	getUserCountryAccountsWithAdminRole,
-} from "~/db/queries/userCountryAccounts";
+} from "~/db/queries/userCountryAccountsRepository";
 import { handleApprovalWorkflowService } from "~/backend.server/services/approvalWorkflowService";
 
 export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {

@@ -1,10 +1,5 @@
-import PreventionWebLandingPageWidget from "~/components/PreventionWebLandingPageWidget";
+import { redirectDefaultLang } from "~/utils/url.backend";
 
-export default function Home() {
-	return (
-		<PreventionWebLandingPageWidget
-			pageId="97629"
-			activeDomain="syndication.preventionweb.net"
-		/>
-	);
-}
+export const loader = async () => {
+	return redirectDefaultLang("/hazardous-event");
+};
