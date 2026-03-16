@@ -10,7 +10,7 @@ import {
 import { MainContainer } from "~/frontend/container";
 import { LangLink } from "~/utils/link";
 import { ViewContext } from "~/frontend/context";
-import { canEditRecord } from "~/frontend/user/roles";
+import { canEditDataCollectionRecord } from "~/frontend/user/roles";
 
 interface ViewComponentMainDataCollectionProps {
 	ctx: ViewContext;
@@ -413,7 +413,10 @@ export function ViewComponentMainDataCollection(
 							<>
 								<div style={{ textAlign: "right" }}>
 									<LangLink
-										visible={canEditRecord(ctx.user?.role ?? null)}
+										visible={canEditDataCollectionRecord(
+											ctx.user?.role ?? null,
+											props.approvalStatus,
+										)}
 										lang={ctx.lang}
 										to={`${props.path}/edit/${String(props.id)}`}
 										className="mg-button mg-button-secondary"

@@ -1,6 +1,9 @@
 import { ViewContext } from "~/frontend/context";
 import { LangLink } from "~/utils/link";
-import { canDeleteDataCollectionRecord } from "~/frontend/user/roles";
+import {
+	canDeleteDataCollectionRecord,
+	canEditDataCollectionRecord,
+} from "~/frontend/user/roles";
 import { HazardousEventDeleteButton } from "~/frontend/components/delete-dialog";
 
 /**
@@ -20,7 +23,7 @@ export function DataCollectionActionLinks(props: {
 	const ctx = props.ctx;
 	return (
 		<>
-			{!props.hideEditButton && (
+			{canEditDataCollectionRecord(props.user.role, props.approvalStatus) && (
 				<LangLink lang={ctx.lang} to={`${props.route}/edit/${props.id}`}>
 					<button
 						type="button"
