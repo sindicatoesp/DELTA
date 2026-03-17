@@ -259,16 +259,16 @@ export async function assetDeleteById(
 ): Promise<DeleteResult> {
 	let id = idStr;
 	let res = await dr.query.assetTable.findFirst({
-		where: and(
-			eq(assetTable.id, id),
-			eq(assetTable.countryAccountsId, countryAccountsId),
-		),
+		where: eq(assetTable.id, id),
 	});
 	if (!res) {
-		throw new Error("Id is invalid");
+		throw new Response("Asset not found", { status: 404 });
 	}
 	if (res.isBuiltIn) {
-		throw new Error("Attempted to delete builtin asset");
+		throw new Response("Cannot delete built-in asset", { status: 403 });
+	}
+	if (res.countryAccountsId !== countryAccountsId) {
+		throw new Response("Asset not accessible", { status: 403 });
 	}
 	await deleteByIdForStringId(id, assetTable);
 	return { ok: true };
