@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useActionData, useLoaderData, useLocation, useNavigate, useNavigation } from "react-router";
+import { Form, useActionData, useLoaderData, useLocation, useNavigate, useNavigation } from "react-router";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 
@@ -7,7 +7,7 @@ import { BackendContext } from "~/backend.server/context";
 import { OrganizationRepository } from "~/db/queries/organizationRepository";
 import { OrganizationService } from "~/services/organizationService";
 import { authActionWithPerm, authLoaderPublicOrWithPerm } from "~/utils/auth";
-import { getCountryAccountsIdFromSession } from "~/utils/session";
+import { getCountryAccountsIdFromSession, redirectWithMessage } from "~/utils/session";
 import { ViewContext } from "~/frontend/context";
 import type { OrganizationActionResult } from "~/services/organizationService";
 
@@ -41,11 +41,20 @@ export const action = authActionWithPerm("ManageOrganizations", async (args) => 
 		formData.set("id", args.params.id);
 	}
 
-	return OrganizationService.organizationAction({
+	const result = await OrganizationService.organizationAction({
 		backendCtx,
 		countryAccountsId,
 		formData,
 	});
+
+	if (result.ok) {
+		return redirectWithMessage(args, "/settings/organizations", {
+			type: "success",
+			text: backendCtx.t({ code: "common.record_deleted", msg: "Record deleted" }),
+		});
+	}
+
+	return result;
 });
 
 function getOrganizationsBasePath(pathname: string) {
@@ -86,7 +95,7 @@ export default function OrganizationsDeletePage() {
 				onHide={() => navigate(withCurrentSearch(basePath))}
 				className="w-[30rem] max-w-full"
 			>
-				<form method="post">
+				<Form method="post">
 					<p>
 						{ctx.t({
 							code: "common.confirm_deletion",
@@ -109,7 +118,7 @@ export default function OrganizationsDeletePage() {
 							disabled={!selectedItem}
 						/>
 					</div>
-				</form>
+				</Form>
 			</Dialog>
 		</>
 	);

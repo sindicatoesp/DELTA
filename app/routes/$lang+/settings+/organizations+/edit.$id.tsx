@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useActionData, useLoaderData, useLocation, useNavigate, useNavigation } from "react-router";
+import { Form, useActionData, useLoaderData, useLocation, useNavigate, useNavigation } from "react-router";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
@@ -8,7 +8,7 @@ import { BackendContext } from "~/backend.server/context";
 import { OrganizationRepository } from "~/db/queries/organizationRepository";
 import { OrganizationService } from "~/services/organizationService";
 import { authActionWithPerm, authLoaderPublicOrWithPerm } from "~/utils/auth";
-import { getCountryAccountsIdFromSession } from "~/utils/session";
+import { getCountryAccountsIdFromSession, redirectWithMessage } from "~/utils/session";
 import { ViewContext } from "~/frontend/context";
 import type { OrganizationActionResult } from "~/services/organizationService";
 
@@ -42,11 +42,20 @@ export const action = authActionWithPerm("ManageOrganizations", async (args) => 
 		formData.set("id", args.params.id);
 	}
 
-	return OrganizationService.organizationAction({
+	const result = await OrganizationService.organizationAction({
 		backendCtx,
 		countryAccountsId,
 		formData,
 	});
+
+	if (result.ok) {
+		return redirectWithMessage(args, "/settings/organizations", {
+			type: "success",
+			text: backendCtx.t({ code: "common.changes_saved", msg: "Changes saved" }),
+		});
+	}
+
+	return result;
 });
 
 function getOrganizationsBasePath(pathname: string) {
@@ -103,7 +112,7 @@ export default function OrganizationsEditPage() {
 				onHide={() => navigate(withCurrentSearch(basePath))}
 				className="w-[32rem] max-w-full"
 			>
-				<form method="post" className="flex flex-col">
+				<Form method="post" className="flex flex-col">
 					<p className="mb-3 text-red-700">* Required information</p>
 					<div className="mb-3 flex flex-col gap-2">
 						<label htmlFor="edit-organization-name">
@@ -141,7 +150,7 @@ export default function OrganizationsEditPage() {
 							disabled={!selectedItem}
 						/>
 					</div>
-				</form>
+				</Form>
 			</Dialog>
 		</>
 	);

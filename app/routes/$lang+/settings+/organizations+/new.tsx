@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useActionData, useLocation, useNavigate, useNavigation } from "react-router";
+import { Form, useActionData, useLocation, useNavigate, useNavigation } from "react-router";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
@@ -7,7 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { BackendContext } from "~/backend.server/context";
 import { OrganizationService } from "~/services/organizationService";
 import { authActionWithPerm } from "~/utils/auth";
-import { getCountryAccountsIdFromSession } from "~/utils/session";
+import { getCountryAccountsIdFromSession, redirectWithMessage } from "~/utils/session";
 import { ViewContext } from "~/frontend/context";
 import type { OrganizationActionResult } from "~/services/organizationService";
 
@@ -19,11 +19,20 @@ export const action = authActionWithPerm("ManageOrganizations", async (args) => 
 
 	formData.set("intent", "create");
 
-	return OrganizationService.organizationAction({
+	const result = await OrganizationService.organizationAction({
 		backendCtx,
 		countryAccountsId,
 		formData,
 	});
+
+	if (result.ok) {
+		return redirectWithMessage(args, "/settings/organizations", {
+			type: "success",
+			text: backendCtx.t({ code: "common.new_record_created", msg: "New record created" }),
+		});
+	}
+
+	return result;
 });
 
 function getOrganizationsBasePath(pathname: string) {
@@ -73,7 +82,7 @@ export default function OrganizationsNewPage() {
 				onHide={() => navigate(withCurrentSearch(basePath))}
 				className="w-[32rem] max-w-full"
 			>
-				<form method="post" className="flex flex-col">
+				<Form method="post" className="flex flex-col">
 					<p className="mb-3 text-red-700">* Required information</p>
 					<div className="mb-3 flex flex-col gap-2">
 						<label htmlFor="create-organization-name">
@@ -110,7 +119,7 @@ export default function OrganizationsNewPage() {
 							loading={navigation.state !== "idle"}
 						/>
 					</div>
-				</form>
+				</Form>
 			</Dialog>
 		</>
 	);
