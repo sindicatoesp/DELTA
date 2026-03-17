@@ -12,6 +12,7 @@ import {
 	createTestAsset,
 	createOtherTenant,
 	cleanupTestAssets,
+	createTestDamageRecord,
 } from "./test-helpers";
 
 const testIds = createTestIds();
@@ -87,6 +88,18 @@ describe("delete.$id.tsx action", () => {
 
 		await expect(callAction({ id: asset.id })).rejects.toMatchObject({
 			status: 403,
+		});
+	});
+
+	it("should return error when deleting asset in use", async () => {
+		const asset = await createTestAsset(testIds.countryAccountId, {
+			isBuiltIn: false,
+		});
+		await createTestDamageRecord(testIds.countryAccountId, asset.id);
+
+		const response = await callAction({ id: asset.id });
+		expect(response).toMatchObject({
+			error: "Cannot delete this asset - it is used in damages",
 		});
 	});
 });

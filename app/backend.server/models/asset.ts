@@ -1,5 +1,9 @@
 import { dr, Tx } from "~/db.server";
-import { assetTable, InsertAsset } from "~/drizzle/schema/assetTable";
+import {
+	assetTable,
+	InsertAsset,
+	assetTableConstraints,
+} from "~/drizzle/schema/assetTable";
 import { eq, sql, inArray, and, or } from "drizzle-orm";
 import {
 	CreateResult,
@@ -270,7 +274,18 @@ export async function assetDeleteById(
 	if (res.countryAccountsId !== countryAccountsId) {
 		throw new Response("Asset not accessible", { status: 403 });
 	}
-	await deleteByIdForStringId(id, assetTable);
+	try {
+		await deleteByIdForStringId(id, assetTable);
+	} catch (err: any) {
+		const constraint = err.constraint || err.cause?.constraint;
+		if (constraint === assetTableConstraints.assetId) {
+			return {
+				ok: false,
+				error: "Cannot delete this asset - it is used in damages",
+			};
+		}
+		throw err;
+	}
 	return { ok: true };
 }
 
