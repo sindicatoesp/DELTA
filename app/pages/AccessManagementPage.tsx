@@ -7,7 +7,7 @@ import { LangLink } from "~/utils/link";
 import { ViewContext } from "~/frontend/context";
 import { getCountryRole, getCountryRoles } from "~/frontend/user/roles";
 import { useLoaderData, useNavigate } from "react-router";
-import type { loader } from "../routes/$lang+/settings+/access-mgmnt+/route";
+import type { loader } from "../routes/$lang+/settings+/access-mgmnt+/_layout";
 import { Button } from "primereact/button";
 
 export default function AccessManagementPage() {
