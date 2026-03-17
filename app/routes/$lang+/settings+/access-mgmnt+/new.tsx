@@ -154,11 +154,7 @@ export const action = authActionWithPerm("InviteUsers", async (actionArgs) => {
 					organizationId: organization
 				});
 
-				const needsFreshInvite =
-					!user.emailVerified &&
-					(!user.inviteExpiresAt || user.inviteExpiresAt < new Date());
-
-				if (needsFreshInvite) {
+				if (!user.emailVerified) {
 					const existingInviteCode = user.inviteCode;
 					if (!existingInviteCode) {
 						throw new Error("Missing invitation code for unverified user.");
