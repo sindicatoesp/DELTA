@@ -22,7 +22,7 @@ import { UserRepository } from "~/db/queries/UserRepository";
 import { doesUserCountryAccountExistByEmailAndCountryAccountsId, UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { randomBytes } from "node:crypto";
 import { addHours } from "date-fns";
-import { sendInviteForExistingUser2, sendInviteForNewUser2 } from "~/utils/emailUtil";
+import { sendInviteForExistingUser, sendInviteForNewUser } from "~/utils/emailUtil";
 import { dr } from "~/db.server";
 import { Dialog } from "primereact/dialog";
 
@@ -142,7 +142,7 @@ export const action = authActionWithPerm("InviteUsers", async (actionArgs) => {
 			},
 				tx
 			);
-			await sendInviteForNewUser2(ctx, user, countrySettings.websiteName, role, countrySettings.countryName, countryAccountType, inviteCode);
+			await sendInviteForNewUser(ctx, user, countrySettings.websiteName, role, countrySettings.countryName, countryAccountType, inviteCode);
 
 		} else {
 			if (!emailAlreadyAssignedToCountryAccount) {
@@ -169,7 +169,7 @@ export const action = authActionWithPerm("InviteUsers", async (actionArgs) => {
 						tx,
 					);
 
-					await sendInviteForNewUser2(
+					await sendInviteForNewUser(
 						ctx,
 						user,
 						countrySettings.websiteName,
@@ -179,7 +179,7 @@ export const action = authActionWithPerm("InviteUsers", async (actionArgs) => {
 						existingInviteCode,
 					);
 				} else {
-					await sendInviteForExistingUser2(
+					await sendInviteForExistingUser(
 						ctx,
 						user,
 						countrySettings.websiteName,
@@ -203,7 +203,7 @@ export const action = authActionWithPerm("InviteUsers", async (actionArgs) => {
 					tx,
 				);
 
-				await sendInviteForNewUser2(
+				await sendInviteForNewUser(
 					ctx,
 					user,
 					countrySettings.websiteName,

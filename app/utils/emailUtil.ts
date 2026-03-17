@@ -62,7 +62,7 @@ export async function sendWelcomeRegistrationEmail(
 	);
 	await sendEmail(email, subject, text, html);
 }
-export async function sendInviteForNewUser2(
+export async function sendInviteForNewUser(
 	ctx: BackendContext,
 	user: SelectUser,
 	siteName: string,
@@ -129,7 +129,7 @@ export async function sendInviteForNewUser2(
 	await sendEmail(user.email, subject, text, html);
 }
 
-export async function sendInviteForExistingUser2(
+export async function sendInviteForExistingUser(
 	ctx: BackendContext,
 	user: SelectUser,
 	siteName: string,
