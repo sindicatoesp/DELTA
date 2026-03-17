@@ -26,6 +26,11 @@ export function setupSessionMocks() {
 		getCountrySettingsFromSession: vi.fn(),
 		getUserFromSession: vi.fn(),
 		getUserRoleFromSession: vi.fn(),
+		redirectWithMessage: vi.fn(
+			(_args: any, url: string, _message: any) =>
+				new Response(null, { status: 302, headers: { Location: url } }),
+		),
+		getSuperAdminSession: vi.fn().mockResolvedValue(null),
 	}));
 
 	vi.mock("~/utils/auth", async (importOriginal) => {
@@ -34,8 +39,19 @@ export function setupSessionMocks() {
 			...original,
 			requireUser: vi.fn(),
 			authLoaderWithPerm: vi.fn((_permission: string, fn: Function) => fn),
+			authActionWithPerm: vi.fn((_permission: string, fn: Function) => {
+				return async (args: any) => {
+					const { requireUser } = await import("~/utils/auth");
+					const userSession = await (requireUser as any)(args);
+					return fn({ ...args, userSession });
+				};
+			}),
 		};
 	});
+
+	vi.mock("~/backend.server/models/auditLogs", () => ({
+		logAudit: vi.fn().mockResolvedValue({ record: {} }),
+	}));
 }
 
 export async function createTestUser(ids: {
@@ -44,6 +60,7 @@ export async function createTestUser(ids: {
 	userEmail: string;
 	countryId: string;
 }) {
+	await cleanupTestUser(ids);
 	const passwordHash = bcrypt.hashSync("Password123!", 10);
 	await dr.insert(userTable).values({
 		id: ids.userId,
@@ -110,6 +127,8 @@ export async function mockSessionValues(ids: {
 		getUserRoleFromSession,
 	} = await import("~/utils/session");
 
+	const { requireUser } = await import("~/utils/auth");
+
 	vi.mocked(getCountryAccountsIdFromSession).mockResolvedValue(
 		ids.countryAccountId,
 	);
@@ -122,4 +141,9 @@ export async function mockSessionValues(ids: {
 		session: { totpAuthed: true },
 	} as any);
 	vi.mocked(getUserRoleFromSession).mockResolvedValue("admin");
+	vi.mocked(requireUser).mockResolvedValue({
+		user: { id: ids.userId, emailVerified: true, totpEnabled: false },
+		sessionId: "test-session-id",
+		session: { totpAuthed: true },
+	} as any);
 }
