@@ -89,19 +89,19 @@ export const loader = authLoaderWithPerm(
 
 type ActionData =
 	| {
-		success: true;
-		operation: "create" | "update" | "resend_email" | "reset";
-	}
+			success: true;
+			operation: "create" | "update" | "resend_email" | "reset";
+	  }
 	| {
-		errors: string[];
-		formValues?: {
-			id?: string;
-			countryId?: string;
-			status?: FormDataEntryValue | null;
-			email?: string;
-			countryAccountType?: string;
-		};
-	};
+			errors: string[];
+			formValues?: {
+				id?: string;
+				countryId?: string;
+				status?: FormDataEntryValue | null;
+				email?: string;
+				countryAccountType?: string;
+			};
+	  };
 
 export const action = authActionWithPerm(
 	"manage_country_accounts",
@@ -128,7 +128,9 @@ export const action = authActionWithPerm(
 				} else {
 					countryName = country.name;
 				}
-				const userAdmin = (await UserRepository.getById(userAdminId)) as SelectUser;
+				const userAdmin = (await UserRepository.getById(
+					userAdminId,
+				)) as SelectUser;
 				if (!userAdmin) {
 					// TODO throw error
 					countryName = `User with ID ${userAdminId} not found.`;
@@ -173,7 +175,7 @@ export const action = authActionWithPerm(
 			} else {
 				if (intent === "reset") {
 					await resetInstanceData(id);
-					console.log(id)
+					console.log(id);
 					return { success: true, operation: "reset" } satisfies ActionData;
 				}
 
@@ -239,7 +241,8 @@ export default function CountryAccounts() {
 	const ctx = new ViewContext();
 	const { countryAccounts, countries } = ld;
 	const countryOptions = useMemo(
-		() => countries.map((country) => ({ label: country.name, value: country.id })),
+		() =>
+			countries.map((country) => ({ label: country.name, value: country.id })),
 		[countries],
 	);
 
@@ -315,10 +318,10 @@ export default function CountryAccounts() {
 				msg: "Reset All Instance Data",
 			}),
 			icon: "pi pi-exclamation-triangle",
-			acceptIcon: 'pi pi-replay',
-			rejectClassName: 'p-button-outlined ml-2',
+			acceptIcon: "pi pi-replay",
+			rejectClassName: "p-button-outlined ml-2",
 			acceptClassName: "p-button-danger p-button-outlined",
-			defaultFocus: 'reject',
+			defaultFocus: "reject",
 			acceptLabel: ctx.t({ code: "common.yes", msg: "Yes" }),
 			rejectLabel: ctx.t({ code: "common.no", msg: "No" }),
 			accept: () => {
@@ -363,18 +366,18 @@ export default function CountryAccounts() {
 					detail:
 						actionData.operation === "update"
 							? ctx.t({
-								code: "admin.country_account_updated",
-								msg: "Country account updated successfully",
-							})
+									code: "admin.country_account_updated",
+									msg: "Country account updated successfully",
+								})
 							: actionData.operation === "create"
 								? ctx.t({
-									code: "admin.country_account_created",
-									msg: "Country account created successfully",
-								})
+										code: "admin.country_account_created",
+										msg: "Country account created successfully",
+									})
 								: ctx.t({
-									code: "admin.invitation_resent",
-									msg: "Invitation email sent successfully",
-								}),
+										code: "admin.invitation_resent",
+										msg: "Invitation email sent successfully",
+									}),
 				});
 			}
 		}
@@ -488,13 +491,13 @@ export default function CountryAccounts() {
 							<td>
 								{countryAccount.status === countryAccountStatuses.ACTIVE
 									? ctx.t({
-										code: "common.active",
-										msg: "Active",
-									})
+											code: "common.active",
+											msg: "Active",
+										})
 									: ctx.t({
-										code: "common.inactive",
-										msg: "Inactive",
-									})}
+											code: "common.inactive",
+											msg: "Inactive",
+										})}
 							</td>
 							<td>
 								{countryAccount.type === countryAccountTypesTable.OFFICIAL ? (
@@ -526,7 +529,7 @@ export default function CountryAccounts() {
 								>
 									<i className="pi pi-pencil" aria-hidden="true"></i>
 								</Button>
-								{countryAccount.country.name === "Disaster Land" &&
+								{countryAccount.country.name === "Disaster Land" && (
 									<Button
 										tooltip="Reset all instance data"
 										loading={resetFetcher.state === "submitting"}
@@ -537,8 +540,12 @@ export default function CountryAccounts() {
 										}}
 										className="p-2"
 									>
-										<i className="pi pi-replay" style={{ fontSize: "1rem" }}></i>
-									</Button>}
+										<i
+											className="pi pi-replay"
+											style={{ fontSize: "1rem" }}
+										></i>
+									</Button>
+								)}
 							</td>
 						</tr>
 					))}
@@ -551,13 +558,13 @@ export default function CountryAccounts() {
 				header={
 					editingCountryAccount
 						? ctx.t({
-							code: "admin.edit_country_account",
-							msg: "Edit country account",
-						})
+								code: "admin.edit_country_account",
+								msg: "Edit country account",
+							})
 						: ctx.t({
-							code: "admin.create_country_account",
-							msg: "Create country account",
-						})
+								code: "admin.create_country_account",
+								msg: "Create country account",
+							})
 				}
 				onHide={() => setIsAddCountryAccountDialogOpen(false)}
 				footer={footerContent}
@@ -568,11 +575,7 @@ export default function CountryAccounts() {
 				draggable={false}
 				resizable={false}
 			>
-				<Form
-					method="post"
-					id="addCountryAccountForm"
-					ref={formRef}
-				>
+				<Form method="post" id="addCountryAccountForm" ref={formRef}>
 					{/* Add error message display here */}
 					{actionData && "errors" in actionData && (
 						<div className="mb-4 space-y-2">
@@ -608,14 +611,21 @@ export default function CountryAccounts() {
 										})}
 									</span>
 								</div>
-								<input type="hidden" name="countryId" value={selectedCountryId} />
+								<input
+									type="hidden"
+									name="countryId"
+									value={selectedCountryId}
+								/>
 								<Dropdown
 									value={selectedCountryId}
 									options={countryOptions}
 									optionLabel="label"
 									optionValue="value"
 									onChange={(e) => setSelectedCountryId(e.value)}
-									placeholder={ctx.t({ code: "admin.select_country", msg: "Select a country" })}
+									placeholder={ctx.t({
+										code: "admin.select_country",
+										msg: "Select a country",
+									})}
 									filterBy="label"
 									filter
 									virtualScrollerOptions={{ itemSize: 38 }}
@@ -667,8 +677,17 @@ export default function CountryAccounts() {
 								<Dropdown
 									value={status}
 									options={[
-										{ label: ctx.t({ code: "common.active", msg: "Active" }), value: countryAccountStatuses.ACTIVE },
-										{ label: ctx.t({ code: "common.inactive", msg: "Inactive" }), value: countryAccountStatuses.INACTIVE },
+										{
+											label: ctx.t({ code: "common.active", msg: "Active" }),
+											value: countryAccountStatuses.ACTIVE,
+										},
+										{
+											label: ctx.t({
+												code: "common.inactive",
+												msg: "Inactive",
+											}),
+											value: countryAccountStatuses.INACTIVE,
+										},
 									]}
 									onChange={(e) => setStatus(e.value as CountryAccountStatus)}
 									className="w-full"
@@ -745,7 +764,7 @@ export default function CountryAccounts() {
 											checked={
 												type === countryAccountTypesTable.OFFICIAL ||
 												editingCountryAccount?.type ===
-												countryAccountTypesTable.OFFICIAL
+													countryAccountTypesTable.OFFICIAL
 											}
 											disabled={!!editingCountryAccount?.id}
 										/>
@@ -766,7 +785,7 @@ export default function CountryAccounts() {
 											checked={
 												type === countryAccountTypesTable.TRAINING ||
 												editingCountryAccount?.type ===
-												countryAccountTypesTable.TRAINING
+													countryAccountTypesTable.TRAINING
 											}
 											disabled={!!editingCountryAccount?.id}
 										/>
