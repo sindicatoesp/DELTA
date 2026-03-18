@@ -39,6 +39,11 @@ export function setupSessionMocks() {
 			...original,
 			requireUser: vi.fn(),
 			authLoaderWithPerm: vi.fn((_permission: string, fn: Function) => fn),
+			authLoaderPublicOrWithPerm: vi.fn((_permission: string, fn: Function) => {
+				return async (args: any) => {
+					return fn(args);
+				};
+			}),
 			authActionWithPerm: vi.fn((_permission: string, fn: Function) => {
 				return async (args: any) => {
 					const { requireUser } = await import("~/utils/auth");
@@ -129,9 +134,9 @@ export async function mockSessionValues(ids: {
 
 	const { requireUser } = await import("~/utils/auth");
 
-	vi.mocked(getCountryAccountsIdFromSession).mockResolvedValue(
-		ids.countryAccountId,
-	);
+	vi.mocked(getCountryAccountsIdFromSession).mockImplementation(async () => {
+		return ids.countryAccountId;
+	});
 	vi.mocked(getCountrySettingsFromSession).mockResolvedValue({
 		approvedRecordsArePublic: false,
 	} as any);
