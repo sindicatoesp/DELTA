@@ -89,19 +89,19 @@ export const loader = authLoaderWithPerm(
 
 type ActionData =
 	| {
-			success: true;
-			operation: "create" | "update" | "resend_email" | "reset";
-	  }
+		success: true;
+		operation: "create" | "update" | "resend_email" | "reset";
+	}
 	| {
-			errors: string[];
-			formValues?: {
-				id?: string;
-				countryId?: string;
-				status?: FormDataEntryValue | null;
-				email?: string;
-				countryAccountType?: string;
-			};
-	  };
+		errors: string[];
+		formValues?: {
+			id?: string;
+			countryId?: string;
+			status?: FormDataEntryValue | null;
+			email?: string;
+			countryAccountType?: string;
+		};
+	};
 
 export const action = authActionWithPerm(
 	"manage_country_accounts",
@@ -366,18 +366,18 @@ export default function CountryAccounts() {
 					detail:
 						actionData.operation === "update"
 							? ctx.t({
-									code: "admin.country_account_updated",
-									msg: "Country account updated successfully",
-								})
+								code: "admin.country_account_updated",
+								msg: "Country account updated successfully",
+							})
 							: actionData.operation === "create"
 								? ctx.t({
-										code: "admin.country_account_created",
-										msg: "Country account created successfully",
-									})
+									code: "admin.country_account_created",
+									msg: "Country account created successfully",
+								})
 								: ctx.t({
-										code: "admin.invitation_resent",
-										msg: "Invitation email sent successfully",
-									}),
+									code: "admin.invitation_resent",
+									msg: "Invitation email sent successfully",
+								}),
 				});
 			}
 		}
@@ -392,6 +392,7 @@ export default function CountryAccounts() {
 					code: "common.save",
 					msg: "Save",
 				})}
+				icon="pi pi-check"
 			/>
 			<Button
 				type="button"
@@ -426,6 +427,7 @@ export default function CountryAccounts() {
 							code: "admin.add_country_account",
 							msg: "Add country account",
 						})}
+						icon="pi pi-plus"
 						onClick={() => addCountryAccount()}
 					/>
 				</div>
@@ -491,13 +493,13 @@ export default function CountryAccounts() {
 							<td>
 								{countryAccount.status === countryAccountStatuses.ACTIVE
 									? ctx.t({
-											code: "common.active",
-											msg: "Active",
-										})
+										code: "common.active",
+										msg: "Active",
+									})
 									: ctx.t({
-											code: "common.inactive",
-											msg: "Inactive",
-										})}
+										code: "common.inactive",
+										msg: "Inactive",
+									})}
 							</td>
 							<td>
 								{countryAccount.type === countryAccountTypesTable.OFFICIAL ? (
@@ -558,13 +560,13 @@ export default function CountryAccounts() {
 				header={
 					editingCountryAccount
 						? ctx.t({
-								code: "admin.edit_country_account",
-								msg: "Edit country account",
-							})
+							code: "admin.edit_country_account",
+							msg: "Edit country account",
+						})
 						: ctx.t({
-								code: "admin.create_country_account",
-								msg: "Create country account",
-							})
+							code: "admin.create_country_account",
+							msg: "Create country account",
+						})
 				}
 				onHide={() => setIsAddCountryAccountDialogOpen(false)}
 				footer={footerContent}
@@ -764,7 +766,7 @@ export default function CountryAccounts() {
 											checked={
 												type === countryAccountTypesTable.OFFICIAL ||
 												editingCountryAccount?.type ===
-													countryAccountTypesTable.OFFICIAL
+												countryAccountTypesTable.OFFICIAL
 											}
 											disabled={!!editingCountryAccount?.id}
 										/>
@@ -785,7 +787,7 @@ export default function CountryAccounts() {
 											checked={
 												type === countryAccountTypesTable.TRAINING ||
 												editingCountryAccount?.type ===
-													countryAccountTypesTable.TRAINING
+												countryAccountTypesTable.TRAINING
 											}
 											disabled={!!editingCountryAccount?.id}
 										/>
