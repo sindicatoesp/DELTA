@@ -41,7 +41,9 @@ export function setupSessionMocks() {
 		return {
 			...original,
 			requireUser: vi.fn(),
-			authLoaderWithPerm: vi.fn((_permission: string, fn: Function) => fn),
+			authLoaderWithPerm: vi.fn((_permission: string, fn: Function) => {
+				return async (args: any) => fn(args);
+			}),
 			authLoaderPublicOrWithPerm: vi.fn((_permission: string, fn: Function) => {
 				return async (args: any) => {
 					return fn(args);
@@ -70,12 +72,15 @@ export async function createTestUser(ids: {
 }) {
 	await cleanupTestUser(ids);
 	const passwordHash = bcrypt.hashSync("Password123!", 10);
-	await dr.insert(userTable).values({
-		id: ids.userId,
-		email: ids.userEmail,
-		password: passwordHash,
-		emailVerified: true,
-	});
+	await dr
+		.insert(userTable)
+		.values({
+			id: ids.userId,
+			email: ids.userEmail,
+			password: passwordHash,
+			emailVerified: true,
+		})
+		.onConflictDoNothing();
 
 	await dr
 		.insert(countriesTable)
@@ -85,25 +90,34 @@ export async function createTestUser(ids: {
 		})
 		.onConflictDoNothing();
 
-	await dr.insert(countryAccounts).values({
-		id: ids.countryAccountId,
-		shortDescription: "Test Country",
-		countryId: ids.countryId,
-		status: 1,
-		type: "Training",
-	});
+	await dr
+		.insert(countryAccounts)
+		.values({
+			id: ids.countryAccountId,
+			shortDescription: "Test Country",
+			countryId: ids.countryId,
+			status: 1,
+			type: "Training",
+		})
+		.onConflictDoNothing();
 
-	await dr.insert(userCountryAccountsTable).values({
-		userId: ids.userId,
-		countryAccountsId: ids.countryAccountId,
-		role: "admin",
-		isPrimaryAdmin: true,
-	});
+	await dr
+		.insert(userCountryAccountsTable)
+		.values({
+			userId: ids.userId,
+			countryAccountsId: ids.countryAccountId,
+			role: "admin",
+			isPrimaryAdmin: true,
+		})
+		.onConflictDoNothing();
 
-	await dr.insert(instanceSystemSettingsTable).values({
-		countryAccountsId: ids.countryAccountId,
-		approvedRecordsArePublic: true,
-	});
+	await dr
+		.insert(instanceSystemSettingsTable)
+		.values({
+			countryAccountsId: ids.countryAccountId,
+			approvedRecordsArePublic: true,
+		})
+		.onConflictDoNothing();
 }
 
 export async function cleanupTestUser(ids: {
@@ -158,6 +172,9 @@ export async function mockSessionValues(ids: {
 	});
 	vi.mocked(getCountrySettingsFromSession).mockResolvedValue({
 		approvedRecordsArePublic: false,
+		dtsInstanceCtryIso3: "USA",
+		currencyCode: "USD",
+		websiteName: "DELTA Resilience",
 	} as any);
 	vi.mocked(getUserFromSession).mockResolvedValue({
 		user: { id: ids.userId, emailVerified: true, totpEnabled: false },
