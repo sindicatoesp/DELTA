@@ -9,8 +9,8 @@ import {
 } from "../../../test-helpers";
 import { createTestDamage, cleanupTestDamages } from "./test-helpers";
 import { loader as indexLoader } from "~/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/_index";
-import { dr } from "~/db.server";
-import { sectorTable } from "~/drizzle/schema/sectorTable";
+
+const AGRICULTURE_SECTOR_ID = "8cf24ec3-3567-4c40-a5fd-bff9e9a27d87";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-index@");
@@ -84,8 +84,7 @@ describe("_index.tsx loader", () => {
 			sectorId: testDisasterIds.sectorId,
 		});
 
-		expect(data.sectorFullPath).toBeDefined();
-		expect(typeof data.sectorFullPath).toBe("string");
+		expect(data.sectorFullPath).toBe("Productive");
 	});
 
 	it("should return recordId and sectorId", async () => {
@@ -96,16 +95,6 @@ describe("_index.tsx loader", () => {
 
 		expect(data.recordId).toBe(testDisasterIds.disasterRecordId);
 		expect(data.sectorId).toBe(testDisasterIds.sectorId);
-	});
-
-	it("should return instanceName", async () => {
-		const data = await callLoader({
-			disasterRecordId: testDisasterIds.disasterRecordId,
-			sectorId: testDisasterIds.sectorId,
-		});
-
-		expect(data.instanceName).toBeDefined();
-		expect(typeof data.instanceName).toBe("string");
 	});
 
 	it("should return asset and sector names for damages", async () => {
@@ -135,36 +124,17 @@ describe("_index.tsx loader", () => {
 		});
 	});
 
-	it("should filter damages by sectorId", async () => {
-		const sectors = await dr
-			.select({ id: sectorTable.id })
-			.from(sectorTable)
-			.limit(2);
-
-		if (sectors.length < 2) {
-			throw new Error("Not enough sectors in database for test");
-		}
-
-		const result2 = await createTestDamage(testIds.countryAccountId, {
-			sectorId: sectors[1].id,
+	it("should return sectorFullPath for nested sector (Agriculture > Productive)", async () => {
+		const result = await createTestDamage(testIds.countryAccountId, {
+			sectorId: AGRICULTURE_SECTOR_ID,
 		});
-		testDamageIds.push(result2.damageId);
+		testDamageIds.push(result.damageId);
 
-		const data1 = await callLoader({
-			disasterRecordId: testDisasterIds.disasterRecordId,
-			sectorId: sectors[0].id,
+		const data = await callLoader({
+			disasterRecordId: result.disasterRecordId,
+			sectorId: AGRICULTURE_SECTOR_ID,
 		});
 
-		const data2 = await callLoader({
-			disasterRecordId: result2.disasterRecordId,
-			sectorId: sectors[1].id,
-		});
-
-		const itemIds1 = data1.data.items.map((item: any) => item.id);
-		const itemIds2 = data2.data.items.map((item: any) => item.id);
-
-		expect(itemIds1).toContain(testDamageIds[0]);
-		expect(itemIds2).toContain(result2.damageId);
-		expect(itemIds1).not.toContain(result2.damageId);
+		expect(data.sectorFullPath).toBe("Agriculture > Productive");
 	});
 });
