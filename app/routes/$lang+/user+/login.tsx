@@ -20,7 +20,7 @@ import {
 	configAuthSupportedAzureSSOB2C,
 	configAuthSupportedForm,
 } from "~/utils/config";
-import { getCountryAccountWithCountryById } from "~/db/queries/countryAccounts";
+import { getCountryAccountWithCountryById } from "~/db/queries/countryAccountsRepository";
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
 import { createCSRFToken } from "~/utils/csrf";

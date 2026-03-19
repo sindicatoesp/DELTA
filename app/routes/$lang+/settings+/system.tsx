@@ -9,7 +9,7 @@ import { getSystemInfo } from "~/db/queries/dtsSystemInfo";
 
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
-import { getCountryAccountById } from "~/db/queries/countryAccounts";
+import { getCountryAccountById } from "~/db/queries/countryAccountsRepository";
 import { CountryRepository } from "~/db/queries/countriesRepository";
 import {
 	SettingsValidationError,

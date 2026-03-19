@@ -1,14 +1,27 @@
-import { MetaFunction, Outlet, useFetcher, useLoaderData, useNavigate } from "react-router";
+import {
+    MetaFunction,
+    Outlet,
+    useFetcher,
+    useLoaderData,
+    useLocation,
+    useNavigate,
+} from "react-router";
 import { useEffect, useRef } from "react";
 import { Button } from "primereact/button";
+import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { DataTable } from "primereact/datatable";
+import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 
 import {
     CountryAccountWithCountryAndPrimaryAdminUser,
-    getCountryAccountsWithUserCountryAccountsAndUser,
-} from "~/db/queries/countryAccounts";
+    getCountryAccountsWithUserCountryAccountsAndUserPaginated,
+} from "~/db/queries/countryAccountsRepository";
+import { countryAccounts } from "~/drizzle/schema/countryAccounts";
+import { dr } from "~/db.server";
 import { MainContainer } from "~/frontend/container";
+import { executeQueryForPagination3 } from "~/frontend/pagination/api.server";
 import { NavSettings } from "../../settings/nav";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import {
@@ -46,10 +59,21 @@ export const meta: MetaFunction = () => {
 
 export const loader = authLoaderWithPerm(
     "manage_country_accounts",
-    async () => {
-        const countryAccounts =
-            await getCountryAccountsWithUserCountryAccountsAndUser();
-        return { countryAccounts };
+    async (loaderArgs) => {
+        const { request } = loaderArgs;
+        const totalItems = await dr.$count(countryAccounts);
+        const data = await executeQueryForPagination3(
+            request,
+            totalItems,
+            (pagination) =>
+                getCountryAccountsWithUserCountryAccountsAndUserPaginated(
+                    pagination.offset,
+                    pagination.limit,
+                ),
+            [],
+        );
+
+        return data;
     },
 );
 
@@ -97,11 +121,88 @@ export function getCountryAccountTypeLabel(
 export default function CountryAccountsLayout() {
     const ld = useLoaderData<typeof loader>();
     const ctx = new ViewContext();
-    const { countryAccounts } = ld;
+    const { items: countryAccounts, pagination } = ld;
 
     const navigate = useNavigate();
+    const location = useLocation();
     const resetFetcher = useFetcher<ActionData>();
     const toast = useRef<Toast>(null);
+    const pageSizeOptions = [10, 20, 30, 40, 50];
+
+    const updatePaginationParams = (nextPage: number, nextPageSize: number) => {
+        const params = new URLSearchParams(location.search);
+        params.set("page", String(nextPage));
+        params.set("pageSize", String(nextPageSize));
+        navigate(`${location.pathname}?${params.toString()}`);
+    };
+
+    function statusBodyTemplate(
+        countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
+    ) {
+        return countryAccount.status === countryAccountStatuses.ACTIVE
+            ? ctx.t({ code: "common.active", msg: "Active" })
+            : ctx.t({ code: "common.inactive", msg: "Inactive" });
+    }
+
+    function typeBodyTemplate(
+        countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
+    ) {
+        if (countryAccount.type === countryAccountTypesTable.OFFICIAL) {
+            return (
+                <Tag
+                    value={getCountryAccountTypeLabel(ctx, countryAccount.type)}
+                />
+            );
+        }
+
+        return (
+            <Tag
+                value={getCountryAccountTypeLabel(ctx, countryAccount.type)}
+                severity="warning"
+            />
+        );
+    }
+
+    function modifiedAtBodyTemplate(
+        countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
+    ) {
+        return countryAccount.updatedAt
+            ? new Date(countryAccount.updatedAt).toLocaleString()
+            : "";
+    }
+
+    function actionsBodyTemplate(
+        countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
+    ) {
+        return (
+            <>
+                <Button
+                    text
+                    severity="secondary"
+                    onClick={() =>
+                        navigate(
+                            ctx.url(`/admin/country-accounts/edit/${countryAccount.id}`),
+                        )
+                    }
+                    className="p-2"
+                >
+                    <i className="pi pi-pencil" aria-hidden="true"></i>
+                </Button>
+                {countryAccount.country.name === "Disaster Land" && (
+                    <Button
+                        tooltip="Reset all instance data"
+                        loading={resetFetcher.state === "submitting"}
+                        text
+                        severity="danger"
+                        onClick={() => handleResetInstanceData(countryAccount)}
+                        className="p-2"
+                    >
+                        <i className="pi pi-replay" style={{ fontSize: "1rem" }}></i>
+                    </Button>
+                )}
+            </>
+        );
+    }
 
     function handleResetInstanceData(
         countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
@@ -173,95 +274,66 @@ export default function CountryAccountsLayout() {
                     />
                 </div>
             </div>
-            <table className="dts-table">
-                <thead>
-                    <tr>
-                        <th>{ctx.t({ code: "common.country", msg: "Country" })}</th>
-                        <th>
-                            {ctx.t({
-                                code: "common.short_description",
-                                msg: "Short description",
-                            })}
-                        </th>
-                        <th>{ctx.t({ code: "common.status", msg: "Status" })}</th>
-                        <th>{ctx.t({ code: "common.type", msg: "Type" })}</th>
-                        <th>
-                            {ctx.t({
-                                code: "admin.primary_admin_email",
-                                msg: "Primary admin's email",
-                            })}
-                        </th>
-                        <th>{ctx.t({ code: "common.created_at", msg: "Created at" })}</th>
-                        <th>
-                            {ctx.t({ code: "common.modified_at", msg: "Modified at" })}
-                        </th>
-                        <th>{ctx.t({ code: "common.actions", msg: "Actions" })}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {countryAccounts.map((countryAccount) => (
-                        <tr key={countryAccount.id}>
-                            <td>{countryAccount.country.name}</td>
-                            <td>{countryAccount.shortDescription}</td>
-                            <td>
-                                {countryAccount.status === countryAccountStatuses.ACTIVE
-                                    ? ctx.t({ code: "common.active", msg: "Active" })
-                                    : ctx.t({ code: "common.inactive", msg: "Inactive" })}
-                            </td>
-                            <td>
-                                {countryAccount.type === countryAccountTypesTable.OFFICIAL ? (
-                                    <Tag
-                                        value={getCountryAccountTypeLabel(ctx, countryAccount.type)}
-                                    />
-                                ) : (
-                                    <Tag
-                                        value={getCountryAccountTypeLabel(ctx, countryAccount.type)}
-                                        severity="warning"
-                                    />
-                                )}
-                            </td>
-                            <td>{countryAccount.userCountryAccounts[0].user.email}</td>
-                            <td>{new Date(countryAccount.createdAt).toLocaleString()}</td>
-                            <td>
-                                {countryAccount.updatedAt
-                                    ? new Date(countryAccount.updatedAt).toLocaleString()
-                                    : ""}
-                            </td>
-                            <td>
-                                <Button
-                                    text
-                                    severity="secondary"
-                                    onClick={() =>
-                                        navigate(
-                                            ctx.url(
-                                                `/admin/country-accounts/edit/${countryAccount.id}`,
-                                            ),
-                                        )
-                                    }
-                                    className="p-2"
-                                >
-                                    <i className="pi pi-pencil" aria-hidden="true"></i>
-                                </Button>
-                                {countryAccount.country.name === "Disaster Land" && (
-                                    <Button
-                                        tooltip="Reset all instance data"
-                                        loading={resetFetcher.state === "submitting"}
-                                        text
-                                        severity="danger"
-                                        onClick={() => handleResetInstanceData(countryAccount)}
-                                        className="p-2"
-                                    >
-                                        <i
-                                            className="pi pi-replay"
-                                            style={{ fontSize: "1rem" }}
-                                        ></i>
-                                    </Button>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div className="w-full overflow-x-auto [&_.p-datatable]:w-full [&_.p-datatable-wrapper]:w-full [&_.p-datatable-table]:w-full [&_.p-datatable-table]:min-w-full">
+                <DataTable
+                    value={countryAccounts}
+                    dataKey="id"
+                    className="w-full"
+                    tableClassName="!table w-full min-w-full border-collapse"
+                    emptyMessage={ctx.t({ code: "common.no_data_found", msg: "No data found" })}
+                >
+                    <Column
+                        header={ctx.t({ code: "common.country", msg: "Country" })}
+                        body={(countryAccount: CountryAccountWithCountryAndPrimaryAdminUser) =>
+                            countryAccount.country.name}
+                    />
+                    <Column
+                        header={ctx.t({ code: "common.short_description", msg: "Short description" })}
+                        field="shortDescription"
+                    />
+                    <Column
+                        header={ctx.t({ code: "common.status", msg: "Status" })}
+                        body={statusBodyTemplate}
+                    />
+                    <Column
+                        header={ctx.t({ code: "common.type", msg: "Type" })}
+                        body={typeBodyTemplate}
+                    />
+                    <Column
+                        header={ctx.t({
+                            code: "admin.primary_admin_email",
+                            msg: "Primary admin's email",
+                        })}
+                        body={(countryAccount: CountryAccountWithCountryAndPrimaryAdminUser) =>
+                            countryAccount.userCountryAccounts[0].user.email}
+                    />
+                    <Column
+                        header={ctx.t({ code: "common.created_at", msg: "Created at" })}
+                        body={(countryAccount: CountryAccountWithCountryAndPrimaryAdminUser) =>
+                            new Date(countryAccount.createdAt).toLocaleString()}
+                    />
+                    <Column
+                        header={ctx.t({ code: "common.modified_at", msg: "Modified at" })}
+                        body={modifiedAtBodyTemplate}
+                    />
+                    <Column
+                        header={ctx.t({ code: "common.actions", msg: "Actions" })}
+                        body={actionsBodyTemplate}
+                    />
+                </DataTable>
+            </div>
+            {pagination.totalItems > 0 && (
+                <Paginator
+                    first={(pagination.page - 1) * pagination.pageSize}
+                    rows={pagination.pageSize}
+                    totalRecords={pagination.totalItems}
+                    rowsPerPageOptions={pageSizeOptions}
+                    onPageChange={(event) => {
+                        updatePaginationParams(event.page + 1, event.rows);
+                    }}
+                    className="mt-4 !justify-end"
+                />
+            )}
             <Outlet />
         </MainContainer>
     );

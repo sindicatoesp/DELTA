@@ -3,7 +3,7 @@ import { dr } from "~/db.server";
 import {
 	getCountryAccountWithCountryById,
 	updateCountryAccount,
-} from "~/db/queries/countryAccounts";
+} from "~/db/queries/countryAccountsRepository";
 import { updateInstanceSystemSetting } from "~/db/queries/instanceSystemSetting";
 import {
 	CountryAccountStatus,

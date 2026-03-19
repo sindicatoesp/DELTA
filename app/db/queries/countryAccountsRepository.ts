@@ -35,6 +35,35 @@ export async function getCountryAccountsWithUserCountryAccountsAndUser() {
 		orderBy: (countryAccounts, { desc }) => [desc(countryAccounts.createdAt)],
 	});
 }
+
+export async function getCountryAccountsWithUserCountryAccountsAndUserPaginated(
+	offset: number,
+	limit: number,
+) {
+	return await dr.query.countryAccounts.findMany({
+		with: {
+			country: true,
+			userCountryAccounts: {
+				where: eq(userCountryAccountsTable.isPrimaryAdmin, true),
+				limit: 1,
+				with: {
+					user: true,
+				},
+			},
+		},
+		columns: {
+			id: true,
+			status: true,
+			type: true,
+			shortDescription: true,
+			createdAt: true,
+			updatedAt: true,
+		},
+		offset,
+		limit,
+		orderBy: (countryAccounts, { desc }) => [desc(countryAccounts.createdAt)],
+	});
+}
 export type CountryAccountWithCountryAndPrimaryAdminUser = Awaited<
 	ReturnType<typeof getCountryAccountsWithUserCountryAccountsAndUser>
 >[number];

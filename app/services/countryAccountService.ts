@@ -16,7 +16,7 @@ import {
 	createCountryAccount,
 	getCountryAccountWithCountryById,
 	updateCountryAccount,
-} from "~/db/queries/countryAccounts";
+} from "~/db/queries/countryAccountsRepository";
 import { DamagesRepository } from "~/db/queries/damagesRepository";
 import { DeathRepository } from "~/db/queries/deathRepository";
 import { DevExample1Repository } from "~/db/queries/devExample1Repository";

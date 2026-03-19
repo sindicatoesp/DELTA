@@ -29,7 +29,7 @@ import {
 	sendInviteForExistingUser,
 	sendInviteForNewUser,
 } from "~/utils/emailUtil";
-import { getCountryAccountById } from "~/db/queries/countryAccounts";
+import { getCountryAccountById } from "~/db/queries/countryAccountsRepository";
 
 export const meta: MetaFunction = () => {
 	const ctx = new ViewContext();
@@ -241,9 +241,8 @@ export default function Screen() {
 						</h2>
 						<p className="mb-2 flex items-center">
 							<span
-								className={`status-dot ${
-									loaderData.emailVerified ? "activated" : "pending"
-								}`}
+								className={`status-dot ${loaderData.emailVerified ? "activated" : "pending"
+									}`}
 								style={{
 									height: "10px",
 									width: "10px",
@@ -256,13 +255,13 @@ export default function Screen() {
 							></span>
 							{loaderData.emailVerified
 								? ctx.t({
-										code: "settings.access_mgmnt.account_activated",
-										msg: "Account activated",
-									})
+									code: "settings.access_mgmnt.account_activated",
+									msg: "Account activated",
+								})
 								: ctx.t({
-										code: "settings.access_mgmnt.account_activation_pending",
-										msg: "Account activation pending",
-									})}
+									code: "settings.access_mgmnt.account_activation_pending",
+									msg: "Account activation pending",
+								})}
 						</p>
 						<p className="mb-2">
 							<strong>
