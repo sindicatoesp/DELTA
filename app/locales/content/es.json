@@ -2261,7 +2261,7 @@
     },
     {
         "id": "hip_hazard.name.78460.4b4962",
-        "translation": "Gusano barrenador del nuevo mundo (NWS)"
+        "translation": "Gusano barrenador del ganado ( GBG) o del nuevo mundo (NWS)"
     },
     {
         "id": "hip_hazard.name.78461.5bf7e8",
@@ -2269,19 +2269,19 @@
     },
     {
         "id": "hip_hazard.name.78462.09ee5b",
-        "translation": "Peste de pequeños rumiantes"
+        "translation": "Peste de pequeños rumiantes ( PPR)"
     },
     {
         "id": "hip_hazard.name.78463.f2b58f",
-        "translation": "Fiebre Q"
+        "translation": "Fiebre Q o coxiellosis"
     },
     {
         "id": "hip_hazard.name.78464.ce557e",
-        "translation": "Fiebre del Valle del Rift"
+        "translation": "Fiebre del Valle del Rift ( FVR)"
     },
     {
         "id": "hip_hazard.name.78466.b53bb4",
-        "translation": "Fiebre del Nilo Occidental"
+        "translation": "Fiebre del Nilo Occidental ( FNO)"
     },
     {
         "id": "hip_hazard.name.78467.d817f1",
@@ -2305,7 +2305,7 @@
     },
     {
         "id": "hip_hazard.name.78472.b62b66",
-        "translation": "Enfermedad de la ostra Acuicultura"
+        "translation": "Enfermedad de la ostra de acuicultura - Bonamia exitiosa y Bonamia ostreae"
     },
     {
         "id": "hip_hazard.name.78473.68c201",
