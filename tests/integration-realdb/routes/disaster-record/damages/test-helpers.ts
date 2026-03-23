@@ -57,6 +57,7 @@ export async function createTestDamage(
 			recordId: disasterRecord.id,
 			sectorId: overrides.sectorId || sector.id,
 			assetId: asset.id,
+			attachments: [],
 			...overrides,
 		})
 		.returning();
