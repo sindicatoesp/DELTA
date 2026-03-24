@@ -19,7 +19,7 @@ import { SelectUserCountryAccounts } from "~/drizzle/schema/userCountryAccountsT
 import {
 	countryAccountTypesTable,
 	SelectCountryAccounts,
-} from "~/drizzle/schema/countryAccounts";
+} from "~/drizzle/schema/countryAccountsTable";
 import { SelectCountries } from "~/drizzle/schema/countriesTable";
 import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
 import { redirectLangFromRoute, replaceLang } from "~/utils/url.backend";

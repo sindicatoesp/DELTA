@@ -19,7 +19,7 @@ import {
 	countryAccountStatuses,
 	CountryAccountType,
 	countryAccountTypesTable,
-} from "~/drizzle/schema/countryAccounts";
+} from "~/drizzle/schema/countryAccountsTable";
 import {
 	CountryAccountValidationError,
 	createCountryAccountService,

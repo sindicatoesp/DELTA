@@ -39,7 +39,7 @@ import {
 	CountryAccountStatus,
 	countryAccountStatuses,
 	countryAccountTypesTable,
-} from "~/drizzle/schema/countryAccounts";
+} from "~/drizzle/schema/countryAccountsTable";
 import { COUNTRY_TYPE } from "~/drizzle/schema/countriesTable";
 
 // Create a custom error class for validation errors
@@ -281,7 +281,14 @@ export async function cloneCountryAccountService(
 	}
 
 	console.log("Clonning");
-
+	// Cloning steps
+	// 1. Create new country account with same country and type as Training but with new short description
+	// const newCountryAccount = await CountryAccountsRepository.create(
+	// 	countryAccount.countryId,
+	// 	countryAccount.status,
+	// 	countryAccountTypesTable.TRAINING,
+	// 	shortDescription,
+	// );
 	return { success: true };
 }
 

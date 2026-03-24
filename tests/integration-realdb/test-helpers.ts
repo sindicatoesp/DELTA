@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import { dr } from "~/db.server";
-import { countryAccounts } from "~/drizzle/schema/countryAccounts";
+import { countryAccountsTable } from "~/drizzle/schema/countryAccountsTable";
 import { userTable } from "~/drizzle/schema";
 import { userCountryAccountsTable } from "~/drizzle/schema/userCountryAccountsTable";
 import { instanceSystemSettingsTable } from "~/drizzle/schema/instanceSystemSettingsTable";
@@ -90,7 +90,7 @@ export async function createTestUser(ids: {
 			.onConflictDoNothing();
 
 		await tx
-			.insert(countryAccounts)
+			.insert(countryAccountsTable)
 			.values({
 				id: ids.countryAccountId,
 				shortDescription: "Test Country",
@@ -139,8 +139,8 @@ export async function cleanupTestUser(ids: {
 	} catch (e) {}
 	try {
 		await dr
-			.delete(countryAccounts)
-			.where(eq(countryAccounts.id, ids.countryAccountId));
+			.delete(countryAccountsTable)
+			.where(eq(countryAccountsTable.id, ids.countryAccountId));
 	} catch (e) {}
 	try {
 		await dr.delete(userTable).where(eq(userTable.id, ids.userId));

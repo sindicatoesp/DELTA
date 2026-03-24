@@ -18,7 +18,7 @@ import {
     CountryAccountsRepository,
     CountryAccountWithCountryAndPrimaryAdminUser,
 } from "~/db/queries/countryAccountsRepository";
-import { countryAccounts } from "~/drizzle/schema/countryAccounts";
+import { countryAccountsTable } from "~/drizzle/schema/countryAccountsTable";
 import { dr } from "~/db.server";
 import { MainContainer } from "~/frontend/container";
 import { executeQueryForPagination3 } from "~/frontend/pagination/api.server";
@@ -27,7 +27,7 @@ import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import {
     countryAccountStatuses,
     countryAccountTypesTable,
-} from "~/drizzle/schema/countryAccounts";
+} from "~/drizzle/schema/countryAccountsTable";
 import { ViewContext } from "~/frontend/context";
 import { DContext } from "~/utils/dcontext";
 import { htmlTitle } from "~/utils/htmlmeta";
@@ -61,7 +61,7 @@ export const loader = authLoaderWithPerm(
     "manage_country_accounts",
     async (loaderArgs) => {
         const { request } = loaderArgs;
-        const totalItems = await dr.$count(countryAccounts);
+        const totalItems = await dr.$count(countryAccountsTable);
         const data = await executeQueryForPagination3(
             request,
             totalItems,

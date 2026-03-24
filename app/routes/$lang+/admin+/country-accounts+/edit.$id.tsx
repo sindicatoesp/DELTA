@@ -27,7 +27,7 @@ import {
     CountryAccountStatus,
     countryAccountStatuses,
     countryAccountTypesTable,
-} from "~/drizzle/schema/countryAccounts";
+} from "~/drizzle/schema/countryAccountsTable";
 import { userCountryAccountsTable } from "~/drizzle/schema/userCountryAccountsTable";
 import { SelectUser } from "~/drizzle/schema/userTable";
 import {

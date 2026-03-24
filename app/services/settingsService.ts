@@ -5,7 +5,7 @@ import { updateInstanceSystemSetting } from "~/db/queries/instanceSystemSetting"
 import {
 	CountryAccountStatus,
 	countryAccountStatuses,
-} from "~/drizzle/schema/countryAccounts";
+} from "~/drizzle/schema/countryAccountsTable";
 import { checkValidCurrency } from "~/utils/currency";
 
 export class SettingsValidationError extends Error {
