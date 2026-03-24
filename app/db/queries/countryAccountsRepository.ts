@@ -79,6 +79,7 @@ export const CountryAccountsRepository = {
 				id: true,
 				countryId: true,
 				status: true,
+				shortDescription: true,
 				createdAt: true,
 				updatedAt: true,
 			},

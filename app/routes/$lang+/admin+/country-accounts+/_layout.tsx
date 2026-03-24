@@ -1,18 +1,14 @@
 import {
     MetaFunction,
     Outlet,
-    useFetcher,
     useLoaderData,
     useLocation,
     useNavigate,
 } from "react-router";
-import { useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { DataTable } from "primereact/datatable";
 import { Paginator } from "primereact/paginator";
-import { Toast } from "primereact/toast";
 
 import {
     CountryAccountsRepository,
@@ -114,9 +110,6 @@ export default function CountryAccountsLayout() {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const resetFetcher = useFetcher<{ success?: true; operation?: "reset"; errors?: string[] }>();
-    const toast = useRef<Toast>(null);
-    const [resettingId, setResettingId] = useState<string | null>(null);
     const pageSizeOptions = [10, 20, 30, 40, 50];
 
     const updatePaginationParams = (nextPage: number, nextPageSize: number) => {
@@ -180,14 +173,15 @@ export default function CountryAccountsLayout() {
     function actionsBodyTemplate(
         countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
     ) {
-        const isResettingThisRow =
-            resetFetcher.state !== "idle" && resettingId === countryAccount.id;
-
         return (
             <>
                 <Button
                     text
                     severity="secondary"
+                    tooltip={ctx.t({
+                        code: "common.edit",
+                        msg: "Edit",
+                    })}
                     onClick={() =>
                         navigate(
                             ctx.url(`/admin/country-accounts/edit/${countryAccount.id}`),
@@ -213,84 +207,24 @@ export default function CountryAccountsLayout() {
                         <i className="pi pi-clone" aria-hidden="true"></i>
                     </Button>
                 ) : null}
-                {countryAccount.country.name === "Disaster Land" && (
+                {countryAccount.country.type === COUNTRY_TYPE.FICTIONAL && (
                     <Button
-                        tooltip="Reset all instance data"
-                        loading={isResettingThisRow}
+                        tooltip="Delete instance"
                         text
                         severity="danger"
-                        onClick={() => handleResetInstanceData(countryAccount)}
+                        onClick={() =>
+                            navigate(
+                                ctx.url(`/admin/country-accounts/delete/${countryAccount.id}`),
+                            )
+                        }
                         className="p-2"
                     >
-                        <i className="pi pi-replay" style={{ fontSize: "1rem" }}></i>
+                        <i className="pi pi-trash" style={{ fontSize: "1rem" }}></i>
                     </Button>
                 )}
             </>
         );
     }
-
-    function handleResetInstanceData(
-        countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
-    ) {
-        confirmDialog({
-            message: ctx.t({
-                code: "admin.reset_instance_data_confirm_message",
-                msg: "Are you sure you want to reset all instance data? This action cannot be undone.",
-            }),
-            header: ctx.t({
-                code: "admin.reset_instance_data_confirm_header",
-                msg: "Reset All Instance Data",
-            }),
-            icon: "pi pi-exclamation-triangle",
-            acceptIcon: "pi pi-replay",
-            rejectClassName: "p-button-outlined ml-2",
-            acceptClassName: "p-button-danger p-button-outlined",
-            defaultFocus: "reject",
-            acceptLabel: ctx.t({ code: "common.yes", msg: "Yes" }),
-            rejectLabel: ctx.t({ code: "common.no", msg: "No" }),
-            accept: () => {
-                setResettingId(countryAccount.id);
-                resetFetcher.submit(
-                    {},
-                    {
-                        method: "post",
-                        action: ctx.url(`/admin/country-accounts/reset/${countryAccount.id}`),
-                    },
-                );
-            },
-            reject: () => {
-                setResettingId(null);
-            },
-        });
-    }
-
-    useEffect(() => {
-        if (resetFetcher.state !== "idle") {
-            return;
-        }
-
-        if (resetFetcher.data?.success && resetFetcher.data.operation === "reset") {
-            setResettingId(null);
-            toast.current?.show({
-                severity: "info",
-                summary: ctx.t({ code: "common.success", msg: "Success" }),
-                detail: ctx.t({
-                    code: "admin.instance_data_reset",
-                    msg: "Instance data has been reset successfully",
-                }),
-            });
-            return;
-        }
-
-        if (resetFetcher.data?.errors?.length) {
-            setResettingId(null);
-            toast.current?.show({
-                severity: "error",
-                summary: ctx.t({ code: "common.error", msg: "Error" }),
-                detail: resetFetcher.data.errors[0],
-            });
-        }
-    }, [resetFetcher.data, resetFetcher.state]);
 
     return (
         <MainContainer
@@ -300,9 +234,6 @@ export default function CountryAccountsLayout() {
             })}
             headerExtra={<NavSettings ctx={ctx} />}
         >
-            <ConfirmDialog />
-            <Toast ref={toast} />
-
             <div className="dts-page-intro" style={{ paddingRight: 0 }}>
                 <div className="dts-additional-actions">
                     <Button
