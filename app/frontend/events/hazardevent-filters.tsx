@@ -62,7 +62,7 @@ export function getEventStatusOptions(ctx: ViewContext) {
 }
 
 export function getRecordStatusOptions(ctx: ViewContext) {
-	return [
+	let statusArray = [
 		{
 			value: "draft",
 			label: ctx.t({
@@ -104,6 +104,15 @@ export function getRecordStatusOptions(ctx: ViewContext) {
 			}),
 		},
 	];
+
+	// If the user is a data viewer, only show validated and published statuses
+	if (ctx.user?.role === "data-viewer") {
+		statusArray = statusArray.filter((status) =>
+			["validated", "published"].includes(status.value),
+		);
+	}
+
+	return statusArray;
 }
 
 /**

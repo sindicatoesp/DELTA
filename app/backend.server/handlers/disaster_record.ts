@@ -19,6 +19,7 @@ import {
 	getCountryAccountsIdFromSession,
 	getCountrySettingsFromSession,
 	getUserIdFromSession,
+	getUserRoleFromSession,
 } from "~/utils/session";
 import { getSectorByLevel } from "~/db/queries/sector";
 
@@ -34,7 +35,7 @@ export async function disasterRecordLoader(args: disasterRecordLoaderArgs) {
 	const ctx = new BackendContext(loaderArgs);
 	const { request } = loaderArgs;
 	const userId = (await getUserIdFromSession(request)) as string;
-
+	const userRole = await getUserRoleFromSession(request);
 	const url = new URL(request.url);
 	const extraParams = [
 		"disasterEventUUID",
@@ -200,6 +201,14 @@ export async function disasterRecordLoader(args: disasterRecordLoaderArgs) {
   			)`
 				: undefined,
 	);
+
+	// in case of data viewer role, force the filter on approvalStatus to validated and published
+	if (userRole === 'data-viewer') {
+		baseCondition = and(baseCondition, or(
+			eq(disasterRecordsTable.approvalStatus, "validated"),
+			eq(disasterRecordsTable.approvalStatus, "published")
+		));
+	}
 
 	// count and select must now join the disasterEventTable
 	const countResult = await dr

@@ -18,6 +18,7 @@ import {
 	getCountryAccountsIdFromSession,
 	getCountrySettingsFromSession,
 	getUserIdFromSession,
+	getUserRoleFromSession,
 } from "~/utils/session";
 import { getCommonData } from "../commondata";
 import { entityValidationAssignmentTable } from "~/drizzle/schema/entityValidationAssignmentTable";
@@ -33,7 +34,7 @@ export async function disasterEventsLoader(args: disasterEventLoaderArgs) {
 	const { loaderArgs } = args;
 	const { request } = loaderArgs;
 	const userId = (await getUserIdFromSession(request)) as string;
-
+	const userRole = await getUserRoleFromSession(request);
 	const url = new URL(request.url);
 	const extraParams = ["search", "viewMyRecords", "pendingMyAction"];
 
@@ -303,6 +304,14 @@ export async function disasterEventsLoader(args: disasterEventLoaderArgs) {
 				)
 			: undefined,
 	);
+
+	// in case of data viewer role, force the filter on approvalStatus to validated and published
+	if (userRole === 'data-viewer') {
+		condition = and(condition, or(
+			eq(disasterEventTable.approvalStatus, "validated"),
+			eq(disasterEventTable.approvalStatus, "published")
+		));
+	}
 
 	const count = await dr.$count(disasterEventTable, condition);
 	// const events = async (offsetLimit: OffsetLimit) => {
