@@ -78,18 +78,18 @@ export default function CloneCountryAccountDialog() {
             footer={
                 <div className="flex justify-end gap-2">
                     <Button
-                        type="submit"
-                        form="cloneCountryAccountForm"
-                        label={ctx.t({ code: "common.save", msg: "Save" })}
-                        icon="pi pi-check"
-                        loading={isSubmitting}
-                    />
-                    <Button
                         type="button"
                         label={ctx.t({ code: "common.cancel", msg: "Cancel" })}
                         icon="pi pi-times"
                         onClick={handleClose}
                         outlined
+                    />
+                    <Button
+                        type="submit"
+                        form="cloneCountryAccountForm"
+                        label={ctx.t({ code: "common.clone", msg: "Clone" })}
+                        icon="pi pi-check"
+                        loading={isSubmitting}
                     />
                 </div>
             }

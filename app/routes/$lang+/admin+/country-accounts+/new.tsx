@@ -146,17 +146,18 @@ export default function CountryAccountsNewPage() {
 	const footerContent = (
 		<div className="flex w-full justify-end gap-2">
 			<Button
+				type="button"
+				outlined
+				label={ctx.t({ code: "common.cancel", msg: "Cancel" })}
+				onClick={() => navigate(ctx.url("/admin/country-accounts/"))}
+				icon="pi pi-times"
+			/>
+			<Button
 				type="submit"
 				form="newCountryAccountForm"
 				label={ctx.t({ code: "common.save", msg: "Save" })}
 				icon="pi pi-check"
 				loading={isSubmitting}
-			/>
-			<Button
-				type="button"
-				outlined
-				label={ctx.t({ code: "common.cancel", msg: "Cancel" })}
-				onClick={() => navigate(ctx.url("/admin/country-accounts/"))}
 			/>
 		</div>
 	);

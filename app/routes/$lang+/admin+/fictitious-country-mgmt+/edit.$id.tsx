@@ -133,6 +133,7 @@ export default function FictitiousCountryEditPage() {
                     <Button
                         type="button"
                         outlined
+                        icon="pi pi-times"
                         label={ctx.t({ code: "common.cancel", msg: "Cancel" })}
                         onClick={() => navigate(ctx.url("/admin/fictitious-country-mgmt"))}
                     />

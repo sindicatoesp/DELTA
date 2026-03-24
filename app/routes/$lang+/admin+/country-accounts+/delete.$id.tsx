@@ -89,19 +89,19 @@ export default function DeleteInstanceRoute() {
             footer={
                 <div className="flex justify-end gap-2">
                     <Button
+                        type="button"
+                        label={ctx.t({ code: "common.no", msg: "No" })}
+                        icon="pi pi-times"
+                        onClick={handleClose}
+                        outlined
+                    />
+                    <Button
                         type="submit"
                         form="deleteCountryAccountForm"
                         label={ctx.t({ code: "common.yes", msg: "Yes" })}
                         icon="pi pi-trash"
                         severity="danger"
                         loading={isSubmitting}
-                    />
-                    <Button
-                        type="button"
-                        label={ctx.t({ code: "common.no", msg: "No" })}
-                        icon="pi pi-times"
-                        onClick={handleClose}
-                        outlined
                     />
                 </div>
             }
