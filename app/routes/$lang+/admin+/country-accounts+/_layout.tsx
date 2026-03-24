@@ -32,6 +32,7 @@ import { ViewContext } from "~/frontend/context";
 import { DContext } from "~/utils/dcontext";
 import { htmlTitle } from "~/utils/htmlmeta";
 import Tag from "~/components/Tag";
+import { COUNTRY_TYPE } from "~/drizzle/schema";
 
 export const meta: MetaFunction = () => {
     const ctx = new ViewContext();
@@ -160,6 +161,22 @@ export default function CountryAccountsLayout() {
             : "";
     }
 
+    function countryTypeBodyTemplate(
+        countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
+    ) {
+        const countryType = countryAccount.country.type;
+        return countryType === COUNTRY_TYPE.FICTIONAL ? (
+            <Tag
+                value={countryType}
+                severity="warning"
+            />
+        ) : (
+            <Tag
+                value={countryType}
+            />
+        );
+    }
+
     function actionsBodyTemplate(
         countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
     ) {
@@ -180,11 +197,16 @@ export default function CountryAccountsLayout() {
                 >
                     <i className="pi pi-pencil" aria-hidden="true"></i>
                 </Button>
-                {countryAccount.country.type === "Fictional" ? (
+                {countryAccount.country.type === COUNTRY_TYPE.FICTIONAL ? (
                     <Button
                         text
                         severity="contrast"
                         tooltip="Clone Instance"
+                        onClick={() =>
+                            navigate(
+                                ctx.url(`/admin/country-accounts/clone/${countryAccount.id}`),
+                            )
+                        }
                         className="p-2"
                         type="button"
                     >
@@ -305,6 +327,10 @@ export default function CountryAccountsLayout() {
                         header={ctx.t({ code: "common.country", msg: "Country" })}
                         body={(countryAccount: CountryAccountWithCountryAndPrimaryAdminUser) =>
                             countryAccount.country.name}
+                    />
+                    <Column
+                        header={ctx.t({ code: "common.country_type", msg: "Country Type" })}
+                        body={countryTypeBodyTemplate}
                     />
                     <Column
                         header={ctx.t({ code: "common.short_description", msg: "Short description" })}

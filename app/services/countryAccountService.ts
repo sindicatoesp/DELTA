@@ -40,6 +40,7 @@ import {
 	countryAccountStatuses,
 	countryAccountTypesTable,
 } from "~/drizzle/schema/countryAccounts";
+import { COUNTRY_TYPE } from "~/drizzle/schema/countriesTable";
 
 // Create a custom error class for validation errors
 export class CountryAccountValidationError extends Error {
@@ -251,6 +252,37 @@ export async function updateCountryAccountStatusService(
 		shortDescription,
 	);
 	return { updatedCountryAccount };
+}
+
+export async function cloneCountryAccountService(
+	countryAccountId: string,
+	shortDescription: string,
+) {
+	const errors: string[] = [];
+	const countryAccount =
+		await CountryAccountsRepository.getByIdWithCountry(countryAccountId);
+
+	if (!countryAccount) {
+		throw new CountryAccountValidationError([
+			`Country accounts id:${countryAccountId} does not exist`,
+		]);
+	}
+
+	if (!shortDescription || shortDescription.trim() === "") {
+		errors.push("Short description is required");
+	}
+
+	if (countryAccount.country.type !== COUNTRY_TYPE.FICTIONAL) {
+		errors.push("Only fictional country accounts can be cloned");
+	}
+
+	if (errors.length > 0) {
+		throw new CountryAccountValidationError(errors);
+	}
+
+	console.log("Clonning");
+
+	return { success: true };
 }
 
 export async function resetInstanceData(countryAccountId: string) {
