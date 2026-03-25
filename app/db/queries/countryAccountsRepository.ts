@@ -127,6 +127,12 @@ export const CountryAccountsRepository = {
 			.execute();
 		return result[0] || null;
 	},
+	async deleteById(id: string, tx?: Tx) {
+		const db = tx || dr;
+		await db
+			.delete(countryAccountsTable)
+			.where(eq(countryAccountsTable.id, id));
+	},
 };
 export type CountryAccountWithCountryAndPrimaryAdminUser = Awaited<
 	ReturnType<

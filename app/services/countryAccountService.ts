@@ -296,8 +296,8 @@ export async function cloneCountryAccountService(
 	return { success: true };
 }
 
-export async function resetInstanceData(countryAccountId: string) {
-	console.log("Resetting instance data for:", countryAccountId);
+export async function deleteInstance(countryAccountId: string) {
+	console.log("Deleting instance data for:", countryAccountId);
 	return dr.transaction(async (tx) => {
 		// 1. Get all disaster records for this country account
 		const disasterRecords =
@@ -412,6 +412,8 @@ export async function resetInstanceData(countryAccountId: string) {
 			countryAccountId,
 			tx,
 		);
+		// 4. Finally, delete the country account itself
+		await CountryAccountsRepository.deleteById(countryAccountId, tx);
 
 		return true;
 	});
