@@ -5,7 +5,10 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
 import { BackendContext } from "~/backend.server/context";
-import { CountryRepository } from "~/db/queries/countriesRepository";
+import {
+    createFictitiousCountry,
+    FictitiousCountryValidationError,
+} from "~/services/fictitiousCountryService";
 import { authActionWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 import { ViewContext } from "~/frontend/context";
@@ -20,18 +23,10 @@ export const action = authActionWithPerm(
         const { request } = actionArgs;
         const backendCtx = new BackendContext(actionArgs);
         const formData = await request.formData();
-        const name = String(formData.get("name") ?? "").trim();
-
-        if (!name) {
-            return { errors: ["Name is required"] } satisfies ActionData;
-        }
+        const name = String(formData.get("name") ?? "");
 
         try {
-            await CountryRepository.create({
-                name,
-                type: "Fictional",
-                iso3: null,
-            });
+            await createFictitiousCountry(name);
 
             return redirectWithMessage(actionArgs, "/admin/fictitious-country-mgmt", {
                 type: "success",
@@ -41,11 +36,10 @@ export const action = authActionWithPerm(
                 }),
             });
         } catch (error) {
-            const message =
-                error instanceof Error && error.message.includes("unique")
-                    ? "A country with this name already exists"
-                    : "An unexpected error occurred";
-            return { errors: [message] } satisfies ActionData;
+            if (error instanceof FictitiousCountryValidationError) {
+                return { errors: error.errors } satisfies ActionData;
+            }
+            return { errors: ["An unexpected error occurred"] } satisfies ActionData;
         }
     },
 );

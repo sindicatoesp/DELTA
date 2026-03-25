@@ -5,7 +5,12 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
 import { BackendContext } from "~/backend.server/context";
-import { CountryRepository } from "~/db/queries/countriesRepository";
+import {
+    FictitiousCountryNotFoundError,
+    FictitiousCountryValidationError,
+    getFictitiousCountryById,
+    updateFictitiousCountry,
+} from "~/services/fictitiousCountryService";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 import { ViewContext } from "~/frontend/context";
@@ -18,8 +23,8 @@ export const loader = authLoaderWithPerm(
     "manage_country_accounts",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
-        const country = await CountryRepository.getById(id);
-        if (!country || country.type !== "Fictional") {
+        const country = await getFictitiousCountryById(id);
+        if (!country) {
             throw new Response("Not Found", { status: 404 });
         }
 
@@ -34,24 +39,10 @@ export const action = authActionWithPerm(
         const backendCtx = new BackendContext(actionArgs);
         const id = actionArgs.params.id!;
         const formData = await request.formData();
-        const name = String(formData.get("name") ?? "").trim();
-
-        if (!name) {
-            return { errors: ["Name is required"] } satisfies ActionData;
-        }
+        const name = String(formData.get("name") ?? "");
 
         try {
-            const existing = await CountryRepository.getById(id);
-
-            if (!existing || existing.type !== "Fictional") {
-                throw new Response("Not Found", { status: 404 });
-            }
-
-            await CountryRepository.updateById(id, {
-                name,
-                type: "Fictional",
-                iso3: null,
-            });
+            await updateFictitiousCountry(id, name);
 
             return redirectWithMessage(actionArgs, "/admin/fictitious-country-mgmt", {
                 type: "success",
@@ -61,11 +52,13 @@ export const action = authActionWithPerm(
                 }),
             });
         } catch (error) {
-            const message =
-                error instanceof Error && error.message.includes("unique")
-                    ? "A country with this name already exists"
-                    : "An unexpected error occurred";
-            return { errors: [message] } satisfies ActionData;
+            if (error instanceof FictitiousCountryNotFoundError) {
+                throw new Response("Not Found", { status: 404 });
+            }
+            if (error instanceof FictitiousCountryValidationError) {
+                return { errors: error.errors } satisfies ActionData;
+            }
+            return { errors: ["An unexpected error occurred"] } satisfies ActionData;
         }
     },
 );

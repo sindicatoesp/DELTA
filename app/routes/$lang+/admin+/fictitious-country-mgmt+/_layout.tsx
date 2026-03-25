@@ -3,9 +3,8 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 
-import { CountryRepository } from "~/db/queries/countriesRepository";
-import { COUNTRY_TYPE } from "~/drizzle/schema/countriesTable";
 import { MainContainer } from "~/frontend/container";
+import { getFictitiousCountriesOrderByName } from "~/services/fictitiousCountryService";
 import { NavSettings } from "../../settings/nav";
 import { authLoaderWithPerm } from "~/utils/auth";
 import { ViewContext } from "~/frontend/context";
@@ -17,7 +16,7 @@ type LoaderData = {
 export const loader = authLoaderWithPerm(
     "manage_country_accounts",
     async () => {
-        const items = await CountryRepository.getByTypeOrderByName(COUNTRY_TYPE.FICTIONAL);
+        const items = await getFictitiousCountriesOrderByName();
 
         return { items } satisfies LoaderData;
     },

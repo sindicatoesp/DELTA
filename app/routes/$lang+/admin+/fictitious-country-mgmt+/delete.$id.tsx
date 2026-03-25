@@ -10,9 +10,14 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Message } from "primereact/message";
 
-import { CountryRepository } from "~/db/queries/countriesRepository";
 import { BackendContext } from "~/backend.server/context";
 import { ViewContext } from "~/frontend/context";
+import {
+    deleteFictitiousCountry,
+    FictitiousCountryNotFoundError,
+    FictitiousCountryValidationError,
+    getFictitiousCountryById,
+} from "~/services/fictitiousCountryService";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 
@@ -23,33 +28,14 @@ export const loader = authLoaderWithPerm(
     "manage_country_accounts",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
-        const country = await CountryRepository.getById(id);
-        if (!country || country.type !== "Fictional") {
+        const country = await getFictitiousCountryById(id);
+        if (!country) {
             throw new Response("Not Found", { status: 404 });
         }
 
         return { country };
     },
 );
-
-function isForeignKeyDeleteViolation(error: unknown): boolean {
-    if (!error || typeof error !== "object") {
-        return false;
-    }
-
-    const err = error as {
-        code?: string;
-        message?: string;
-        cause?: { code?: string; message?: string };
-    };
-
-    if (err.code === "23503" || err.cause?.code === "23503") {
-        return true;
-    }
-
-    const message = `${err.message ?? ""} ${err.cause?.message ?? ""}`.toLowerCase();
-    return message.includes("foreign key") || message.includes("violates");
-}
 
 export const action = authActionWithPerm(
     "manage_country_accounts",
@@ -58,13 +44,7 @@ export const action = authActionWithPerm(
         const backendCtx = new BackendContext(actionArgs);
 
         try {
-            const existing = await CountryRepository.getById(id);
-
-            if (!existing || existing.type !== "Fictional") {
-                return { errors: ["Fictitious country not found"] } satisfies ActionData;
-            }
-
-            await CountryRepository.deleteById(id);
+            await deleteFictitiousCountry(id);
 
             return redirectWithMessage(actionArgs, "/admin/fictitious-country-mgmt", {
                 type: "success",
@@ -74,19 +54,13 @@ export const action = authActionWithPerm(
                 }),
             });
         } catch (error) {
-            if (isForeignKeyDeleteViolation(error)) {
-                return {
-                    errors: [
-                        "This fictitious country cannot be deleted because it is used by other records.",
-                    ],
-                } satisfies ActionData;
+            if (error instanceof FictitiousCountryNotFoundError) {
+                return { errors: ["Fictitious country not found"] } satisfies ActionData;
             }
-
-            const message =
-                error instanceof Error
-                    ? error.message
-                    : "An unexpected error occurred";
-            return { errors: [message] } satisfies ActionData;
+            if (error instanceof FictitiousCountryValidationError) {
+                return { errors: error.errors } satisfies ActionData;
+            }
+            return { errors: ["An unexpected error occurred"] } satisfies ActionData;
         }
     },
 );
