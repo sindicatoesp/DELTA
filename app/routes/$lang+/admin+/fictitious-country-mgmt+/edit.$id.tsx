@@ -20,7 +20,7 @@ type ActionData =
     | undefined;
 
 export const loader = authLoaderWithPerm(
-    "manage_country_accounts",
+    "EditFictitiousCountry",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
         const country = await getFictitiousCountryById(id);
@@ -33,7 +33,7 @@ export const loader = authLoaderWithPerm(
 );
 
 export const action = authActionWithPerm(
-    "manage_country_accounts",
+    "EditFictitiousCountry",
     async (actionArgs) => {
         const { request } = actionArgs;
         const backendCtx = new BackendContext(actionArgs);

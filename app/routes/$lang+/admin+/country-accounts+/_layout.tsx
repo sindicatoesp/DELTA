@@ -54,7 +54,7 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = authLoaderWithPerm(
-    "manage_country_accounts",
+    "ViewCountryAccounts",
     async (loaderArgs) => {
         const { request } = loaderArgs;
         const totalItems = await dr.$count(countryAccountsTable);
@@ -77,7 +77,7 @@ type ActionData =
     | { errors: string[] };
 
 export const action = authActionWithPerm(
-    "manage_country_accounts",
+    "ViewCountryAccounts",
     async () => {
         return { errors: ["Unknown intent"] } satisfies ActionData;
     },

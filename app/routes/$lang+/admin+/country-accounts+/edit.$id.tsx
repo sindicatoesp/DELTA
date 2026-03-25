@@ -46,7 +46,7 @@ type ActionData =
     };
 
 export const loader = authLoaderWithPerm(
-    "manage_country_accounts",
+    "EditCountryAccount",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
 
@@ -82,7 +82,7 @@ export const loader = authLoaderWithPerm(
 );
 
 export const action = authActionWithPerm(
-    "manage_country_accounts",
+    "EditCountryAccount",
     async (actionArgs) => {
         const { request } = actionArgs;
         const ctx = new BackendContext(actionArgs);

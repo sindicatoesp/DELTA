@@ -14,7 +14,7 @@ type LoaderData = {
 };
 
 export const loader = authLoaderWithPerm(
-    "manage_country_accounts",
+    "ViewFictitiousCountries",
     async () => {
         const items = await getFictitiousCountriesOrderByName();
 

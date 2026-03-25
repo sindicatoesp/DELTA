@@ -25,7 +25,7 @@ type ActionData =
     | { errors: string[] };
 
 export const loader = authLoaderWithPerm(
-    "manage_country_accounts",
+    "DeleteFictitiousCountry",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
         const country = await getFictitiousCountryById(id);
@@ -38,7 +38,7 @@ export const loader = authLoaderWithPerm(
 );
 
 export const action = authActionWithPerm(
-    "manage_country_accounts",
+    "DeleteFictitiousCountry",
     async (actionArgs: ActionFunctionArgs) => {
         const id = actionArgs.params.id!;
         const backendCtx = new BackendContext(actionArgs);

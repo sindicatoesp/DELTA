@@ -18,7 +18,7 @@ type ActionData =
     | undefined;
 
 export const action = authActionWithPerm(
-    "manage_country_accounts",
+    "AddFictitiousCountry",
     async (actionArgs) => {
         const { request } = actionArgs;
         const backendCtx = new BackendContext(actionArgs);

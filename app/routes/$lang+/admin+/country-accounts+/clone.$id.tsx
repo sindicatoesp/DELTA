@@ -16,7 +16,7 @@ type ActionData = {
 };
 
 export const action = authActionWithPerm(
-    "manage_country_accounts",
+    "CloneCountryAccount",
     async (actionArgs) => {
         const { request } = actionArgs;
         const formData = await request.formData();

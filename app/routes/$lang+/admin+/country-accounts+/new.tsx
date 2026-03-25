@@ -40,7 +40,7 @@ type ActionData = {
 };
 
 export const loader = authLoaderWithPerm(
-	"manage_country_accounts",
+	"AddCountryAccount",
 	async () => {
 		const countries = await CountryRepository.getAll();
 		return { countries };
@@ -48,7 +48,7 @@ export const loader = authLoaderWithPerm(
 );
 
 export const action = authActionWithPerm(
-	"manage_country_accounts",
+	"AddCountryAccount",
 	async (actionArgs) => {
 		const { request } = actionArgs;
 		const ctx = new BackendContext(actionArgs);

@@ -20,7 +20,7 @@ import { redirectWithMessage } from "~/utils/session";
 type ActionData = { errors: string[] };
 
 export const loader = authLoaderWithPerm(
-    "manage_country_accounts",
+    "DeleteCountryAccount",
     async (loaderArgs) => {
         const id = loaderArgs.params.id as string;
         const countryAccount = await CountryAccountsRepository.getByIdWithCountry(id);
@@ -34,7 +34,7 @@ export const loader = authLoaderWithPerm(
 );
 
 export const action = authActionWithPerm(
-    "manage_country_accounts",
+    "DeleteCountryAccount",
     async (actionArgs: ActionFunctionArgs) => {
         const { params } = actionArgs;
         const id = params.id as string;
