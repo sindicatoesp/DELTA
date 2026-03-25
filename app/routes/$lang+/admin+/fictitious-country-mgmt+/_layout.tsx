@@ -1,11 +1,10 @@
 import { Outlet, useLoaderData, useNavigate } from "react-router";
-import { eq } from "drizzle-orm";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 
-import { dr } from "~/db.server";
-import { countriesTable } from "~/drizzle/schema/countriesTable";
+import { CountryRepository } from "~/db/queries/countriesRepository";
+import { COUNTRY_TYPE } from "~/drizzle/schema/countriesTable";
 import { MainContainer } from "~/frontend/container";
 import { NavSettings } from "../../settings/nav";
 import { authLoaderWithPerm } from "~/utils/auth";
@@ -18,15 +17,7 @@ type LoaderData = {
 export const loader = authLoaderWithPerm(
     "manage_country_accounts",
     async () => {
-        const items = await dr
-            .select({
-                id: countriesTable.id,
-                name: countriesTable.name,
-                type: countriesTable.type,
-            })
-            .from(countriesTable)
-            .where(eq(countriesTable.type, "Fictional"))
-            .orderBy(countriesTable.name);
+        const items = await CountryRepository.getByTypeOrderByName(COUNTRY_TYPE.FICTIONAL);
 
         return { items } satisfies LoaderData;
     },

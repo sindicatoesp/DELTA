@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import {
     ActionFunctionArgs,
     Form,
@@ -11,8 +10,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Message } from "primereact/message";
 
-import { dr } from "~/db.server";
-import { countriesTable } from "~/drizzle/schema/countriesTable";
+import { CountryRepository } from "~/db/queries/countriesRepository";
 import { BackendContext } from "~/backend.server/context";
 import { ViewContext } from "~/frontend/context";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
@@ -25,17 +23,7 @@ export const loader = authLoaderWithPerm(
     "manage_country_accounts",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
-        const result = await dr
-            .select({
-                id: countriesTable.id,
-                name: countriesTable.name,
-                type: countriesTable.type,
-            })
-            .from(countriesTable)
-            .where(eq(countriesTable.id, id))
-            .limit(1);
-
-        const country = result[0] ?? null;
+        const country = await CountryRepository.getById(id);
         if (!country || country.type !== "Fictional") {
             throw new Response("Not Found", { status: 404 });
         }
@@ -70,17 +58,13 @@ export const action = authActionWithPerm(
         const backendCtx = new BackendContext(actionArgs);
 
         try {
-            const existing = await dr
-                .select({ id: countriesTable.id, type: countriesTable.type })
-                .from(countriesTable)
-                .where(eq(countriesTable.id, id))
-                .limit(1);
+            const existing = await CountryRepository.getById(id);
 
-            if (!existing[0] || existing[0].type !== "Fictional") {
+            if (!existing || existing.type !== "Fictional") {
                 return { errors: ["Fictitious country not found"] } satisfies ActionData;
             }
 
-            await dr.delete(countriesTable).where(eq(countriesTable.id, id));
+            await CountryRepository.deleteById(id);
 
             return redirectWithMessage(actionArgs, "/admin/fictitious-country-mgmt", {
                 type: "success",

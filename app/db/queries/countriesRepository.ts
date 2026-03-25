@@ -1,12 +1,48 @@
 import { dr, Tx } from "~/db.server";
-import { countriesTable } from "~/drizzle/schema/countriesTable";
+import {
+	countriesTable,
+	CountryType,
+	InsertCountries,
+} from "~/drizzle/schema/countriesTable";
 import { eq } from "drizzle-orm";
 
 export const CountryRepository = {
-	getAll: (tx?: Tx) => {
+	getAll: async (tx?: Tx) => {
 		return (tx ?? dr).select().from(countriesTable);
 	},
-	getById: (id: string, tx?: Tx) => {
+	create: async (data: Omit<InsertCountries, "id">, tx?: Tx) => {
+		return (tx ?? dr)
+			.insert(countriesTable)
+			.values(data)
+			.returning()
+			.execute()
+			.then((result) => result[0]);
+	},
+	deleteById: async (id: string, tx?: Tx) => {
+		return (tx ?? dr).delete(countriesTable).where(eq(countriesTable.id, id));
+	},
+	updateById: async (
+		id: string,
+		data: Partial<Omit<InsertCountries, "id">>,
+		tx?: Tx,
+	) => {
+		return (tx ?? dr)
+			.update(countriesTable)
+			.set(data)
+			.where(eq(countriesTable.id, id));
+	},
+	getByTypeOrderByName: async (type: CountryType, tx?: Tx) => {
+		return (tx ?? dr)
+			.select({
+				id: countriesTable.id,
+				name: countriesTable.name,
+				type: countriesTable.type,
+			})
+			.from(countriesTable)
+			.where(eq(countriesTable.type, type))
+			.orderBy(countriesTable.name);
+	},
+	getById: async (id: string, tx?: Tx) => {
 		return (tx ?? dr)
 			.select()
 			.from(countriesTable)

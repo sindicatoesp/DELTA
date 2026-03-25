@@ -5,8 +5,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
 import { BackendContext } from "~/backend.server/context";
-import { dr } from "~/db.server";
-import { countriesTable } from "~/drizzle/schema/countriesTable";
+import { CountryRepository } from "~/db/queries/countriesRepository";
 import { authActionWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 import { ViewContext } from "~/frontend/context";
@@ -28,7 +27,7 @@ export const action = authActionWithPerm(
         }
 
         try {
-            await dr.insert(countriesTable).values({
+            await CountryRepository.create({
                 name,
                 type: "Fictional",
                 iso3: null,

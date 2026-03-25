@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { eq } from "drizzle-orm";
 import { Form, useActionData, useLoaderData, useNavigate, useNavigation } from "react-router";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
 import { BackendContext } from "~/backend.server/context";
-import { dr } from "~/db.server";
-import { countriesTable } from "~/drizzle/schema/countriesTable";
+import { CountryRepository } from "~/db/queries/countriesRepository";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 import { ViewContext } from "~/frontend/context";
@@ -20,17 +18,7 @@ export const loader = authLoaderWithPerm(
     "manage_country_accounts",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
-        const result = await dr
-            .select({
-                id: countriesTable.id,
-                name: countriesTable.name,
-                type: countriesTable.type,
-            })
-            .from(countriesTable)
-            .where(eq(countriesTable.id, id))
-            .limit(1);
-
-        const country = result[0] ?? null;
+        const country = await CountryRepository.getById(id);
         if (!country || country.type !== "Fictional") {
             throw new Response("Not Found", { status: 404 });
         }
@@ -53,24 +41,17 @@ export const action = authActionWithPerm(
         }
 
         try {
-            const existing = await dr
-                .select({ id: countriesTable.id, type: countriesTable.type })
-                .from(countriesTable)
-                .where(eq(countriesTable.id, id))
-                .limit(1);
+            const existing = await CountryRepository.getById(id);
 
-            if (!existing[0] || existing[0].type !== "Fictional") {
+            if (!existing || existing.type !== "Fictional") {
                 throw new Response("Not Found", { status: 404 });
             }
 
-            await dr
-                .update(countriesTable)
-                .set({
-                    name,
-                    type: "Fictional",
-                    iso3: null,
-                })
-                .where(eq(countriesTable.id, id));
+            await CountryRepository.updateById(id, {
+                name,
+                type: "Fictional",
+                iso3: null,
+            });
 
             return redirectWithMessage(actionArgs, "/admin/fictitious-country-mgmt", {
                 type: "success",
