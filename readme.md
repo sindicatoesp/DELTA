@@ -211,5 +211,3 @@ yarn test:e2e
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for branch naming, commit style, and PR conventions.
-
-All contributions must comply with the Apache License 2.0. By submitting a contribution, you agree to license your work under these terms.
