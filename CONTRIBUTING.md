@@ -18,6 +18,8 @@ Read `_docs/code-structure/code-structure.md` and the related pages. They explai
 | Feature | `feature/issuenumber-short-description` | `feature/385-validation-workflow` |
 | Refactor | `refactor/short-description` | `refactor/country-accounts-routes` |
 
+Omit the issue number if there is no associated issue (common for refactors).
+
 Always branch from `dev`.
 
 ## Commit messages
@@ -28,7 +30,15 @@ Use a context prefix and reference the issue number:
 Bug: attachment upload gives generic error for files over 2MB #422
 ```
 
-Common prefixes: `Bug:`, `Feature:`, `Refactor:`, `Docs:`, or the relevant component name (e.g. `Damages:`).
+Common prefixes: `Bug:`, `Feature:`, `Refactor:`, `Docs:`, or the relevant component name (e.g. `Damages: fix null check on submission`).
+
+## Before submitting
+
+Run the test suite and make sure it passes:
+
+```bash
+yarn run test
+```
 
 ## Pull requests
 
