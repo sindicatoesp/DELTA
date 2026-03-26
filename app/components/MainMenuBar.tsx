@@ -13,21 +13,26 @@ interface Props {
     isCountryAccountSelected: boolean;
     siteName?: string;
     userRole: string;
+    firstName?: string;
+    lastName?: string;
 }
 
-export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSelected, siteName }: Props) {
+export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSelected, siteName, firstName, lastName }: Props) {
     const menu = useRef<Menu>(null);
     const ctx = new ViewContext();
     const location = useLocation();
     const submit = useSubmit();
     const navigate = useNavigate();
 
-    const userMenuItems = [
+    const avatarLabel = `${(firstName || "").trim().charAt(0)}${(lastName || "").trim().charAt(0)}`.toUpperCase();
+    const isSuperAdmin = userRole === "super_admin";
+
+    const userAvatarMenu = [
         {
             label: ctx.t({ code: "nav.profile", msg: "Profile" }),
             icon: 'pi pi-user',
             command: () => {
-                console.log('Go to profile');
+                navigate(ctx.url("/user/profile"));
             }
         },
         {
@@ -61,6 +66,24 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
             }
         }
     ];
+
+    const superAdminAvatarMenu = [
+        {
+            label: ctx.t({ code: "nav.sign_out", msg: "Sign out" }),
+            icon: 'pi pi-sign-out',
+            command: () => {
+                submit(null, {
+                    method: "post",
+                    action: location.pathname.startsWith(ctx.url("/admin/")) ? ctx.url("/admin/logout") : ctx.url("/user/logout")
+                });
+            }
+        }
+    ];
+
+    let avatarMenuModel = userAvatarMenu;
+    if (isSuperAdmin) {
+        avatarMenuModel = superAdminAvatarMenu;
+    }
 
     const itemRenderer = (item: any) => (
         <a className="flex align-items-center p-menuitem-link">
@@ -109,12 +132,18 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
             <button
                 className="p-link inline-flex items-center no-underline hover:surface-hover border-round p-2 transition-colors transition-duration-200"
                 onClick={(e) => menu.current?.toggle(e)}
+                title={ctx.t({ code: "nav.profile", msg: "Profile" })}
             >
-                <Avatar icon="pi pi-user" shape="circle" size="large" />
+                <Avatar
+                    label={avatarLabel || undefined}
+                    icon={avatarLabel ? undefined : "pi pi-user"}
+                    shape="circle"
+                    size="large"
+                />
             </button>
 
             <Menu
-                model={userMenuItems}
+                model={avatarMenuModel}
                 popup
                 popupAlignment={ctx.lang === "ar" ? "right" : "left"}
                 ref={menu}
