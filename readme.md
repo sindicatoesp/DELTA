@@ -9,7 +9,7 @@ DELTA Resilience is a comprehensive system, not just an open-source software. Co
 
 It supports nationally owned Disaster Tracking Systems to monitor hazardous events and record losses and damages at national and subnational levels—whether countries use the DELTA Resilience software interface or strengthen their existing national platforms.
 
-Visit the [project website for more details](https://www.undrr.org/building-risk-knowledge/disaster-losses-and-damages-tracking-system-delta-resilience).
+Visit the [project website for more details](https://www.undrr.org/building-risk-knowledge/disaster-losses-and-damages-tracking-system-delta-resilience). See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## Features
 
@@ -17,14 +17,22 @@ Visit the [project website for more details](https://www.undrr.org/building-risk
 - Geospatial footprints
 - Import tools for legacy datasets (DesInventar using [DIX - DesInventar eXchange](https://github.com/unisdr/dts-import-middleware))
 - Role based access
+- Multi-factor authentication (TOTP)
+- Multi-language support (i18n)
+- Multi-tenant, multi-country architecture
 
 ## Technology stack
 
 - TypeScript
 - Node.js (v22 recommended)
-- Remix (React)
+- React Router v7 (React)
+- Vite
+- Tailwind CSS v4
+- PrimeReact (UI components)
 - Drizzle ORM
-- PostgreSQL 16 + PostGIS
+- PostgreSQL 16 or 17 + PostGIS
+- Vitest (unit and integration tests)
+- Playwright (end-to-end tests)
 
 ## Project structure
 
@@ -32,38 +40,63 @@ Below is a view of the repository layout and the purpose of key folders/files to
 
 ```
 ├── _docs/                     # Developer docs and design docs
-├── app/                       # Remix app source (routes, components, backend.server code)
+├── app/                       # React Router v7 app source
 │   ├── backend.server/        # Server-side API handlers and models
-│   ├── frontend/              # Shared frontend components and views
-│   ├── routes/                # Remix route modules
-│   ├── db/                    # DB helpers
-│   └── ...
-├── build/                     # Build output (client/server bundles)
+│   ├── components/            # Shared UI components (charts, maps, tables, etc.)
+│   ├── frontend/              # Shared frontend views and form components
+│   ├── pages/                 # Full-page components (access management, org management)
+│   ├── routes/                # React Router route modules (under $lang+ prefix)
+│   ├── services/              # Application-level service layer
+│   ├── utils/                 # Utility functions (auth, email, logging, etc.)
+│   ├── types/                 # Global TypeScript types
+│   └── db/                    # DB helpers and query layer
+├── tests/                     # Test suites (unit, integration, integration-realdb, e2e)
+├── locales/                   # i18n translation files
 ├── scripts/                   # Database init, build and deployment scripts
 ├── public/                    # Static assets served by the app
-│   └── assets/
-├── uploads/                   # Uploaded files storage
-├── logs/                      # Application logs
+├── docker-compose.yml         # Docker Compose setup (app + PostgreSQL/PostGIS + Adminer)
+├── Dockerfile.app             # Application container definition
+├── Makefile                   # Convenience targets (start, stop, migrate, logs, db-shell)
+├── drizzle.config.ts          # Drizzle ORM configuration
+├── CHANGELOG.md               # Release history
 └── example.env                # Example environment variables
 ```
 
 Notes:
 
-- The `app/` directory contains the bulk of the application code (Remix routes, frontend components, and server models).
+- The `app/` directory contains the bulk of the application code (React Router routes, frontend components, and server models).
 
-- `_docs/` contain developer and design documentation — consult these before contributing.
+- `_docs/` contains developer and design documentation — consult these before contributing.
 
 - `scripts/` includes db schema and initialization scripts used in CI/deploy flows.
 
 - `public/` contains static front-end assets and theme files.
 
+- `build/`, `uploads/`, and `logs/` are generated at build/runtime and are not committed to the repository.
+
 ## Quick start (local development)
+
+### Docker (recommended)
+
+The fastest way to get a working environment is Docker Compose, which starts the app, PostgreSQL 17 + PostGIS, and Adminer together.
+
+```bash
+cp example.env .env
+# configure DATABASE_URL, SESSION_SECRET, etc.
+docker-compose build
+docker-compose up -d
+docker-compose exec app yarn dbsync   # apply DB migrations
+```
+
+Open http://localhost:3000. Use `docker-compose logs -f app` to tail logs.
+
+### Manual setup
 
 Prerequisites:
 
 - Node.js (22.x recommended)
 - Yarn (or use npm)
-- PostgreSQL 16 with PostGIS
+- PostgreSQL 16 or 17 with PostGIS
 
 1. Clone the repository
 
@@ -111,7 +144,7 @@ Copy `example.env` to `.env` and update values. Key variables:
 - EMAIL_FROM: default sender address for outgoing emails
 - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_SECURE: SMTP settings when EMAIL_TRANSPORT=smtp
 - AUTHENTICATION_SUPPORTED: `form`, `sso_azure_b2c`, or comma-separated values
-- SSO*AZURE_B2C*\*: configuration for Azure B2C SSO when used
+- `SSO_AZURE_B2C_*`: configuration for Azure B2C SSO when used
   Security notes:
 - Never commit `.env` to source control. Use a secrets manager for production.
 
@@ -123,11 +156,26 @@ Copy `example.env` to `.env` and update values. Key variables:
 
 ### Testing
 
-- Run unit and integration tests with Jest (or the configured test runner):
+The project has three test layers:
+
+- **Unit + integration tests** (Vitest with PGlite in-memory DB):
 
 ```bash
-yarn run dotenv -e .env.test drizzle-kit push
-yarn run test
+yarn test:run2
+```
+
+- **Real-DB integration tests** (Vitest against a live PostgreSQL instance):
+
+```bash
+cp example.env.test .env.test
+# configure .env.test with a test database URL
+yarn test:run3
+```
+
+- **End-to-end tests** (Playwright, runs the full app on port 4000):
+
+```bash
+yarn test:e2e
 ```
 
 ### Useful commands
@@ -135,7 +183,8 @@ yarn run test
 - Install dependencies: `yarn install`
 - Run dev: `yarn run dev`
 - Apply migrations: `yarn run dbsync`
-- Run tests: `yarn run test`
+- Run unit/integration tests: `yarn test:run2`
+- Run E2E tests: `yarn test:e2e`
 - Build production artifact: `yarn run build`
 
 ## Production deployment (recommendations)

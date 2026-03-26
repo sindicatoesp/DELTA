@@ -9,11 +9,11 @@
   - [Frontend](code-structure/frontend.md)
 - [Form CSV API](code-structure/form-csv-api.md)
 
-- [Dependencies](code-structure/dependencies.md)
+- [Dependencies](dependencies.md)
 
 - [Human direct effects](human-direct-effects.md)
-- [Translations](translations/index)
-- [MCP](mcp)
+- [Translations](translations/index.md)
+- [MCP](mcp.md)
 
 ## Requirements
 
@@ -32,6 +32,26 @@
 
 - [Division import guide](division/division_import_guide.md)
 - [Division technical implementation](division/division_technical_implementation.md)
+
+## Installation
+
+- [Shared instance installation](installation/shared-instance-installation.md)
+- [Health check best practices](installation/health-check-best-practices.md)
+
+## Security
+
+- [API key – user relationship guide](security/api-key-user-relationship-guide.md)
+- [API key – user assignment developer guide](security/api-key-user-assignment-developer-guide.md)
+
+## Maps & dashboards
+
+- [Custom map integration guide](custom-map/custom-map-integration-guide.md)
+- [Sectors dashboard user guide](dashboards/sectors/user-guide.md)
+- [Sectors dashboard developer guide](dashboards/sectors/developer-guide.md)
+
+## High availability
+
+- [HA analysis report](<High Availability (HA)/01-HA-Analysis-Report.md>)
 
 ## LICENSE
 

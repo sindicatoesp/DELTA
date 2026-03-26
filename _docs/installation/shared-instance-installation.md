@@ -129,7 +129,7 @@ The DELTA Resilience Shared Instance uses a **Single Database Multi-Tenancy** ar
    docker-compose exec app yarn dbsync
    ```
 
-   > Note: This command runs both `drizzle-kit push` to load the schema and `drizzle-kit migrate` to execute migration scripts. Using only `drizzle-kit push` is insufficient as it only loads the schema without running migrations.
+   > Note: This command runs `drizzle-kit migrate` to apply all pending SQL migrations. See `_docs/code-structure/drizzle.md` for the full migration workflow and safety rules.
 
 ### Option B: Manual Installation
 
@@ -194,7 +194,7 @@ An account is created by default with user name admin@admin.com and password pvD
 ### 4.2 Update Super Admin Password
 
 ```bash
-   docker-compose exec psql -U postgres -d dts_development -c "UPDATE public.super_admin_users
+   docker-compose exec db psql -U postgres -d dts_development -c "UPDATE public.super_admin_users
 SET password = crypt('your_password_here', gen_salt('bf', 10))
 WHERE email = 'admin@admin.com';"
 ```

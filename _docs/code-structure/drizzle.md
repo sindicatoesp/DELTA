@@ -63,7 +63,3 @@ cs: many(eventRelationshipTable, {relationName: "parent"})
 }));
 
 ```
-
-```
-
-```
