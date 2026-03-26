@@ -133,6 +133,8 @@ The DELTA Resilience Shared Instance uses a **Single Database Multi-Tenancy** ar
 
    > Note: This command runs `drizzle-kit migrate` to apply all pending SQL migrations. See `_docs/code-structure/drizzle.md` for the full migration workflow and safety rules.
 
+   The Docker stack also starts an [Adminer](https://www.adminer.org/) database UI at `http://localhost:8080`. Use it for direct database inspection during development. Do not expose port 8080 in production.
+
 ### Option B: Manual Installation
 
 1. **Install Dependencies**
@@ -191,7 +193,7 @@ The DELTA Resilience Shared Instance uses a **Single Database Multi-Tenancy** ar
 
 ### 4.1 Super Admin Default
 
-An account is created by default with user name admin@admin.com and password pvDT0g8Qsa36
+An account is created by default with username `admin@admin.com`. The initial password is hardcoded in the database seed migration (`app/drizzle/migrations/`). **Change it immediately** using the steps below — leaving the seed password in place is a security risk.
 
 ### 4.2 Update Super Admin Password
 
@@ -221,7 +223,7 @@ WHERE email = 'admin@admin.com';"
 
 3. **Enter the super admin credentials:**
    - **Email**: `admin@admin.com`
-   - **Password**: The password you set in the previous step or the default pvDT0g8Qsa36
+   - **Password**: The password you set in the previous step
 
 4. **Upon successful login**, you will be redirected to the country accounts management page (`/admin/country-accounts`).
 

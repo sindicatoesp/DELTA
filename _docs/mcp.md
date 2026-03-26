@@ -6,10 +6,9 @@ Application provides a Model Context Protocol (MCP) endpoint that allows AI assi
 
 MCP enables AI assistants to:
 
-- List and modify DELTA data entities
-- Work with disaster records, assets, damages, losses, disruptions
-- Manage human effects data
-- Access reference data (HIP classifications, sectors, categories)
+- Read and write core data entities: `asset`, `damage`, `disaster-event`, `disaster-record`, `disruption`, `hazardous-event`, `losses`, `nonecolosses`, `sector-disaster-record-relation`
+- Manage human effects data (special entity: `human-effects`)
+- Access read-only reference data: `categories`, `hip-type`, `hip-cluster`, `hip-hazard`, `sector`
 - Use structured prompts for common workflows
 
 ## Configuration
