@@ -36,3 +36,7 @@ Full developer documentation is in [`_docs/index.md`](../_docs/index.md). Key pa
 - [`_docs/code-structure/testing.md`](../_docs/code-structure/testing.md) — PGlite setup, single-test commands, e2e config
 - [`_docs/code-structure/form-csv-api.md`](../_docs/code-structure/form-csv-api.md) — how to add a new data type end-to-end
 - [`_docs/translations/app-ui/index.md`](../_docs/translations/app-ui/index.md) — translation system, `ctx.t` API
+
+## Custom agents
+
+Specialist agents for recurring task types live in [`.github/agents/`](agents/). See [`agents/README.md`](agents/README.md) for the current list and guidance on adding new ones.
