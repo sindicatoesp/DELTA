@@ -4,12 +4,15 @@ This tool extracts translation strings from frontend code (TypeScript and TSX fi
 
 ## Usage
 
-Run from the `scripts/delta-string-extractor` sub-directory to scan the app directory and write to the default output file location. Install Go first. Then do the following:
+The standard way to run the extractor is via the yarn script:
 
+```bash
+yarn i18n:extractor
 ```
-cd scripts/delta-string-extractor
-go run .
-```
+
+This runs `scripts/extractor-i18n.ts` (TypeScript, via tsx) and writes updated locale files to `locales/app/`.
+
+A Go-based extractor also exists at `scripts/delta-string-extractor/` and can be run with `go run .` from that directory, but the yarn script above is the standard workflow.
 
 The tool will scan all `.ts` and `.tsx` files in the `app/` directory and generate the translation strings in `app/locales/app/en.json`.
 
