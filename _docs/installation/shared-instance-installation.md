@@ -152,14 +152,14 @@ The DELTA Resilience Shared Instance uses a **Single Database Multi-Tenancy** ar
    ```bash
    sudo -u postgres createdb dts_shared
    sudo -u postgres psql -d dts_shared -c "CREATE EXTENSION postgis;"
-   sudo -u postgres psql -d dts_shared -c " CREATE EXTENSION IF NOT EXISTS pgcrypto"
+   sudo -u postgres psql -d dts_shared -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
    ```
 
 3. **Clone and Setup Application**
 
    ```bash
-   git clone https://github.com/unisdr/dts-shared-instance.git
-   cd dts-shared-instance
+   git clone https://github.com/unisdr/delta.git
+   cd delta
    yarn install
    cp example.env .env
    # Edit .env file with infrastructure variables only (see Docker section above)
@@ -193,8 +193,18 @@ An account is created by default with user name admin@admin.com and password pvD
 
 ### 4.2 Update Super Admin Password
 
+**Docker deployment** (database name matches `POSTGRES_DB` in `docker-compose.yml`, default `dts_development`):
+
 ```bash
-   docker-compose exec db psql -U postgres -d dts_development -c "UPDATE public.super_admin_users
+docker-compose exec db psql -U postgres -d dts_development -c "UPDATE public.super_admin_users
+SET password = crypt('your_password_here', gen_salt('bf', 10))
+WHERE email = 'admin@admin.com';"
+```
+
+**Manual installation** (use the database name you created in step 3.B.2, e.g. `dts_shared`):
+
+```bash
+sudo -u postgres psql -d dts_shared -c "UPDATE public.super_admin_users
 SET password = crypt('your_password_here', gen_salt('bf', 10))
 WHERE email = 'admin@admin.com';"
 ```
