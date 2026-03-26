@@ -4,7 +4,7 @@
 
 `app/backend.server/models`
 
-This forlder is the database access layer. Most files map directly to ta database table and provide function to read and write data.
+This folder is the database access layer. Most files map directly to a database table and provide functions to read and write data.
 
 Use `dev_example1.ts` as a template.
 
@@ -37,12 +37,12 @@ User management and auth related code. Includes email content for invites, passw
 
 ## human_effects.ts
 
-Hnadles DB logic for human direct effects stored across multiple tables with shared structure. Test cover most functionality.
+Handles DB logic for human direct effects stored across multiple tables with shared structure. Tests cover most functionality.
 
 ## common.ts
 
 selectTranslated
-Divisions are stored with multiple names in jsonb as {"en":"a","it":"b"} structure. selectTransacted selects the available ones based on the passed language priority, which is helpful when not all translations are there.
+Divisions are stored with multiple names in jsonb as {"en":"a","it":"b"} structure. selectTranslated selects the available ones based on the passed language priority, which is helpful when not all translations are there.
 
 delete...
 basic functions for deleting 1 record

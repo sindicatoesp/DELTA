@@ -47,8 +47,8 @@ Copy and rename. This includes:
 
 ### Routes
 
-`app/routes/examples+/dev_example1+`
-Copy the full forlder. It includes:
+`app/routes/$lang+/examples+/dev-example1+`
+Copy the full folder. It includes:
 
 - edit.$id.tsx - Create and update form (/edit/new for creating a new record)
 - $id.tsx - View record
@@ -62,7 +62,7 @@ CSV handling related files
 
 ### API
 
-`app/routes/api+/dev-example+1`
+`app/routes/$lang+/api+/dev-example1+`
 
 - \_index.tsx - Documentation for the API
 - add.ts,update.ts,upsert.ts - Write operations
