@@ -4,9 +4,32 @@
 
 `app/backend.server/handlers`
 
-Handlers contain logic shared between multiple Remix routes. If a routes had repeating code, that logic was moved here.
+Handlers contain logic shared between multiple routes. If route files had repeating code, that logic was moved here.
 
-Read about remix [routes](routes.md) first.
+Read about [routes](routes.md) first.
+
+## BackendContext
+
+Most handlers receive a `BackendContext` instance (from `~/backend.server/context`) rather than raw route args. `BackendContext` wraps the request, exposes the active language (`ctx.lang`), and provides the translator (`ctx.t({ code, msg })`). Construct one at the top of a loader or action:
+
+```ts
+import { BackendContext } from "~/backend.server/context";
+const ctx = new BackendContext(args);
+```
+
+## Auth wrappers
+
+Route loaders and actions should be wrapped with one of the auth helpers from `~/utils/auth` before calling any handler or model code:
+
+| Wrapper | When to use |
+|---|---|
+| `authLoader` | Requires any logged-in user |
+| `authLoaderWithPerm(perm, fn)` | Requires a specific permission |
+| `authLoaderIsPublic` | No auth required |
+| `authLoaderPublicOrWithPerm(perm, fn)` | Public read, permissioned write |
+| `authLoaderApi` | API key auth |
+
+Action equivalents follow the same naming (`authActionWithPerm`, etc.).
 
 ## Main handler files
 
@@ -18,7 +41,7 @@ These handle form submissions, API requests, and CSV imports/exports. They do ba
 
 - formSave - Used to create or update records from an HTML form.
 
-Mainly used by createAction, which creates a Remix action function with EditData permission checks and DB integation.
+Mainly used by createAction, which creates a React Router action function with EditData permission checks and DB integration.
 
 The hazardous form doesn't use createAction, because it splits new and edit into separate files.
 
@@ -32,7 +55,7 @@ CSV related code
 
 - csvCreate
 - csvUpdate
-- csvImportExample - Creates an sample CSV as a stating point for updates.
+- csvImportExample - Creates a sample CSV as a starting point for updates.
 
 Self generated field list for API
 

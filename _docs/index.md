@@ -9,6 +9,7 @@ DELTA Resilience (**D**isaster & Hazardous **E**vents, **L**osses and Damages **
   - [Handlers](code-structure/handlers.md)
   - [Routes](code-structure/routes.md)
   - [Frontend](code-structure/frontend.md)
+  - [Testing](code-structure/testing.md)
 - [Form CSV API](code-structure/form-csv-api.md)
 - [Creating a new type linked to a form](creating-a-new-type-linked-to-a-form.md) - step-by-step guide for adding a new entity type
 
