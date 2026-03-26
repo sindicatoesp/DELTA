@@ -17,6 +17,8 @@ DELTA Resilience (**D**isaster & Hazardous **E**vents, **L**osses and Damages **
 
 - [Dependencies](dependencies.md)
 
+- [Scripts](../scripts/README.md) - install, upgrade, and operational scripts
+
 - [Human direct effects](human-direct-effects.md)
 - [Translations](translations/index.md)
 - [MCP](mcp.md)
