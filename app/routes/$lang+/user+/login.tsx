@@ -394,7 +394,7 @@ export default function Screen() {
 										)}
 									</div>
 
-									<u className="self-end ltr:text-right rtl:text-left">
+									<u className="self-end text-end">
 										<LangLink lang={ctx.lang} to="/user/forgot-password">
 											{ctx.t({
 												code: "user_login.forgot_password",
