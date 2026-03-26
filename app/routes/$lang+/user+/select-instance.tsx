@@ -17,6 +17,7 @@ import { NavSettings } from "../settings/nav";
 
 import { SelectUserCountryAccounts } from "~/drizzle/schema/userCountryAccountsTable";
 import {
+	countryAccountStatuses,
 	countryAccountTypesTable,
 	SelectCountryAccounts,
 } from "~/drizzle/schema/countryAccountsTable";
@@ -70,7 +71,12 @@ export const loader = async (args: LoaderFunctionArgs) => {
 				const countryAccount = await CountryAccountsRepository.getById(
 					uca.countryAccountsId,
 				);
-				if (!countryAccount) return null;
+				if (
+					!countryAccount ||
+					countryAccount.status !== countryAccountStatuses.ACTIVE
+				) {
+					return null;
+				}
 
 				const country = await CountryRepository.getById(countryAccount.countryId);
 				if (!country) return null;

@@ -122,9 +122,19 @@ export default function CountryAccountsLayout() {
     function statusBodyTemplate(
         countryAccount: CountryAccountWithCountryAndPrimaryAdminUser,
     ) {
-        return countryAccount.status === countryAccountStatuses.ACTIVE
-            ? ctx.t({ code: "common.active", msg: "Active" })
-            : ctx.t({ code: "common.inactive", msg: "Inactive" });
+        return countryAccount.status === countryAccountStatuses.ACTIVE ? (
+            <i
+                className="pi pi-check-circle text-green-600"
+                aria-label={ctx.t({ code: "common.active", msg: "Active" })}
+                title={ctx.t({ code: "common.active", msg: "Active" })}
+            ></i>
+        ) : (
+            <i
+                className="pi pi-times-circle text-red-600"
+                aria-label={ctx.t({ code: "common.inactive", msg: "Inactive" })}
+                title={ctx.t({ code: "common.inactive", msg: "Inactive" })}
+            ></i>
+        );
     }
 
     function typeBodyTemplate(
@@ -268,7 +278,7 @@ export default function CountryAccountsLayout() {
                         field="shortDescription"
                     />
                     <Column
-                        header={ctx.t({ code: "common.status", msg: "Status" })}
+                        header={ctx.t({ code: "common.active", msg: "Active" })}
                         body={statusBodyTemplate}
                     />
                     <Column
