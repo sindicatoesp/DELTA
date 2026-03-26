@@ -138,6 +138,8 @@ Copy `example.env` to `.env` and update values. Key variables:
 
 - DATABASE_URL (required): Postgres connection string. Example: `postgresql://user:pass@localhost:5432/dts?schema=public`
 - SESSION_SECRET (required): long random string for session signing
+- PUBLIC_URL: base URL of the application (used in emails, links)
+- NODE_ENV: `development` or `production`
 - EMAIL_TRANSPORT: `smtp` or `file` (file is useful for dev)
 - EMAIL_FROM: default sender address for outgoing emails
 - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_SECURE: SMTP settings when EMAIL_TRANSPORT=smtp

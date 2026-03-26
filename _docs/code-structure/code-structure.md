@@ -1,5 +1,3 @@
-> **Note:** This document is out of date and needs revising. Some folder paths are incorrect and several directories are undocumented. Do not rely on it as a complete reference.
-
 # Code Structure
 
 ## Important concepts
@@ -24,6 +22,12 @@
 
 - [Handlers](handlers.md) - Code that is shared between multiple remix routes.
 
+### Services
+
+`app/backend.server/services`
+
+- Server-side services (e.g. MCP integration, email validation workflow)
+
 ### Remix Routes
 
 - [Routes](routes.md)
@@ -34,10 +38,40 @@
 - [Frontend](frontend.md)
   `app/frontend`
 
+### Shared UI Components
+
+`app/components`
+
+- Shared React components used across routes (e.g. MainMenuBar, ContentPicker, ContentRepeater, ErrorState)
+
+### Pages
+
+`app/pages`
+
+- Full-page components for settings views (e.g. AccessManagementPage, OrganizationManagementPage)
+
+### Application Services
+
+`app/services`
+
+- Application-level service layer (e.g. countryAccountService, organizationService, settingsService)
+
+### Utilities
+
+`app/utils`
+
+- Shared utility functions (auth, email, session, logging)
+
 ### Database schema
 
 - [Drizzle](drizzle.md)
   `app/drizzle`
+
+### Database Queries
+
+`app/db/queries`
+
+- Repository-pattern query files for database access (e.g. `countryAccountsRepository.ts`, `UserRepository.ts`)
 
 ### Types
 
@@ -52,3 +86,4 @@
 - User-placed markdown files
 - Content loaded via loadMarkdownContent.tsx
 - Follow consistent naming conventions for files
+- This directory is created at runtime and is not committed to the repository
