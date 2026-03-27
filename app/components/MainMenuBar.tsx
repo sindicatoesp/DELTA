@@ -27,6 +27,11 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
     const avatarLabel = `${(firstName || "").trim().charAt(0)}${(lastName || "").trim().charAt(0)}`.toUpperCase();
     const isSuperAdmin = userRole === "super_admin";
 
+    const openInstanceSwitcher = () => {
+        const redirectTo = `${location.pathname}${location.search}`;
+        navigate(`${ctx.url("/user/select-instance")}?redirectTo=${encodeURIComponent(redirectTo)}`);
+    };
+
     const userAvatarMenu = [
         {
             label: ctx.t({ code: "nav.profile", msg: "Profile" }),
@@ -114,14 +119,26 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
             <Divider layout="vertical" />
             {/* Site name */}
             {siteName && (
-                <>
+                <div className="flex items-end gap-2">
                     <div className="flex flex-col">
                         <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-[0.1em]">Site</span>
                         <span className="font-semibold text-sm leading-none tracking-tight text-[#004F91] mt-0.5 max-w-[140px] truncate">
                             {siteName}
                         </span>
                     </div>
-                </>
+
+                    {isLoggedIn && !isSuperAdmin && (
+                        <Button
+                            type="button"
+                            icon="pi pi-sync"
+                            label={ctx.t({ code: "nav.switch_instance", msg: "Switch" })}
+                            outlined
+                            size="small"
+                            onClick={openInstanceSwitcher}
+                            className="!py-1 !px-2"
+                        />
+                    )}
+                </div>
             )}
         </div>
     );
