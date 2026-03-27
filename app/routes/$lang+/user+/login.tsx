@@ -166,7 +166,7 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 			headers: headerSession,
 		});
 	}
-	return redirectLangFromRoute(routeArgs, redirectTo, {
+	return redirectDocument(redirectTo, {
 		headers: headerSession,
 	});
 };
@@ -197,7 +197,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		if (userCountryAccounts.length > 1) {
 			const countryAccountsId = await getCountryAccountsIdFromSession(request);
 			if (countryAccountsId) {
-				return redirectLangFromRoute(args, redirectTo, {
+				return redirectDocument(redirectTo, {
 					headers: { "Set-Cookie": setCookie },
 				});
 			} else {
@@ -207,7 +207,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 			}
 		}
 
-		return redirectLangFromRoute(args, redirectTo, {
+		return redirectDocument(redirectTo, {
 			headers: { "Set-Cookie": setCookie },
 		});
 	}
@@ -240,7 +240,7 @@ export function getSafeRedirectTo(
 	if (redirectTo && redirectTo.startsWith("/")) {
 		return redirectTo;
 	}
-	return ctx.url("");
+	return ctx.url("/");
 }
 
 export const meta: MetaFunction = () => {
