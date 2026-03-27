@@ -7,7 +7,6 @@ export const instanceSystemSettingsTable = pgTable("instance_system_settings", {
 	id: ourRandomUUID(),
 	footerUrlPrivacyPolicy: url("footer_url_privacy_policy"),
 	footerUrlTermsConditions: url("footer_url_terms_conditions"),
-	adminSetupComplete: boolean("admin_setup_complete").notNull().default(false),
 	websiteLogo: varchar("website_logo")
 		.notNull()
 		.default("/assets/country-instance-logo.png"),

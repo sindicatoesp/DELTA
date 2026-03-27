@@ -148,6 +148,13 @@
       "when": 1774331932848,
       "tag": "20260324055852_add_type_column_to_countries_table",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1774579003546,
+      "tag": "20260327023643_remove_admin_setup_complete_column",
+      "breakpoints": true
     }
   ]
 }
