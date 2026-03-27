@@ -155,7 +155,6 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
                     label={avatarLabel || undefined}
                     icon={avatarLabel ? undefined : "pi pi-user"}
                     shape="circle"
-                    size="large"
                 />
             </button>
 

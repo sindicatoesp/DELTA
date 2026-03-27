@@ -7,8 +7,10 @@ import {
 	Meta,
 	Outlet,
 	Scripts,
+	useLocation,
 	useNavigation,
 	useFetcher,
+	useSubmit,
 } from "react-router";
 
 import { ToastContainer } from "react-toastify/unstyled";
@@ -43,6 +45,8 @@ import { ViewContext } from "./frontend/context";
 import { isAdminRoute } from "./utils/url.backend";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
 import { Toast } from "primereact/toast";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
 import MainMenuBar from "./components/MainMenuBar";
 import { isRouteErrorResponse, useRouteError } from "react-router";
 import { Footer } from "./frontend/footer/footer";
@@ -139,19 +143,19 @@ interface InactivityWarningProps {
 }
 function InactivityWarning(props: InactivityWarningProps) {
 	const ctx = props.ctx;
+	const location = useLocation();
 	const navigation = useNavigation();
+	const submit = useSubmit();
 	const [lastActivity, setLastActivity] = useState(new Date());
 	const [showWarning, setShowWarning] = useState(false);
 	const [expiresInMinutes, setExpiresInMinutes] = useState(0);
 
 	useEffect(() => {
-		console.log("navigation state changed", navigation.state);
 		setLastActivity(new Date());
 	}, [navigation.state]);
 
 	useEffect(() => {
 		const update = () => {
-			console.log("Checking login session expiration");
 			const now = new Date();
 			const minutesSinceLastActivity =
 				(now.getTime() - lastActivity.getTime()) / (1000 * 60);
@@ -176,59 +180,88 @@ function InactivityWarning(props: InactivityWarningProps) {
 
 	const fetcher = useFetcher();
 
-	if (!props.loggedIn) {
-		return null;
-	}
 	const handleRefreshSession = () => {
 		setLastActivity(new Date());
 		fetcher.load(ctx.url("/user/refresh-session"));
 	};
 
+	const logoutAction = location.pathname.startsWith(ctx.url("/admin/"))
+		? ctx.url("/admin/logout")
+		: ctx.url("/user/logout");
+
+	const handleGoToLogin = () => {
+		submit(null, { method: "post", action: logoutAction });
+	};
+
+	const isExpired = expiresInMinutes <= 0.1;
+
+	if (!props.loggedIn) {
+		return null;
+	}
+
 	return (
 		<>
-			{showWarning ? (
-				<div className="fixed top-0 left-0 w-full z-50">
-					<div className="container mx-auto">
-						<div className="dts-alert dts-alert--error">
-							<div className="dts-alert__icon">
-								<svg
-									className="h-6 w-6"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-									/>
-								</svg>
-							</div>
-							<span>
-								{expiresInMinutes > 0.1 ? (
-									<div className="flex flex-col gap-4">
-										<p className="text-base">
-											Login session expires in {Math.round(expiresInMinutes)}{" "}
-											minutes due to inactivity.
-										</p>
-										<div>
-											<button
-												onClick={handleRefreshSession}
-												className="mg-button mg-button-outline mg-button-sm"
-											>
-												Refresh session
-											</button>
-										</div>
-									</div>
-								) : (
-									<p>Session expired</p>
-								)}
-							</span>
-						</div>
+			<Dialog
+				visible={showWarning}
+				onHide={() => { }}
+				modal
+				closable={false}
+				draggable={false}
+				resizable={false}
+				style={{ width: "92%", maxWidth: "560px" }}
+				header={
+					<div className="flex items-center gap-2">
+						<i
+							className={`pi ${isExpired ? "pi-times-circle text-red-600" : "pi-exclamation-triangle text-amber-600"}`}
+						/>
+						<span className="font-semibold text-base text-gray-900">
+							{isExpired ? "Session expired" : "Session expiration warning"}
+						</span>
+					</div>
+				}
+			>
+				<div className="flex flex-col gap-4">
+					{isExpired ? (
+						<p className="text-sm text-gray-700 leading-relaxed">
+							{ctx.t({ code: "session.expired_message", msg: "Your session has expired due to inactivity. Please sign in again to continue." })}
+						</p>
+					) : (
+						<p className="text-sm text-gray-700 leading-relaxed">
+							{ctx.t(
+								{
+									code: "session.expiry_warning_minutes",
+									msgs: {
+										one: "For your security, your session will expire in {n} minute due to inactivity.",
+										other: "For your security, your session will expire in {n} minutes due to inactivity.",
+									},
+								},
+								{ n: Math.round(expiresInMinutes) },
+							)}
+						</p>
+					)}
+
+					<div className="flex items-center justify-end gap-2">
+						{!isExpired ? (
+							<Button
+								type="button"
+								label="Refresh session"
+								icon="pi pi-refresh"
+								onClick={handleRefreshSession}
+								loading={fetcher.state !== "idle"}
+								severity="warning"
+							/>
+						) : null}
+						<Button
+							type="button"
+							label="Go to Sign in"
+							icon="pi pi-arrow-right"
+							onClick={handleGoToLogin}
+							outlined={!isExpired}
+							severity={isExpired ? "danger" : "secondary"}
+						/>
 					</div>
 				</div>
-			) : null}
+			</Dialog>
 		</>
 	);
 }
