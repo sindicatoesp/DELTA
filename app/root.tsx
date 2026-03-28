@@ -334,15 +334,13 @@ export default function Screen() {
 						{/* Header */}
 						<header className="w-full bg-white border-b border-gray-200">
 							<div className="mx-auto max-w-8xl px-4 md:px-6 lg:px-8 py-4">
-								<h1 className="text-xl font-semibold text-gray-900">
-									<MainMenuBar
-										isLoggedIn={isLoggedIn}
-										userRole={userRole}
-										isCountryAccountSelected={isCountryAccountSelected}
-										siteName={confSiteName}
-										firstName={firstName}
-										lastName={lastName} />
-								</h1>
+								<MainMenuBar
+									isLoggedIn={isLoggedIn}
+									userRole={userRole}
+									isCountryAccountSelected={isCountryAccountSelected}
+									siteName={confSiteName}
+									firstName={firstName}
+									lastName={lastName} />
 							</div>
 						</header>
 
