@@ -609,7 +609,7 @@ export function Inputs<T>(props: InputsProps<T>) {
 						return (
 							<React.Fragment key={def.key}>
 								{def.key === "approvalStatus" &&
-								props.id == undefined ? null : (
+									props.id == undefined ? null : (
 									<>
 										<Input
 											ctx={ctx}
@@ -1010,8 +1010,8 @@ export function Input(props: InputProps) {
 								}}
 							/>,
 							props.def.label +
-								" " +
-								ctx.t({ code: "common.date", msg: "Date" }),
+							" " +
+							ctx.t({ code: "common.date", msg: "Date" }),
 						)}
 					{precision == "yyyy-mm" && (
 						<>
@@ -1040,8 +1040,8 @@ export function Input(props: InputProps) {
 									}}
 								/>,
 								props.def.label +
-									" " +
-									ctx.t({ code: "common.year", msg: "Year" }),
+								" " +
+								ctx.t({ code: "common.year", msg: "Year" }),
 							)}
 							<WrapInputBasic
 								label={
@@ -1099,8 +1099,8 @@ export function Input(props: InputProps) {
 									}}
 								/>,
 								props.def.label +
-									" " +
-									ctx.t({ code: "common.year", msg: "Year" }),
+								" " +
+								ctx.t({ code: "common.year", msg: "Year" }),
 							)}
 						</>
 					)}
@@ -1575,13 +1575,13 @@ export function ViewComponentMainDataCollection(
 						header={
 							selectedAction === "submit-reject"
 								? ctx.t({
-										code: "common.returned_with_comments",
-										msg: "Returned with comments",
-									})
+									code: "common.returned_with_comments",
+									msg: "Returned with comments",
+								})
 								: ctx.t({
-										code: "common.successfully_validated",
-										msg: "Successfully validated",
-									})
+									code: "common.successfully_validated",
+									msg: "Successfully validated",
+								})
 						}
 						style={{ width: "50rem" }}
 						onHide={() => {
@@ -1593,13 +1593,13 @@ export function ViewComponentMainDataCollection(
 							<p>
 								{selectedAction === "submit-reject"
 									? ctx.t({
-											code: "common.returned_to_submitter_for_changes",
-											msg: "The event below has been returned to the submitter for changes",
-										})
+										code: "common.returned_to_submitter_for_changes",
+										msg: "The event below has been returned to the submitter for changes",
+									})
 									: ctx.t({
-											code: "common.validated_and_ready_to_publish",
-											msg: "The event below has been validated and is ready to be published",
-										})}
+										code: "common.validated_and_ready_to_publish",
+										msg: "The event below has been validated and is ready to be published",
+									})}
 							</p>
 
 							{props.recordTitle && <p>{props.recordTitle}</p>}
@@ -2224,48 +2224,3 @@ function canDelete(approvalStatus: string | undefined, user: any): boolean {
 		approvalStatus?.toLowerCase() !== "validated"
 	);
 }
-
-/**
- * Disables the submit button of a form until all required fields are valid.
- *
- * @param formId - The ID of the form element to validate.
- * @param submitButtonId - The ID of the submit button element to disable/enable.
- */
-export const validateFormAndToggleSubmitButton = (
-	formId: string,
-	submitButtonId: string,
-): void => {
-	// Select the form element using the provided ID
-	const formElement = document.querySelector<HTMLFormElement>(`#${formId}`);
-
-	// Select the submit button element using the provided ID
-	const submitButton = document.querySelector<HTMLButtonElement>(
-		`#${submitButtonId}`,
-	);
-
-	// Check if the form and submit button elements are found
-	if (formElement && submitButton) {
-		// Select all input fields with the 'required' attribute within the form
-		const requiredFields =
-			formElement.querySelectorAll<HTMLInputElement>("input[required]");
-
-		if (requiredFields.length > 0) {
-			// Iterate over each required field and add an event listener to validate inputs
-			requiredFields.forEach((field) => {
-				field.addEventListener("input", () => {
-					// Check if all required fields are valid
-					const allFieldsValid = Array.from(requiredFields).every(
-						(requiredField) => requiredField.validity.valid,
-					);
-
-					// Enable the submit button if all fields are valid, otherwise disable it
-					submitButton.disabled = !allFieldsValid;
-				});
-			});
-		}
-	} else {
-		console.error(
-			"Form or submit button not found. Ensure the provided IDs are correct.",
-		);
-	}
-};
