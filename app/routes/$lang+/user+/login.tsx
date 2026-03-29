@@ -23,6 +23,7 @@ import {
 import { CountryAccountsRepository } from "~/db/queries/countryAccountsRepository";
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { UserRepository } from "~/db/queries/UserRepository";
 import { createCSRFToken } from "~/utils/csrf";
 import { redirectLangFromRoute, replaceLang } from "~/utils/url.backend";
 import { ViewContext } from "~/frontend/context";
@@ -138,10 +139,19 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 	//otherwise take him to first page.
 	const userCountryAccounts = await UserCountryAccountRepository.getByUserId(res.userId);
 	const headerSession = await createUserSession(res.userId);
+	const user = await UserRepository.getById(res.userId);
 
 	const url = new URL(request.url);
 	let redirectTo = url.searchParams.get("redirectTo");
 	redirectTo = getSafeRedirectTo(ctx, redirectTo);
+
+	if (user?.totpEnabled) {
+		return redirectLangFromRoute(
+			routeArgs,
+			`/user/totp-login?redirectTo=${encodeURIComponent(redirectTo)}`,
+			{ headers: headerSession },
+		);
+	}
 
 	if (userCountryAccounts && userCountryAccounts.length === 1) {
 		const countrySettings = await InstanceSystemSettingRepository.getByCountryAccountId(
