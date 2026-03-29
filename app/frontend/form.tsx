@@ -172,22 +172,6 @@ interface FieldErrorsProps<T> {
 	field: keyof T;
 }
 
-export function FieldErrorsStandard<T>({ errors, field }: FieldErrorsProps<T>) {
-	if (!errors || !errors.fields) {
-		return null;
-	}
-	const fieldErrors = errors.fields[field];
-	if (!fieldErrors || fieldErrors.length == 0) {
-		return null;
-	}
-
-	if (!errors) {
-		return null;
-	}
-
-	return FieldErrors3({ errors: errorsToStrings(fieldErrors) });
-}
-
 export function FieldErrors<T>({ errors, field }: FieldErrorsProps<T>) {
 	if (!errors || !errors.fields) {
 		return null;
