@@ -42,10 +42,10 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
         },
         {
             label: ctx.t({
-                code: "nav.change_password",
-                msg: "Change password",
+                code: "nav.reset_password",
+                msg: "Reset password",
             }),
-            icon: 'pi pi-key',
+            icon: 'pi pi-lock-open',
             command: () => {
                 navigate(ctx.url("/user/change-password"));
             }
