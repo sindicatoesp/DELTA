@@ -8,7 +8,7 @@ export default function Home() {
 			{/* HERO SECTION */}
 			<div className="relative w-full min-h-[700px] py-16 md:py-24 ">
 				<img
-					src="/assets/images/forest.png"
+					src="/assets/images/hero.png"
 					className="absolute inset-0 w-full h-full object-cover"
 				/>
 
