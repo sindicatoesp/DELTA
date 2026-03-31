@@ -277,6 +277,80 @@ export const CountryAccountService = {
 		return { updatedCountryAccount };
 	},
 
+	async resendInvitation(ctx: BackendContext, countryAccountId: string) {
+		const countryAccount = await dr.query.countryAccountsTable.findFirst({
+			where: (ca, { eq }) => eq(ca.id, countryAccountId),
+			with: {
+				userCountryAccounts: {
+					where: (uca, { eq }) => eq(uca.isPrimaryAdmin, true),
+					limit: 1,
+					with: {
+						user: true,
+					},
+				},
+			},
+			columns: {
+				id: true,
+				countryId: true,
+				type: true,
+			},
+		});
+
+		if (!countryAccount) {
+			throw new CountryAccountValidationError(["Country account not found."]);
+		}
+
+		const adminUserRef = countryAccount.userCountryAccounts[0]?.user;
+		if (!adminUserRef) {
+			throw new CountryAccountValidationError([
+				"Primary admin user not found.",
+			]);
+		}
+
+		const country = await CountryRepository.getById(countryAccount.countryId);
+		if (!country) {
+			throw new CountryAccountValidationError([
+				`Country with ID ${countryAccount.countryId} not found.`,
+			]);
+		}
+
+		const userAdmin = await UserRepository.getById(adminUserRef.id);
+		if (!userAdmin) {
+			throw new CountryAccountValidationError([
+				`User with ID ${adminUserRef.id} not found.`,
+			]);
+		}
+
+		if (userAdmin.emailVerified) {
+			await sendInviteForExistingCountryAccountAdminUser(
+				ctx,
+				userAdmin,
+				"DELTA Resilience",
+				"Admin",
+				country.name,
+				countryAccount.type,
+			);
+		} else {
+			const EXPIRATION_DAYS = 14;
+			const expirationTime = addHours(new Date(), EXPIRATION_DAYS * 24);
+
+			await UserRepository.updateById(userAdmin.id, {
+				inviteSentAt: new Date(),
+				inviteExpiresAt: expirationTime,
+			});
+
+			await sendInviteForNewCountryAccountAdminUser(
+				ctx,
+				userAdmin,
+				"DELTA Resilience",
+				"Admin",
+				country.name,
+				countryAccount.type,
+				userAdmin.inviteCode,
+			);
+		}
+	},
+
 	async clone(countryAccountId: string, shortDescription: string) {
 		const errors: string[] = [];
 		const countryAccount =
