@@ -14,7 +14,7 @@ export default function Home() {
 
 				<div className="relative bg-sky-950/95 md:bg-sky-950 max-w-xl lg:max-w-2xl px-6 sm:px-10 md:px-16 py-16 md:py-24 flex flex-col justify-start gap-8">
 					<div>
-						<span className="text-white text-2xl font-bold leading-tight block">
+						<span className="text-white text-2xl font-bold leading-tight block mb-8">
 							DELTA Resilience
 						</span>
 

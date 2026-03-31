@@ -4,6 +4,7 @@ import {
 	Link,
 	LoaderFunctionArgs,
 	redirectDocument,
+	useNavigate,
 	useNavigation,
 } from "react-router";
 import { useLoaderData, useActionData } from "react-router";
@@ -28,7 +29,7 @@ import { createCSRFToken } from "~/utils/csrf";
 import { redirectLangFromRoute, replaceLang } from "~/utils/url.backend";
 import { ViewContext } from "~/frontend/context";
 
-import { LangLink } from "~/utils/link";
+
 import { BackendContext } from "~/backend.server/context";
 import { htmlTitle } from "~/utils/htmlmeta";
 import { InputText } from "primereact/inputtext";
@@ -287,6 +288,7 @@ export default function Screen() {
 		navigation.state === "submitting" &&
 		navigation.formData?.get("email") != null;
 
+	const navigate = useNavigate();
 	const { isFormAuthSupported, isSSOAuthSupported } = loaderData;
 
 	return (
@@ -414,12 +416,15 @@ export default function Screen() {
 									</div>
 
 									<div className="self-end text-end">
-										<LangLink lang={ctx.lang} to="/user/forgot-password">
-											{ctx.t({
+										<Button
+											link
+											type="button"
+											label={ctx.t({
 												code: "user_login.forgot_password",
 												msg: "Forgot password?",
 											})}
-										</LangLink>
+											onClick={() => navigate(`/${ctx.lang}/user/forgot-password`)}
+										/>
 									</div>
 
 									<Button
