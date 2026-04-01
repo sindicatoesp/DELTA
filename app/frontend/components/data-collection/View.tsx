@@ -61,9 +61,7 @@ export function ViewComponentMainDataCollection(
 		}),
 	};
 	const [textAreaText, setText] = useState("");
-	const [selectedAssigneeIds, setSelectedAssigneeIds] = useState<string[]>(
-		[],
-	);
+	const [selectedAssigneeIds, setSelectedAssigneeIds] = useState<string[]>([]);
 	const textAreaMaxLength = 500;
 	const fetcher = useFetcher<{ ok: boolean; message: string }>();
 	const [visibleModalConfirmation, setVisibleModalConfirmation] =
@@ -100,15 +98,13 @@ export function ViewComponentMainDataCollection(
 
 		if (selectedAction === "submit-return" && selectedAssigneeIds.length > 0) {
 			selectedAssigneeIds.forEach((assigneeId) => {
-			if (assigneeIds !== '') {
+				if (assigneeIds !== "") {
 					assigneeIds += ",";
 				}
 				assigneeIds += assigneeId;
-				
 			});
 			formData.append("assignedToUserIds", assigneeIds);
 		}
-		
 
 		// Client-side validation only for submit-reject action
 		if (!formTextAreaRejectValue && selectedAction === "submit-reject") {
@@ -308,14 +304,16 @@ export function ViewComponentMainDataCollection(
 											<div className="flex flex-col gap-2">
 												<label htmlFor="return-assignee-multiselect">
 													{ctx.t({
-														code: "common.assign_to",
-														msg: "Assign to",
+														code: "common.notify",
+														msg: "Notify",
 													})}
 												</label>
 												<MultiSelect
 													inputId="return-assignee-multiselect"
 													value={selectedAssigneeIds}
-													onChange={(e) => setSelectedAssigneeIds((e.value || []) as string[])}
+													onChange={(e) =>
+														setSelectedAssigneeIds((e.value || []) as string[])
+													}
 													options={props.returnAssigneeOptions || []}
 													optionLabel="label"
 													optionValue="value"
@@ -339,7 +337,6 @@ export function ViewComponentMainDataCollection(
 											</div>
 										</div>
 									</div>
-									
 								</li>
 								<li>
 									<div>
@@ -348,13 +345,11 @@ export function ViewComponentMainDataCollection(
 											disabled={
 												fetcher.state === "submitting" ||
 												fetcher.state === "loading" ||
-												(textAreaText.trim() === "") ||
-												(selectedAssigneeIds.length === 0)
+												textAreaText.trim() === "" ||
+												selectedAssigneeIds.length === 0
 											}
 											className="mg-button mg-button-primary"
-											label={
-												actionLabels["submit-return"]
-											}
+											label={actionLabels["submit-return"]}
 											style={{ width: "100%" }}
 											onClick={() => {
 												if (validateBeforeSubmit("submit-return")) {
@@ -637,7 +632,8 @@ export function ViewComponentMainDataCollection(
 										</>
 									)}
 
-									{(props.approvalStatus === "validated" || props.approvalStatus === "published") && (
+									{(props.approvalStatus === "validated" ||
+										props.approvalStatus === "published") && (
 										<>
 											<Button
 												lang={ctx.lang}

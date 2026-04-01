@@ -3,7 +3,7 @@ import {
 	userCountryAccountsTable,
 } from "~/drizzle/schema/userCountryAccountsTable";
 import { userTable } from "~/drizzle/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { dr, Tx } from "~/db.server";
 
 export async function getUserCountryAccountsWithUserByCountryAccountsId(
@@ -184,8 +184,9 @@ export async function getReturnAssigneeUsers(
 		.where(
 			and(
 				eq(userCountryAccountsTable.countryAccountsId, countryAccountsId),
-				eq(userTable.emailVerified, true)
-			)
+				eq(userTable.emailVerified, true),
+				ne(userCountryAccountsTable.role, "data-viewer"),
+			),
 		)
 		.orderBy(userTable.firstName, userTable.lastName);
 
