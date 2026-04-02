@@ -20,7 +20,6 @@ import { approvalStatusField2 } from "~/frontend/approval";
 
 import { ContentPicker } from "~/components/ContentPicker";
 import { contentPickerConfig } from "~/routes/$lang+/disaster-record+/content-picker-config";
-import AuditLogHistory from "~/components/AuditLogHistory";
 import { HazardPicker, Hip } from "~/frontend/hip/hazardpicker";
 
 import { SpatialFootprintFormView } from "~/frontend/spatialFootprintFormView";
@@ -636,12 +635,10 @@ interface DisasterRecordsViewProps {
 	ctx: ViewContext;
 	item: DisasterRecordsViewModel;
 	isPublic: boolean;
-	auditLogs?: any[];
 }
 
 export function DisasterRecordsView(props: DisasterRecordsViewProps) {
 	const { ctx, item } = props;
-	const auditLogs = props.auditLogs;
 	const dataSource = (item as any)?.disasterRecord || [];
 
 	return (
@@ -656,14 +653,6 @@ export function DisasterRecordsView(props: DisasterRecordsViewProps) {
 				code: "disaster_records",
 				msg: "Disaster records",
 			})}
-			// extraActions={
-			// 	<ul>
-			// 		<li><LangLink to={"/disaster-record/edit-sub/" + item.id + "/human-effects"}>Human Direct Effects</Link></li>
-			// 		<li><LangLink to={"/disaster-record/edit-sub/" + item.id + "/damages?sectorId=11"}>Damages (Sector id11)</Link></li>
-			// 		<li><LangLink to={"/disaster-record/edit-sub/" + item.id + "/losses?sectorId=11"}>Losses (Sector id11)</Link></li>
-			// 		<li><LangLink to={"/disaster-record/edit-sub/" + item.id + "/disruptions?sectorId=11"}>Disruptions (Sector id11)</Link></li>
-			// 	</ul>
-			// }
 		>
 			<FieldsView
 				def={fieldsDefView(ctx)}
@@ -749,19 +738,6 @@ export function DisasterRecordsView(props: DisasterRecordsViewProps) {
 					),
 				}}
 			/>
-			{/* Add Audit log history at the end */}
-			<br />
-			{auditLogs && auditLogs.length > 0 && (
-				<>
-					<h3>
-						{ctx.t({
-							code: "audit_log.history",
-							msg: "Audit log history",
-						})}
-					</h3>
-					<AuditLogHistory ctx={ctx} auditLogs={auditLogs} />
-				</>
-			)}
 		</ViewComponentMainDataCollection>
 	);
 }
