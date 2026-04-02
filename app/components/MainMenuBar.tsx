@@ -15,9 +15,10 @@ interface Props {
     userRole: string;
     firstName?: string;
     lastName?: string;
+    activeInstanceCount?: number;
 }
 
-export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSelected, siteName, firstName, lastName }: Props) {
+export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSelected, siteName, firstName, lastName, activeInstanceCount = 0 }: Props) {
     const menu = useRef<Menu>(null);
     const ctx = new ViewContext();
     const location = useLocation();
@@ -125,7 +126,7 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
                             {siteName}
                         </span>
 
-                        {isLoggedIn && !isSuperAdmin && (
+                        {isLoggedIn && !isSuperAdmin && activeInstanceCount > 1 && (
                             <Button
                                 type="button"
                                 icon="pi pi-sync"
@@ -147,7 +148,7 @@ export default function MainMenuBar({ isLoggedIn, userRole, isCountryAccountSele
                             </span>
                         </div>
 
-                        {isLoggedIn && !isSuperAdmin && (
+                        {isLoggedIn && !isSuperAdmin && activeInstanceCount > 1 && (
                             <Button
                                 type="button"
                                 icon="pi pi-sync"
