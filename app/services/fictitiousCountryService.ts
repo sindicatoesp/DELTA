@@ -1,6 +1,8 @@
 import { CountryRepository } from "~/db/queries/countriesRepository";
 import { COUNTRY_TYPE, SelectCountries } from "~/drizzle/schema/countriesTable";
 
+const FICTIONAL_COUNTRY_FLAG_URL = "/assets/country-instance-logo.png";
+
 export class FictitiousCountryValidationError extends Error {
 	constructor(public errors: string[]) {
 		super("Fictitious country validation failed");
@@ -73,6 +75,7 @@ export const FictitiousCountryService = {
 				name,
 				type: COUNTRY_TYPE.FICTIONAL,
 				iso3: null,
+				flagUrl: FICTIONAL_COUNTRY_FLAG_URL,
 			});
 		} catch (error) {
 			if (isUniqueViolation(error)) {
