@@ -52,6 +52,7 @@ import { isRouteErrorResponse, useRouteError } from "react-router";
 import { Footer } from "./frontend/footer/footer";
 
 import { getUserRoleFromSession } from "~/utils/session";
+import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 
 export const links: LinksFunction = () => [
 	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250630" },
@@ -74,6 +75,11 @@ export const loader = async (
 	const userRole = await getUserRoleFromSession(request);
 	const isCountryAccountSelected = await getCountryAccountsIdFromSession(request) ? true : false;
 	const isFormAuthSupported = configAuthSupportedForm();
+
+	let activeInstanceCount = 0;
+	if (user) {
+		activeInstanceCount = await UserCountryAccountRepository.countActiveByUserId(user.user.id);
+	}
 
 	// Determine if this is a super admin session and on an admin route
 	const isSuperAdmin = !!superAdminSession && isAdminRoute(request);
@@ -116,6 +122,7 @@ export const loader = async (
 			translations,
 			isLoggedIn: !!user || (!!superAdminSession && isAdminRoute(request)),
 			isCountryAccountSelected,
+			activeInstanceCount,
 			userRole: effectiveUserRole || "",
 			isSuperAdmin: isSuperAdmin,
 			isFormAuthSupported: isFormAuthSupported,
@@ -282,7 +289,8 @@ export default function Screen() {
 		// isFormAuthSupported,
 		lang,
 		translations,
-		isCountryAccountSelected
+		isCountryAccountSelected,
+		activeInstanceCount
 	} = loaderData;
 	const firstName = loaderData.common?.user?.firstName || "";
 	const lastName = loaderData.common?.user?.lastName || "";
@@ -338,6 +346,7 @@ export default function Screen() {
 									isLoggedIn={isLoggedIn}
 									userRole={userRole}
 									isCountryAccountSelected={isCountryAccountSelected}
+									activeInstanceCount={activeInstanceCount}
 									siteName={confSiteName}
 									firstName={firstName}
 									lastName={lastName} />
