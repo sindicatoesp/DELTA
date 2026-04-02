@@ -1,4 +1,6 @@
 import { randomBytes, randomUUID } from "crypto";
+import fs from "fs";
+import path from "path";
 import { addHours } from "date-fns";
 import { BackendContext } from "~/backend.server/context";
 import {
@@ -43,6 +45,7 @@ import {
 	countryAccountTypesTable,
 } from "~/drizzle/schema/countryAccountsTable";
 import { COUNTRY_TYPE } from "~/drizzle/schema/countriesTable";
+import { BASE_UPLOAD_PATH } from "~/utils/paths";
 
 // Create a custom error class for validation errors
 export class CountryAccountValidationError extends Error {
@@ -66,6 +69,173 @@ function getMappedId(
 		throw new Error(`Missing cloned ${entityName} mapping for ${sourceId}`);
 	}
 	return mappedId;
+}
+
+function toPosixPath(filePath: string) {
+	return filePath.replace(/\\/g, "/");
+}
+
+function stripLeadingSlash(filePath: string) {
+	return filePath.replace(/^\/+/, "");
+}
+
+function findTenantSegmentIndex(parts: string[]) {
+	return parts.findIndex((part) => /^tenant-[\w-]+$/.test(part));
+}
+
+function resolveSourceAndDestinationRelativePaths(
+	fileName: string,
+	targetCountryAccountId: string,
+) {
+	const cleanName = stripLeadingSlash(toPosixPath(fileName));
+	if (!cleanName) {
+		return null;
+	}
+
+	const parts = cleanName.split("/").filter(Boolean);
+	if (parts.length === 0) {
+		return null;
+	}
+
+	const tenantSegmentIndex = findTenantSegmentIndex(parts);
+	if (tenantSegmentIndex >= 0) {
+		const srcParts = [...parts];
+		const dstParts = [...parts];
+		dstParts[tenantSegmentIndex] = `tenant-${targetCountryAccountId}`;
+		return {
+			sourceRelative: srcParts.join("/"),
+			destinationRelative: dstParts.join("/"),
+		};
+	}
+
+	const uploadsIndex = parts.findIndex((part) => part === BASE_UPLOAD_PATH);
+	if (uploadsIndex >= 0) {
+		return {
+			sourceRelative: parts.join("/"),
+			destinationRelative: [
+				...parts.slice(0, uploadsIndex + 1),
+				`tenant-${targetCountryAccountId}`,
+				...parts.slice(uploadsIndex + 1),
+			].join("/"),
+		};
+	}
+
+	return {
+		sourceRelative: parts.join("/"),
+		destinationRelative: [
+			BASE_UPLOAD_PATH,
+			`tenant-${targetCountryAccountId}`,
+			...parts,
+		].join("/"),
+	};
+}
+
+function cloneAttachmentFileReference(
+	attachment: any,
+	targetCountryAccountId: string,
+) {
+	if (!attachment || !attachment.file?.name) {
+		return attachment;
+	}
+
+	const resolved = resolveSourceAndDestinationRelativePaths(
+		String(attachment.file.name),
+		targetCountryAccountId,
+	);
+
+	if (!resolved) {
+		return attachment;
+	}
+
+	const sourceAbsolutePath = path.resolve(
+		process.cwd(),
+		resolved.sourceRelative,
+	);
+	const destinationAbsolutePath = path.resolve(
+		process.cwd(),
+		resolved.destinationRelative,
+	);
+
+	if (!fs.existsSync(sourceAbsolutePath)) {
+		console.warn(
+			`Attachment file not found during clone: ${sourceAbsolutePath}`,
+		);
+		return attachment;
+	}
+
+	fs.mkdirSync(path.dirname(destinationAbsolutePath), { recursive: true });
+	fs.copyFileSync(sourceAbsolutePath, destinationAbsolutePath);
+
+	return {
+		...attachment,
+		file: {
+			...attachment.file,
+			name: `/${toPosixPath(resolved.destinationRelative)}`,
+			tenantPath: `${BASE_UPLOAD_PATH}/tenant-${targetCountryAccountId}`,
+		},
+	};
+}
+
+function cloneAttachmentsForCountryAccount(
+	attachments: unknown,
+	targetCountryAccountId: string,
+) {
+	let normalizedAttachments = attachments;
+	if (typeof attachments === "string") {
+		try {
+			normalizedAttachments = JSON.parse(attachments);
+		} catch {
+			return attachments;
+		}
+	}
+
+	if (
+		!Array.isArray(normalizedAttachments) ||
+		normalizedAttachments.length === 0
+	) {
+		return attachments;
+	}
+
+	return normalizedAttachments.map((attachment) =>
+		cloneAttachmentFileReference(attachment, targetCountryAccountId),
+	);
+}
+
+function deleteTenantUploadDirectories(countryAccountId: string) {
+	const tenantFolder = `tenant-${countryAccountId}`;
+	const candidates = [
+		path.resolve(process.cwd(), BASE_UPLOAD_PATH, tenantFolder),
+		path.resolve(process.cwd(), tenantFolder),
+		path.resolve(process.cwd(), "public", BASE_UPLOAD_PATH, tenantFolder),
+		path.resolve(process.cwd(), "public", tenantFolder),
+	];
+
+	const checked = new Set<string>();
+	for (const directoryPath of candidates) {
+		if (checked.has(directoryPath)) {
+			continue;
+		}
+		checked.add(directoryPath);
+
+		try {
+			if (!fs.existsSync(directoryPath)) {
+				continue;
+			}
+
+			const stat = fs.statSync(directoryPath);
+			if (!stat.isDirectory()) {
+				continue;
+			}
+
+			fs.rmSync(directoryPath, { recursive: true, force: true });
+			console.log(`Deleted tenant upload directory: ${directoryPath}`);
+		} catch (error) {
+			console.error(
+				`Failed to delete tenant upload directory: ${directoryPath}`,
+				error,
+			);
+		}
+	}
 }
 
 export const CountryAccountService = {
@@ -579,6 +749,10 @@ export const CountryAccountService = {
 						...row,
 						id: getMappedId(eventIdMap, row.id, "hazardous event"),
 						countryAccountsId: newCountryAccountId,
+						attachments: cloneAttachmentsForCountryAccount(
+							row.attachments,
+							newCountryAccountId,
+						),
 					})),
 					tx,
 				);
@@ -590,6 +764,10 @@ export const CountryAccountService = {
 						...row,
 						id: getMappedId(eventIdMap, row.id, "disaster event"),
 						countryAccountsId: newCountryAccountId,
+						attachments: cloneAttachmentsForCountryAccount(
+							row.attachments,
+							newCountryAccountId,
+						),
 						hazardousEventId: row.hazardousEventId
 							? getMappedId(eventIdMap, row.hazardousEventId, "hazardous event")
 							: null,
@@ -638,6 +816,10 @@ export const CountryAccountService = {
 						...row,
 						id: getMappedId(disasterRecordIdMap, row.id, "disaster record"),
 						countryAccountsId: newCountryAccountId,
+						attachments: cloneAttachmentsForCountryAccount(
+							row.attachments,
+							newCountryAccountId,
+						),
 						disasterEventId: row.disasterEventId
 							? getMappedId(eventIdMap, row.disasterEventId, "disaster event")
 							: null,
@@ -774,6 +956,10 @@ export const CountryAccountService = {
 						disruptionRows.map((row) => ({
 							...row,
 							id: getMappedId(disruptionIdMap, row.id, "disruption"),
+							attachments: cloneAttachmentsForCountryAccount(
+								row.attachments,
+								newCountryAccountId,
+							),
 							recordId: getMappedId(
 								disasterRecordIdMap,
 								row.recordId,
@@ -866,6 +1052,10 @@ export const CountryAccountService = {
 						lossRows.map((row) => ({
 							...row,
 							id: getMappedId(lossIdMap, row.id, "loss"),
+							attachments: cloneAttachmentsForCountryAccount(
+								row.attachments,
+								newCountryAccountId,
+							),
 							recordId: getMappedId(
 								disasterRecordIdMap,
 								row.recordId,
@@ -886,6 +1076,10 @@ export const CountryAccountService = {
 						damageRows.map((row) => ({
 							...row,
 							id: getMappedId(damageIdMap, row.id, "damage"),
+							attachments: cloneAttachmentsForCountryAccount(
+								row.attachments,
+								newCountryAccountId,
+							),
 							recordId: getMappedId(
 								disasterRecordIdMap,
 								row.recordId,
@@ -1028,7 +1222,7 @@ export const CountryAccountService = {
 
 	async deleteInstance(countryAccountId: string) {
 		console.log("Deleting instance data for:", countryAccountId);
-		return dr.transaction(async (tx) => {
+		const deleted = await dr.transaction(async (tx) => {
 			// 1. Get all disaster records for this country account
 			const disasterRecords =
 				await DisasterRecordsRepository.getByCountryAccountsId(
@@ -1157,5 +1351,11 @@ export const CountryAccountService = {
 
 			return true;
 		});
+
+		if (deleted) {
+			deleteTenantUploadDirectories(countryAccountId);
+		}
+
+		return deleted;
 	},
 };
