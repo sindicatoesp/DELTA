@@ -52,8 +52,8 @@ export default function RegularMenuBar({
         },
         {
             label: ctx.t({
-                code: "nav.reset_password",
-                msg: "Reset password",
+                code: "nav.change_password",
+                msg: "Change password",
             }),
             icon: "pi pi-lock-open",
             command: () => {
