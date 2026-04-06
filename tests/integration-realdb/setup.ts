@@ -37,10 +37,6 @@ beforeAll(async () => {
 	pool = new Pool({ connectionString: databaseUrl });
 	_dr = drizzle(pool, { schema });
 
-	globalThis.createTranslationGetter = (_lang: string) => {
-		return (params: { code: string }) => ({ msg: params.code });
-	};
-
 	initCookieStorage();
 });
 

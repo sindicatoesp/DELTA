@@ -14,7 +14,7 @@ import { createTestDisruption } from "./test-helpers";
 import {
 	loader as editLoader,
 	action as editAction,
-} from "~/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/edit.$id";
+} from "~/routes/disaster-record+/edit-sub.$disRecId+/disruptions+/edit.$id";
 
 let testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-disruptions-edit@");

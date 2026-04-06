@@ -1,11 +1,11 @@
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { MainContainer } from "~/frontend/container";
-import { NavSettings } from "~/routes/$lang+/settings/nav";
+import { NavSettings } from "~/routes/settings/nav";
 import { ViewContext } from "~/frontend/context";
 import { getCountryRole, getCountryRoles } from "~/frontend/user/roles";
 import { useLoaderData, useLocation, useNavigate } from "react-router";
-import type { loader } from "../routes/$lang+/settings+/access-mgmnt+/_layout";
+import type { loader } from "../routes/settings+/access-mgmnt+/_layout";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -336,3 +336,4 @@ export default function AccessManagementPage() {
         </MainContainer>
     );
 }
+

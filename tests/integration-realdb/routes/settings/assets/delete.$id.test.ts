@@ -14,7 +14,7 @@ import {
 	cleanupTestAssets,
 	createTestDamageRecord,
 } from "./test-helpers";
-import { action as deleteAction } from "~/routes/$lang+/settings+/assets+/delete.$id";
+import { action as deleteAction } from "~/routes/settings+/assets+/delete.$id";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-delete@");

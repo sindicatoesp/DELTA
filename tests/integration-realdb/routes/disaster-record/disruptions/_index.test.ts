@@ -8,7 +8,7 @@ import {
 	TEST_BASE_URL,
 } from "../../../test-helpers";
 import { createTestDisruption } from "./test-helpers";
-import { loader as indexLoader } from "~/routes/$lang+/disaster-record+/edit-sub.$disRecId+/disruptions+/_index";
+import { loader as indexLoader } from "~/routes/disaster-record+/edit-sub.$disRecId+/disruptions+/_index";
 
 const AGRICULTURE_SECTOR_ID = "8cf24ec3-3567-4c40-a5fd-bff9e9a27d87";
 

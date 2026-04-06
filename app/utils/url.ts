@@ -1,8 +1,9 @@
 import { customType } from "drizzle-orm/pg-core";
 
-export function urlLang(lang: string, path: string): string {
+// Translation has been removed - language prefix is no longer used
+export function urlLang(_lang: string, path: string): string {
 	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-	return `/${lang}${normalizedPath}`;
+	return normalizedPath;
 }
 // // Declared the migrations table to avoid removal after drizzle db syncronization.
 // export const drizzleMigrations = pgTable("__drizzle_migrations__", {

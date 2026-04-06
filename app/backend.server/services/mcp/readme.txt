@@ -15,7 +15,7 @@ Files
 
 Usage
 -----
-The main route handler is at: app/routes/$lang+/api+/mcp.ts
+The main route handler is at: app/routes/api+/mcp.ts
 
 It imports and uses these service modules to:
 1. Handle MCP protocol requests (initialize, tools/list, tools/call, shutdown)

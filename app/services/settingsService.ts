@@ -1,4 +1,4 @@
-import { getAvailableLanguages } from "~/backend.server/translations";
+// Translation removed - getAvailableLanguages no longer available
 import { dr } from "~/db.server";
 import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
 import { checkValidCurrency } from "~/utils/currency";
@@ -62,8 +62,9 @@ export const SettingsService = {
 			errors.currency = "Invalid currency";
 		}
 
-		if (!language || !getAvailableLanguages().includes(language)) {
-			errors.language = "Language is required and must be supported";
+		// Translation removed - only English is supported
+		if (language !== "en") {
+			errors.language = "Only English (en) is supported";
 		}
 
 		if (Object.keys(errors).length > 0) {

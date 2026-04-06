@@ -12,7 +12,7 @@ import {
 	createOtherTenant,
 	cleanupTestAssets,
 } from "./test-helpers";
-import { loader as csvExportLoader } from "~/routes/$lang+/settings+/assets+/csv-export";
+import { loader as csvExportLoader } from "~/routes/settings+/assets+/csv-export";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-csv-export@");

@@ -1,78 +1,68 @@
-import {
-	DEFAULT_LANGUAGE,
-	getLanguage,
-	getLanguageAllowDefault,
-	LangRouteParam,
-} from "./lang.backend";
+import { LangRouteParam } from "./lang.backend";
 import { redirect } from "react-router";
-import { urlLang } from "./url";
 
-export function replaceLang(path: string, lang: string): string {
-	const parts = path.split("/");
-	parts[1] = lang;
-	return parts.join("/");
+// Translation removed - language parameter no longer used
+export function replaceLang(path: string, _lang: string): string {
+	return path;
 }
 
-// build a language-prefixed URL path
+// Translation removed - always use path without language prefix
 export function urlLangFromRoute(
-	routeArgs: LangRouteParam,
+	_routeArgs: LangRouteParam,
 	path: string,
 ): string | null {
-	const lang = getLanguage(routeArgs);
-	if (!lang) {
-		return null;
-	}
-	return urlLang(lang, path);
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	return normalizedPath;
 }
 
+// Translation removed - always use path without language prefix
 export function urlLangFromRouteAllowDefault(
-	routeArgs: LangRouteParam,
+	_routeArgs: LangRouteParam,
 	path: string,
 ): string {
-	const lang = getLanguageAllowDefault(routeArgs);
-	return urlLang(lang, path);
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	return normalizedPath;
 }
 
+// Translation removed - always use path without language prefix
 export function urlDefaultLang(path: string): string {
-	return urlLang(DEFAULT_LANGUAGE, path);
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	return normalizedPath;
 }
 
-// redirect
-export function redirectLang(lang: string, path: string): Response {
-	const url = urlLang(lang, path);
-	if (!url) {
-		return new Response("Not Found", { status: 404 });
-	}
-	return redirect(url);
+// Translation removed - redirect without language prefix
+export function redirectLang(_lang: string, path: string): Response {
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	return redirect(normalizedPath);
 }
 
+// Translation removed - redirect without language prefix
 export function redirectLangFromRoute(
-	routeArgs: LangRouteParam,
+	_routeArgs: LangRouteParam,
 	path: string,
 	init?: number | { headers: Record<string, string> },
 ): Response {
-	const url = urlLangFromRoute(routeArgs, path);
-	if (!url) {
-		return new Response("Not Found", { status: 404 });
-	}
-	return redirect(url, init);
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	return redirect(normalizedPath, init);
 }
 
+// Translation removed - redirect without language prefix
 export function redirectLangFromRouteAllowDefault(
-	routeArgs: LangRouteParam,
+	_routeArgs: LangRouteParam,
 	path: string,
 	init?: number | { headers: Record<string, string> },
 ): Response {
-	const url = urlLangFromRouteAllowDefault(routeArgs, path);
-	return redirect(url, init);
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	return redirect(normalizedPath, init);
 }
 
+// Translation removed - redirect without language prefix
 export function redirectDefaultLang(
 	path: string,
 	init?: number | { headers: Record<string, string> },
 ): Response {
-	const url = urlDefaultLang(path);
-	return redirect(url, init);
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	return redirect(normalizedPath, init);
 }
 
 export function isAdminRoute(request: Request): boolean {

@@ -31,9 +31,6 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { PrimeReactProvider } from "primereact/api";
 
-import { loadTranslations } from "./backend.server/translations";
-import { createTranslationScript } from "./frontend/translations";
-import { getLanguageAllowDefault } from "./utils/lang.backend";
 import { ViewContext } from "./frontend/context";
 import { isAdminRoute } from "./utils/url.backend";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
@@ -112,7 +109,8 @@ export const loader = async (
 	const dtsInstanceCtryIso3 = settings ? settings.dtsInstanceCtryIso3 : "USA";
 	const currencyCode = settings ? settings.currencyCode : "USD";
 
-	const lang = getLanguageAllowDefault(routeArgs);
+	// Translation removed - always use English
+	const lang = "en";
 	const userForFrontend = onAdminRoute
 		? isSuperAdmin
 			? {
@@ -123,15 +121,12 @@ export const loader = async (
 			: null
 		: await authLoaderGetOptionalUserForFrontend(routeArgs);
 
-	const translations = loadTranslations(lang);
-
 	return Response.json(
 		{
 			common: {
 				lang,
 				user: userForFrontend,
 			},
-			translations,
 			isLoggedIn: onAdminRoute ? isSuperAdmin : !!userForRoute,
 			isCountryAccountSelected,
 			activeInstanceCount,
@@ -172,8 +167,6 @@ export default function Screen() {
 		userRole,
 		// isSuperAdmin,
 		// isFormAuthSupported,
-		lang,
-		translations,
 		isCountryAccountSelected,
 		activeInstanceCount
 	} = loaderData;
@@ -189,8 +182,8 @@ export default function Screen() {
 
 	return (
 		<html
-			lang={loaderData.common.lang}
-			dir={loaderData.common.lang === "ar" ? "rtl" : "ltr"}
+			lang="en"
+			dir="ltr"
 		>
 			<head>
 				<meta charSet="utf-8" />
@@ -198,11 +191,6 @@ export default function Screen() {
 				<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 				<Meta />
 				<Links />
-				<script
-					dangerouslySetInnerHTML={{
-						__html: createTranslationScript(lang, translations),
-					}}
-				/>
 			</head>
 			<body>
 				<ToastContainer

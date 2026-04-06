@@ -1,8 +1,5 @@
 import { initDB, endDB } from "./db.server";
 import { initCookieStorage } from "./utils/session";
-import { createTranslationGetter } from "~/backend.server/translations";
-import { importTranslationsIfNeeded } from "./backend.server/services/translationDBUpdates/update";
-import type {} from "~/types/createTranslationGetter.d";
 
 export function initServer() {
 	console.log("init.serve.tsx:init");
@@ -10,11 +7,6 @@ export function initServer() {
 	initDB();
 	console.log("Initing cookie storage...");
 	initCookieStorage();
-
-	console.log("Setting up translator...");
-	globalThis.createTranslationGetter = createTranslationGetter;
-
-	importTranslationsIfNeeded();
 }
 
 export function endServer() {

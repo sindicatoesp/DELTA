@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { action, loader } from "~/routes/$lang+/api+/mcp";
+import { action, loader } from "~/routes/api+/mcp";
 import * as apiAuthModule from "~/backend.server/models/api_key";
 
 vi.mock("~/backend.server/models/api_key", () => ({

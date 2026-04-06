@@ -11,7 +11,7 @@ import {
 	cleanupOtherTenant,
 } from "../../../test-helpers";
 import { createTestDamage } from "./test-helpers";
-import { action as deleteAction } from "~/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/delete.$id";
+import { action as deleteAction } from "~/routes/disaster-record+/edit-sub.$disRecId+/damages+/delete.$id";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-delete@");

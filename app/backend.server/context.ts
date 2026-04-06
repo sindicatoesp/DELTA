@@ -1,40 +1,23 @@
 import { configPublicUrl } from "~/utils/config";
-import { urlLang } from "~/utils/url";
 import { LangRouteParam } from "~/utils/lang.backend";
-import {
-	createTranslator,
-	parseLanguageAndDebugFlag,
-	TranslationGetter,
-	Translator,
-} from "~/utils/translator";
+import { createMockTranslator, Translator } from "~/utils/translator";
 import { DContext } from "~/utils/dcontext";
-import type {} from "~/types/createTranslationGetter.d";
 
 export class BackendContext implements DContext {
-	lang: string;
+	lang: string = "en"; // Translation removed - always use English
+	t: Translator; // Translator with English-only fallbacks
 
-	t: Translator; // General translator (from main.json, etc.)
+	constructor(_routeArgs: LangRouteParam) {
+		// Translation removed - always use English
+		this.lang = "en";
 
-	//countryAccountID
-
-	constructor(routeArgs: LangRouteParam) {
-		if (!routeArgs.params.lang)
-			throw new Error("BackendContext: lang param does not exist on route");
-
-		this.lang = routeArgs.params.lang;
-
-		{
-			const { baseLang, isDebug } = parseLanguageAndDebugFlag(this.lang);
-
-			let translationGetter: TranslationGetter;
-			translationGetter = globalThis.createTranslationGetter(baseLang);
-
-			this.t = createTranslator(translationGetter, baseLang, isDebug);
-		}
+		this.t = createMockTranslator();
 	}
 
 	url(path: string): string {
-		return urlLang(this.lang, path);
+		// Translation removed - don't add language prefix
+		const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+		return normalizedPath;
 	}
 
 	fullUrl(path: string): string {
@@ -42,7 +25,9 @@ export class BackendContext implements DContext {
 		if (!prefix) {
 			return "invalid-link-env-is-missing-public-url";
 		}
-		return prefix + urlLang(this.lang, path);
+		// Translation removed - don't add language prefix
+		const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+		return prefix + normalizedPath;
 	}
 
 	rootUrl(): string {

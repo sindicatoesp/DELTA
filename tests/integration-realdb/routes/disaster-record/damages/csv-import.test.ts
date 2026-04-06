@@ -8,7 +8,7 @@ import {
 	TEST_BASE_URL,
 } from "../../../test-helpers";
 import { createTestDamage } from "./test-helpers";
-import { action as csvImportAction } from "~/routes/$lang+/disaster-record+/edit-sub.$disRecId+/damages+/csv-import";
+import { action as csvImportAction } from "~/routes/disaster-record+/edit-sub.$disRecId+/damages+/csv-import";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-csv-import@");

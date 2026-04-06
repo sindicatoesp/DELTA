@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	loader,
 	action,
-} from "~/routes/$lang+/examples+/test-route-module+/_index";
+} from "~/routes/examples+/test-route-module+/_index";
 
 describe("loader", () => {
 	it("Should return the default message", async () => {

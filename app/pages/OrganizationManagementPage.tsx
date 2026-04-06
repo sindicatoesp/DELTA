@@ -13,9 +13,9 @@ import { FilterMatchMode } from "primereact/api";
 
 import { MainContainer } from "~/frontend/container";
 import { ViewContext } from "~/frontend/context";
-import { NavSettings } from "~/routes/$lang+/settings/nav";
+import { NavSettings } from "~/routes/settings/nav";
 import { canAddNewRecord, canEditRecord } from "~/frontend/user/roles";
-import type { loader } from "../routes/$lang+/settings+/organizations+/_layout";
+import type { loader } from "../routes/settings+/organizations+/_layout";
 
 type OrganizationItem = { id: string; name: string };
 type OrganizationTableFilters = {
@@ -227,3 +227,4 @@ export default function OrganizationManagementPage() {
         </MainContainer>
     );
 }
+

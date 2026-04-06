@@ -1,19 +1,12 @@
 import { useRouteLoaderData } from "react-router";
-import { urlLang } from "~/utils/url";
 import { UserForFrontend } from "~/utils/auth";
-import {
-	createTranslator,
-	parseLanguageAndDebugFlag,
-	TranslationGetter,
-	Translator,
-} from "~/utils/translator";
+import { createMockTranslator, Translator } from "~/utils/translator";
 import { DContext } from "~/utils/dcontext";
 import { CommonData } from "~/backend.server/handlers/commondata";
-import type {} from "~/types/createTranslationGetter.d";
 
 export class ViewContext implements DContext {
 	t: Translator;
-	lang: string;
+	lang: string = "en"; // Translation removed - always use English
 	user: UserForFrontend | null;
 
 	constructor() {
@@ -21,20 +14,14 @@ export class ViewContext implements DContext {
 		const commonData = rootData.common;
 		if (!rootData.common.lang)
 			throw new Error("lang not passed to ViewContext");
-		this.lang = commonData.lang;
+		this.lang = "en"; // Translation removed - always English
 		this.user = commonData.user;
 
-		{
-			const { baseLang, isDebug } = parseLanguageAndDebugFlag(this.lang);
-
-			let translationGetter: TranslationGetter;
-			translationGetter = globalThis.createTranslationGetter(baseLang);
-
-			this.t = createTranslator(translationGetter, baseLang, isDebug);
-		}
+		this.t = createMockTranslator();
 	}
 
 	url(path: string): string {
-		return urlLang(this.lang, path);
+		// Translation removed - no language prefix needed
+		return path.startsWith("/") ? path : `/${path}`;
 	}
 }

@@ -36,7 +36,7 @@ import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
 import { ViewContext } from "../context";
 import { DContext } from "~/utils/dcontext";
-import { HazardousEventPickerType } from "~/routes/$lang+/hazardous-event+/picker";
+import { HazardousEventPickerType } from "~/routes/hazardous-event+/picker";
 
 export const route = "/disaster-event";
 
@@ -1205,3 +1205,4 @@ export function DisasterEventView(props: DisasterEventViewProps) {
 		</ViewComponent>
 	);
 }
+

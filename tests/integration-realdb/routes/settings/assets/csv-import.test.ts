@@ -8,7 +8,7 @@ import {
 	TEST_BASE_URL,
 } from "../../../test-helpers";
 import { cleanupTestAssets } from "./test-helpers";
-import { action as csvImportAction } from "~/routes/$lang+/settings+/assets+/csv-import";
+import { action as csvImportAction } from "~/routes/settings+/assets+/csv-import";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-csv-import@");

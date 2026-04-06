@@ -16,7 +16,7 @@ import {
 import {
 	loader as editLoader,
 	action as editAction,
-} from "~/routes/$lang+/settings+/assets+/edit.$id";
+} from "~/routes/settings+/assets+/edit.$id";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-edit@");

@@ -11,7 +11,7 @@ import {
 	cleanupOtherTenant,
 } from "../../../test-helpers";
 import { createTestLosses } from "./test-helpers";
-import { loader as idLoader } from "~/routes/$lang+/disaster-record+/edit-sub.$disRecId+/losses+/$id";
+import { loader as idLoader } from "~/routes/disaster-record+/edit-sub.$disRecId+/losses+/$id";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-losses-id@");
