@@ -53,7 +53,10 @@ export type PermissionId =
 	| "ValidateData"
 	| "DeleteValidatedData"
 	| "ManageCountrySettings"
-	| "ManageOrganizations"
+	| "organizations.list"
+	| "organizations.create"
+	| "organizations.update"
+	| "organizations.delete"
 	| "activate_country_account"
 	| "deactivate_country_account"
 	| "modify_country_account"
@@ -66,6 +69,36 @@ export type PermissionId =
 	| "AddFictitiousCountry"
 	| "EditFictitiousCountry"
 	| "DeleteFictitiousCountry";
+
+export const PERMISSIONS = {
+	USERS_VIEW: "ViewUsers",
+	USERS_EDIT: "EditUsers",
+	USERS_INVITE: "InviteUsers",
+	API_KEYS_EDIT: "EditAPIKeys",
+	DATA_VIEW: "ViewData",
+	DATA_EDIT: "EditData",
+	API_DOCS_VIEW: "ViewApiDocs",
+	HUMAN_EFFECTS_CUSTOM_DSG_EDIT: "EditHumanEffectsCustomDsg",
+	DATA_VALIDATE: "ValidateData",
+	VALIDATED_DATA_DELETE: "DeleteValidatedData",
+	COUNTRY_SETTINGS_MANAGE: "ManageCountrySettings",
+	ORGANIZATIONS_LIST: "organizations.list",
+	ORGANIZATIONS_CREATE: "organizations.create",
+	ORGANIZATIONS_UPDATE: "organizations.update",
+	ORGANIZATIONS_DELETE: "organizations.delete",
+	COUNTRY_ACCOUNT_ACTIVATE: "activate_country_account",
+	COUNTRY_ACCOUNT_DEACTIVATE: "deactivate_country_account",
+	COUNTRY_ACCOUNT_MODIFY: "modify_country_account",
+	COUNTRY_ACCOUNT_DELETE: "DeleteCountryAccount",
+	COUNTRY_ACCOUNT_CLONE: "CloneCountryAccount",
+	COUNTRY_ACCOUNTS_VIEW: "ViewCountryAccounts",
+	COUNTRY_ACCOUNT_ADD: "AddCountryAccount",
+	COUNTRY_ACCOUNT_EDIT: "EditCountryAccount",
+	FICTITIOUS_COUNTRIES_VIEW: "ViewFictitiousCountries",
+	FICTITIOUS_COUNTRY_ADD: "AddFictitiousCountry",
+	FICTITIOUS_COUNTRY_EDIT: "EditFictitiousCountry",
+	FICTITIOUS_COUNTRY_DELETE: "DeleteFictitiousCountry",
+} as const;
 
 type PermissionOption = {
 	id: PermissionId;
@@ -131,9 +164,24 @@ export function permissions(): PermissionOption[] {
 			label: "Manage country settings",
 		},
 		{
-			id: "ManageOrganizations",
+			id: "organizations.list",
 			role: "admin",
-			label: "Manage organizations",
+			label: "List organizations",
+		},
+		{
+			id: "organizations.create",
+			role: "admin",
+			label: "Create organizations",
+		},
+		{
+			id: "organizations.update",
+			role: "admin",
+			label: "Update organizations",
+		},
+		{
+			id: "organizations.delete",
+			role: "admin",
+			label: "Delete organizations",
 		},
 		// Super admin specific permissions
 		{
@@ -229,7 +277,10 @@ export const roles: {
 		"EditAPIKeys",
 		"EditHumanEffectsCustomDsg",
 		"ManageCountrySettings",
-		"ManageOrganizations",
+		"organizations.list",
+		"organizations.create",
+		"organizations.update",
+		"organizations.delete",
 	],
 	// Global role (cross-tenant)
 	super_admin: [

@@ -1,20 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-    useLoaderData,
-    useLocation,
-    useNavigate,
-} from "react-router";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Paginator } from "primereact/paginator";
+import { useLocation, useNavigate } from "react-router";
 import { FilterMatchMode } from "primereact/api";
+import { Button } from "primereact/button";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { InputText } from "primereact/inputtext";
+import { Paginator } from "primereact/paginator";
 
 import { MainContainer } from "~/frontend/container";
+import type { ListOrganizationsResult } from "~/modules/organizations/domain/repositories/organization-repository";
 import { NavSettings } from "~/routes/settings/nav";
-import { canAddNewRecord, canEditRecord } from "~/frontend/user/roles";
-import type { loader } from "../routes/settings+/organizations+/_layout";
 
 type OrganizationItem = { id: string; name: string };
 type OrganizationTableFilters = {
@@ -24,10 +19,26 @@ type OrganizationTableFilters = {
     };
 };
 
+type OrganizationsPageProps = {
+    organizations: ListOrganizationsResult;
+    filters: {
+        search?: string;
+    };
+    canCreate: boolean;
+    canUpdate: boolean;
+    canDelete: boolean;
+    userRole: string | null;
+};
+
 function getOrganizationsBasePath(pathname: string) {
     const segments = pathname.split("/").filter(Boolean);
 
     if (segments.length >= 2) {
+        const lastSegment = segments[segments.length - 1];
+        if (lastSegment === "edit" || lastSegment === "delete") {
+            return `/${segments.slice(0, -2).join("/")}`;
+        }
+
         const actionSegment = segments[segments.length - 2];
         if (actionSegment === "edit" || actionSegment === "delete") {
             return `/${segments.slice(0, -2).join("/")}`;
@@ -41,10 +52,15 @@ function getOrganizationsBasePath(pathname: string) {
     return pathname;
 }
 
-export default function OrganizationManagementPage() {
-    const ld = useLoaderData<typeof loader>();
-    const { filters } = ld;
-    const { items, pagination } = ld.data;
+export default function OrganizationManagementPage({
+    organizations,
+    filters,
+    canCreate,
+    canUpdate,
+    canDelete,
+    userRole,
+}: OrganizationsPageProps) {
+    const { items, pagination } = organizations;
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -61,12 +77,7 @@ export default function OrganizationManagementPage() {
     });
     const pageSizeOptions = [10, 20, 30, 40, 50];
 
-    const navSettings = <NavSettings userRole={ld.common.user?.role} />;
-
-    const currentUserRole = ld.common.user?.role ?? null;
-    const canAdd = canAddNewRecord(currentUserRole);
-    const canEdit = canEditRecord(currentUserRole);
-    const canDelete = canEditRecord(currentUserRole);
+    const navSettings = <NavSettings userRole={userRole ?? undefined} />;
 
     const withCurrentSearch = (path: string) =>
         location.search ? `${path}${location.search}` : path;
@@ -113,12 +124,12 @@ export default function OrganizationManagementPage() {
 
     const actionsBodyTemplate = (item: OrganizationItem) => (
         <div className="flex items-center justify-center gap-1">
-            {canEdit && (
+            {canUpdate && (
                 <Button
                     type="button"
                     aria-label={"Edit"}
                     text
-                    onClick={() => navigate(withCurrentSearch(`${basePath}/edit/${item.id}`))}
+                    onClick={() => navigate(withCurrentSearch(`${basePath}/${item.id}/edit`))}
                 >
                     <i className="pi pi-pencil" aria-hidden="true" />
                 </Button>
@@ -129,9 +140,7 @@ export default function OrganizationManagementPage() {
                     text
                     severity="danger"
                     aria-label={"Delete"}
-                    onClick={() =>
-                        navigate(withCurrentSearch(`${basePath}/delete/${item.id}`))
-                    }
+                    onClick={() => navigate(withCurrentSearch(`${basePath}/${item.id}/delete`))}
                 >
                     <i className="pi pi-trash" aria-hidden="true" />
                 </Button>
@@ -159,14 +168,11 @@ export default function OrganizationManagementPage() {
     );
 
     return (
-        <MainContainer
-            title={"Organizations"}
-            headerExtra={navSettings}
-        >
+        <MainContainer title={"Organizations"} headerExtra={navSettings}>
             <>
                 <div className="mb-4 w-full">
                     <div className="flex w-full justify-end">
-                        {canAdd && (
+                        {canCreate && (
                             <Button
                                 id="add_new_organization"
                                 label={"Add new organization"}
@@ -223,4 +229,3 @@ export default function OrganizationManagementPage() {
         </MainContainer>
     );
 }
-

@@ -203,15 +203,54 @@ export async function hasPermission(
 	request: Request,
 	permission: PermissionId,
 ): Promise<boolean> {
+	const resolvedPermission = permission;
 	const effectiveRole = await getEffectiveUserRole(request);
 
 	// Use isSuperAdmin helper for direct super admin checks when needed
 	if (isSuperAdmin(effectiveRole)) {
 		// Super admins might have specific permission restrictions
-		return roleHasPermission(effectiveRole, permission);
+		return roleHasPermission(effectiveRole, resolvedPermission);
 	}
 
-	return roleHasPermission(effectiveRole, permission);
+	return roleHasPermission(effectiveRole, resolvedPermission);
+}
+
+export async function requirePermission(
+	request: Request,
+	permission: PermissionId,
+): Promise<UserSession | any> {
+	const resolvedPermission = permission;
+	const onAdminRoute = isAdminRoute(request);
+
+	if (onAdminRoute) {
+		const superAdminSession = await getSuperAdminSession(request);
+		if (!superAdminSession) {
+			const url = new URL(request.url);
+			const redirectTo = url.pathname + url.search;
+			throw redirect(
+				`/admin/login?redirectTo=${encodeURIComponent(redirectTo)}`,
+			);
+		}
+
+		if (!roleHasPermission("super_admin", resolvedPermission)) {
+			throw new Response("Forbidden", { status: 403 });
+		}
+
+		return makeSuperAdminUserSession(superAdminSession.superAdminId);
+	}
+
+	const countryAccountsId = await getCountryAccountsIdFromSession(request);
+	if (!countryAccountsId) {
+		throw redirect("/user/select-instance");
+	}
+
+	const userSession = await requireUser({ request, params: {} });
+	const userRole = await getUserRoleFromSession(request);
+	if (!roleHasPermission(userRole, resolvedPermission)) {
+		throw new Response("Forbidden", { status: 403 });
+	}
+
+	return userSession;
 }
 
 export function authLoader<T extends LoaderFunction>(fn: T): T {
@@ -230,63 +269,7 @@ export function authLoaderWithPerm<T extends LoaderFunction>(
 	fn: T,
 ): T {
 	return (async (args: LoaderFunctionArgs) => {
-		// Check if super admin first
-		const superAdminSession = await getSuperAdminSession(args.request);
-		if (superAdminSession) {
-			// Only proceed with super admin path if this is a super admin route
-			// This prevents regular users from being treated as super admins
-
-			if (isAdminRoute(args.request)) {
-				if (roleHasPermission("super_admin", permission)) {
-					// Create a mock userSession for super admin
-					const mockUserSession = {
-						user: {
-							id: "super_admin",
-							emailVerified: true,
-							totpEnabled: false,
-						},
-						sessionId: superAdminSession.superAdminId,
-						session: { totpAuthed: true },
-					};
-					return fn({
-						...(args as any),
-						userSession: mockUserSession,
-					});
-				}
-				// Redirect to admin login instead of 403 for admin routes
-				const url = new URL(args.request.url);
-				const redirectTo = url.pathname + url.search;
-				throw redirect(
-					`/admin/login?redirectTo=${encodeURIComponent(redirectTo)}`,
-				);
-			}
-		}
-		// If not an admin route, fall through to regular user flow
-
-		// Regular user flow
-		// Check if this is an admin route first
-
-		// If it's an admin route, redirect to admin login
-		if (isAdminRoute(args.request)) {
-			const url = new URL(args.request.url);
-			const redirectTo = url.pathname + url.search;
-			throw redirect(
-				`/admin/login?redirectTo=${encodeURIComponent(redirectTo)}`,
-			);
-		}
-
-		// For non-admin routes, continue with regular permission check
-		const userSession = await requireUser(args);
-		const userRole = await getUserRoleFromSession(args.request);
-		const countryAccountsId = await getCountryAccountsIdFromSession(
-			args.request,
-		);
-		if (!countryAccountsId) {
-			throw redirect("/user/select-instance");
-		}
-		if (!roleHasPermission(userRole, permission)) {
-			throw new Response("Forbidden", { status: 403 });
-		}
+		const userSession = await requirePermission(args.request, permission);
 		return fn({
 			...(args as any),
 			userSession,
@@ -303,6 +286,7 @@ export function authLoaderPublicOrWithPerm<T extends LoaderFunction>(
 	fn: T,
 ): T {
 	const wrappedLoader = async (args: LoaderFunctionArgs) => {
+		const resolvedPermission = permission;
 		const countryAccountsId = await getCountryAccountsIdFromSession(
 			args.request,
 		);
@@ -322,7 +306,7 @@ export function authLoaderPublicOrWithPerm<T extends LoaderFunction>(
 		}
 
 		const userRole = await getEffectiveUserRole(args.request);
-		if (!roleHasPermission(userRole, permission)) {
+		if (!roleHasPermission(userRole, resolvedPermission)) {
 			throw new Response("Forbidden", { status: 403 });
 		}
 		// Create extended args with proper typing
@@ -468,6 +452,7 @@ export function authActionWithPerm<T extends ActionFunction>(
 	fn: T,
 ): T {
 	return (async (args: ActionFunctionArgs) => {
+		const resolvedPermission = permission;
 		const onAdminRoute = isAdminRoute(args.request);
 
 		// Check if super admin first
@@ -481,7 +466,7 @@ export function authActionWithPerm<T extends ActionFunction>(
 				);
 			}
 
-			if (!roleHasPermission("super_admin", permission)) {
+			if (!roleHasPermission("super_admin", resolvedPermission)) {
 				throw new Response("Forbidden", { status: 403 });
 			}
 
@@ -500,7 +485,7 @@ export function authActionWithPerm<T extends ActionFunction>(
 		}
 		const userSession = await requireUser(args);
 		const userRole = await getUserRoleFromSession(args.request);
-		if (!roleHasPermission(userRole, permission)) {
+		if (!roleHasPermission(userRole, resolvedPermission)) {
 			throw new Response("Forbidden", { status: 403 });
 		}
 		return fn({
