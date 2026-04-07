@@ -2,7 +2,6 @@ import { MainContainer } from "~/frontend/container";
 
 import { Res } from "~/backend.server/handlers/form/csv_import";
 import { LangLink } from "~/utils/link";
-import { urlLang } from "~/utils/url";
 
 
 interface CreateScreenArgs {
@@ -10,6 +9,10 @@ interface CreateScreenArgs {
 	title: string;
 	apiBaseUrl: string;
 	listUrl: string;
+}
+
+function normalizePath(path: string): string {
+	return path.startsWith("/") ? path : `/${path}`;
 }
 
 export function csvImportScreen(args: CreateScreenArgs) {
@@ -89,8 +92,7 @@ export function csvImportScreen(args: CreateScreenArgs) {
 					<ul>
 						<li>
 							<a
-								href={urlLang(
-									lang,
+								href={normalizePath(
 									args.apiBaseUrl + "/csv-import-example?import_type=upsert",
 								)}
 							>
@@ -99,8 +101,7 @@ export function csvImportScreen(args: CreateScreenArgs) {
 						</li>
 						<li>
 							<a
-								href={urlLang(
-									lang,
+								href={normalizePath(
 									args.apiBaseUrl + "/csv-import-example?import_type=create",
 								)}
 							>
@@ -109,8 +110,7 @@ export function csvImportScreen(args: CreateScreenArgs) {
 						</li>
 						<li>
 							<a
-								href={urlLang(
-									lang,
+								href={normalizePath(
 									args.apiBaseUrl + "/csv-import-example?import_type=update",
 								)}
 							>

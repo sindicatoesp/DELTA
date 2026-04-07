@@ -1,4 +1,3 @@
-import { LangRouteParam } from "./lang.backend";
 import { redirect } from "react-router";
 
 // Translation removed - language parameter no longer used
@@ -8,7 +7,7 @@ export function replaceLang(path: string, _lang: string): string {
 
 // Translation removed - always use path without language prefix
 export function urlLangFromRoute(
-	_routeArgs: LangRouteParam,
+	_routeArgs: unknown,
 	path: string,
 ): string | null {
 	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
@@ -17,7 +16,7 @@ export function urlLangFromRoute(
 
 // Translation removed - always use path without language prefix
 export function urlLangFromRouteAllowDefault(
-	_routeArgs: LangRouteParam,
+	_routeArgs: unknown,
 	path: string,
 ): string {
 	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
@@ -38,7 +37,7 @@ export function redirectLang(_lang: string, path: string): Response {
 
 // Translation removed - redirect without language prefix
 export function redirectLangFromRoute(
-	_routeArgs: LangRouteParam,
+	_routeArgs: unknown,
 	path: string,
 	init?: number | { headers: Record<string, string> },
 ): Response {
@@ -48,7 +47,7 @@ export function redirectLangFromRoute(
 
 // Translation removed - redirect without language prefix
 export function redirectLangFromRouteAllowDefault(
-	_routeArgs: LangRouteParam,
+	_routeArgs: unknown,
 	path: string,
 	init?: number | { headers: Record<string, string> },
 ): Response {

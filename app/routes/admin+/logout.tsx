@@ -1,5 +1,4 @@
 import type { ActionFunction } from "react-router";
-import { LangRouteParam } from "~/utils/lang.backend";
 import { superAdminSessionCookie } from "~/utils/session";
 import { redirectLangFromRoute } from "~/utils/url.backend";
 
@@ -12,7 +11,10 @@ export const action: ActionFunction = async (actionArgs) => {
 	return await handleLogout(actionArgs);
 };
 
-async function handleLogout(routeArgs: { request: Request } & LangRouteParam) {
+async function handleLogout(routeArgs: {
+	request: Request;
+	params?: { lang?: string };
+}) {
 	const { request } = routeArgs;
 	const session = await superAdminSessionCookie().getSession(
 		request.headers.get("Cookie"),

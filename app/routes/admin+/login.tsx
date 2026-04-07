@@ -22,9 +22,6 @@ import {
 import { FaExclamationTriangle } from "react-icons/fa";
 import { createCSRFToken } from "~/utils/csrf";
 
-import { getLanguage } from "~/utils/lang.backend";
-
-
 import { htmlTitle } from "~/utils/htmlmeta";
 import { Card } from "primereact/card";
 import { Message } from "primereact/message";
@@ -32,7 +29,6 @@ import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { InputText } from "primereact/inputtext";
-import { urlLang } from "~/utils/url";
 
 interface LoginFields {
 	email: string;
@@ -108,7 +104,6 @@ export const action = async (actionArgs: ActionFunctionArgs) => {
 	let redirectTo = url.searchParams.get("redirectTo");
 
 	redirectTo = getSafeRedirectTo(
-		"en",
 		redirectTo,
 		"/admin/country-accounts",
 	);
@@ -245,8 +240,7 @@ export const loader = async (loaderArgs: LoaderFunctionArgs) => {
 
 	const url = new URL(request.url);
 	let redirectTo = url.searchParams.get("redirectTo");
-	const lang = getLanguage(loaderArgs);
-	redirectTo = getSafeRedirectTo(lang, redirectTo, "/admin/country-accounts");
+	redirectTo = getSafeRedirectTo(redirectTo, "/admin/country-accounts");
 
 	if (superAdminSession) {
 		return redirect(redirectTo);
@@ -293,7 +287,6 @@ export const loader = async (loaderArgs: LoaderFunctionArgs) => {
 };
 
 export function getSafeRedirectTo(
-	lang: string,
 	redirectTo: string | null,
 	defaultPath: string,
 ): string {
@@ -304,7 +297,7 @@ export function getSafeRedirectTo(
 	) {
 		return redirectTo;
 	}
-	return urlLang(lang, defaultPath);
+	return defaultPath.startsWith("/") ? defaultPath : `/${defaultPath}`;
 }
 
 export const meta: MetaFunction = () => {

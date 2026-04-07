@@ -30,7 +30,6 @@ import {
 	RoleId,
 	isSuperAdmin,
 } from "~/frontend/user/roles";
-import { ensureValidLanguage } from "./lang.backend";
 import { isAdminRoute, redirectLangFromRoute } from "../utils/url.backend";
 
 export async function login(
@@ -472,7 +471,6 @@ export function authActionWithPerm<T extends ActionFunction>(
 	fn: T,
 ): T {
 	return (async (args: ActionFunctionArgs) => {
-		ensureValidLanguage(args);
 		const onAdminRoute = isAdminRoute(args.request);
 
 		// Check if super admin first

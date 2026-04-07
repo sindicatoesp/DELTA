@@ -6,7 +6,6 @@ import { Button } from "primereact/button";
 
 import { Link, useLocation, useNavigate, useSubmit } from "react-router";
 import { Menu } from "primereact/menu";
-import { urlLang } from "~/utils/url";
 
 interface Props {
     isLoggedIn: boolean;
@@ -138,7 +137,7 @@ export default function SuperAdminMenuBar({
         <div className="ml-auto shrink-0 flex items-center gap-1 md:gap-2">
             <Divider layout="vertical" className="hidden md:block !mx-1" />
 
-            <Link to={urlLang('en', "/admin/login")}>
+            <Link to="/admin/login">
                 <Button
                     label={"common.signin"}
                 />

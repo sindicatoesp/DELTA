@@ -1,5 +1,3 @@
-import { getLanguage, LangRouteParam } from "~/utils/lang.backend";
-
 import {
 	authLoaderGetOptionalUserForFrontend,
 	UserForFrontend,
@@ -16,12 +14,13 @@ export interface CommonDataUnwrapped {
 
 export type CommonDataLoaderArgs = {
 	request: Request;
-} & LangRouteParam;
+	params: { lang?: string };
+};
 
 export async function getCommonData(
 	args: CommonDataLoaderArgs,
 ): Promise<CommonDataUnwrapped> {
-	let lang = getLanguage(args);
+	let lang = "en";
 	let user = await authLoaderGetOptionalUserForFrontend(args);
 	return {
 		lang,

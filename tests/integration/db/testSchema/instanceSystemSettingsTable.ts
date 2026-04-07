@@ -1,7 +1,29 @@
-import { pgTable, boolean, varchar, uuid } from "drizzle-orm/pg-core";
-import { url } from "~/utils/url";
+import {
+	pgTable,
+	boolean,
+	varchar,
+	uuid,
+	customType,
+} from "drizzle-orm/pg-core";
 import { ourRandomUUID } from "~/utils/drizzleUtil";
 import { countryAccounts } from "./countryAccounts";
+
+const url = customType<{
+	data: string;
+	driver: "string";
+}>({
+	dataType() {
+		return "varchar";
+	},
+	toDriver(value: string): string {
+		const urlRegex =
+			/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+		if (!urlRegex.test(value)) {
+			throw new Error("Invalid URL format");
+		}
+		return value;
+	},
+});
 
 export const instanceSystemSettingsTable = pgTable("instance_system_settings", {
 	id: ourRandomUUID(),

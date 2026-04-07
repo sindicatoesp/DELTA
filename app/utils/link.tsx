@@ -1,5 +1,4 @@
 import { Link, LinkProps } from "react-router";
-import { urlLang } from "./url";
 
 type LangLinkProps = Omit<LinkProps, "to"> & {
 	to: string;
@@ -13,7 +12,7 @@ export function LangLink({
 	visible = true,
 	...props
 }: LangLinkProps) {
-	const toPath = urlLang(lang, to);
+	const toPath = to.startsWith("/") ? to : `/${to}`;
 	if (!visible) {
 		return null;
 	}

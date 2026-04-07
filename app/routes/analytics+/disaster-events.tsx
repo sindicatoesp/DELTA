@@ -50,9 +50,6 @@ import { getCurrencySymbol } from "~/utils/currency";
 import { Tooltip } from "primereact/tooltip";
 
 import { htmlTitle } from "~/utils/htmlmeta";
-import { urlLang } from "~/utils/url";
-
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
 
 
 // Define an interface for the structure of the JSON objects
@@ -455,7 +452,7 @@ function DisasterEventsAnalysisContent() {
 	// Define the handleClearFilters function
 	const handleClearFilters = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault(); // Prevent the default form submission
-		window.location.href = urlLang(ctx.lang, "/analytics/disaster-events");
+		window.location.href = "/analytics/disaster-events";
 	};
 
 	const handleSectorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

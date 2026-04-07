@@ -8,7 +8,6 @@ import { dr } from "~/db.server";
 
 import { InferSelectModel, eq, and } from "drizzle-orm";
 import { sessionActivityTimeoutMinutes } from "~/utils/session-activity-config";
-import { LangRouteParam } from "./lang.backend";
 import { redirectLangFromRoute } from "./url.backend";
 import { sessionTable } from "~/drizzle/schema/sessionTable";
 import { userTable, userCountryAccountsTable } from "~/drizzle/schema";
@@ -236,7 +235,7 @@ export function getFlashMessage(session: Session): FlashMessage | undefined {
 }
 
 export async function redirectWithMessage(
-	routeArgs: { request: Request } & LangRouteParam,
+	routeArgs: { request: Request; params?: { lang?: string } },
 	url: string,
 	message: FlashMessage,
 ) {
