@@ -15,8 +15,6 @@ import { VirtualScroller } from "primereact/virtualscroller";
 
 import { getUserRoleFromSession } from "~/utils/session";
 
-const queryLang = "en";
-
 const renderLevelName = (level: number) => {
 	switch (level) {
 		case 1:
@@ -73,18 +71,18 @@ export const loader = authLoader(async (loaderArgs) => {
 		.select({
 			id: sectorTable.id,
 			sectorname:
-				sql<string>`dts_jsonb_localized(${sectorTable.name}, ${queryLang})`.as(
+				sql<string>`dts_jsonb_localized(${sectorTable.name}, 'en')`.as(
 					"sectorname",
 				),
 			level: sectorTable.level,
 			description:
-				sql<string>`dts_jsonb_localized(${sectorTable.description}, ${queryLang})`.as(
+				sql<string>`dts_jsonb_localized(${sectorTable.description}, 'en')`.as(
 					"description",
 				),
 			parentId: sectorTable.parentId,
 			createdAt: sectorTable.createdAt,
 			parentName:
-				sql<string>`dts_jsonb_localized(${parent.name}, ${queryLang})`.as(
+				sql<string>`dts_jsonb_localized(${parent.name}, 'en')`.as(
 					"parentName",
 				),
 		})

@@ -1,13 +1,7 @@
 import { sql, eq, isNull } from "drizzle-orm";
 
-
 import { dr } from "~/db.server";
 import { sectorTable } from "~/drizzle/schema/sectorTable";
-
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
 
 export interface Sector {
 	id: string;
@@ -25,13 +19,12 @@ export type SectorType = Omit<Sector, "id"> & {
 export function sectorSelect() {
 	return dr.select({
 		id: sectorTable.id,
-		sectorname:
-			sql<string>`dts_jsonb_localized(${sectorTable.name}, ${ctx.lang})`.as(
-				"sectorname",
-			),
+		sectorname: sql<string>`dts_jsonb_localized(${sectorTable.name}, 'en')`.as(
+			"sectorname",
+		),
 		parentId: sectorTable.parentId,
 		description:
-			sql<string>`dts_jsonb_localized(${sectorTable.description}, ${ctx.lang})`.as(
+			sql<string>`dts_jsonb_localized(${sectorTable.description}, 'en')`.as(
 				"description",
 			),
 		updatedAt: sectorTable.updatedAt,
