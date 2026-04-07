@@ -20,7 +20,7 @@ import { useState, useEffect, useRef } from "react";
 
 import { ContentPicker } from "~/components/ContentPicker";
 import { contentPickerConfigCategory } from "../content-picker-config";
-import { redirectLangFromRoute } from "~/utils/url.backend";
+import { redirect } from "react-router";
 
 
 
@@ -97,10 +97,7 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 
 		try {
 			await upsertRecord(formRecord).catch(console.error);
-			return redirectLangFromRoute(
-				actionArgs,
-				"/disaster-record/edit/" + params.id,
-			);
+			return redirect("/disaster-record/edit/" + params.id);
 		} catch (e) {
 			console.log(e);
 			throw e;

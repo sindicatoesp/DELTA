@@ -1,4 +1,4 @@
-import { useActionData, MetaFunction, Form, useNavigation } from "react-router";
+import { useActionData, MetaFunction, Form, redirect, useNavigation } from "react-router";
 import { configAuthSupportedForm } from "~/utils/config";
 import {
 	Errors as FormErrors,
@@ -11,7 +11,6 @@ import {
 } from "~/backend.server/models/user/password";
 import { redirectWithMessage } from "~/utils/session";
 import { MainContainer } from "~/frontend/container";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 import { LoaderFunctionArgs } from "react-router";
 
 
@@ -23,10 +22,10 @@ import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 
 // Add loader to check if form auth is supported
-export const loader = async (loaderArgs: LoaderFunctionArgs) => {
+export const loader = async (_loaderArgs: LoaderFunctionArgs) => {
 	// If form authentication is not supported, redirect to login or settings
 	if (!configAuthSupportedForm()) {
-		return redirectLangFromRoute(loaderArgs, "/user/settings"); // or wherever appropriate
+		return redirect("/user/settings"); // or wherever appropriate
 	}
 	return {};
 };
@@ -35,7 +34,7 @@ export const action = authAction(
 	async (actionArgs): Promise<ActionResponse> => {
 		// Check if form authentication is supported
 		if (!configAuthSupportedForm()) {
-			throw redirectLangFromRoute(actionArgs, "/user/settings/system");
+			throw redirect("/user/settings/system");
 		}
 
 		const { request } = actionArgs;

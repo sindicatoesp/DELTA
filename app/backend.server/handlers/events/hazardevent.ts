@@ -16,13 +16,12 @@ import { sql, and, eq, desc, ilike, or } from "drizzle-orm";
 
 import { dataForHazardPicker } from "~/backend.server/models/hip_hazard_picker";
 
-import { LoaderFunctionArgs } from "react-router";
+import { LoaderFunctionArgs, redirect } from "react-router";
 import { approvalStatusIds } from "~/frontend/approval";
 import {
 	getCountryAccountsIdFromSession,
 	getUserIdFromSession,
 } from "~/utils/session";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
 
@@ -32,7 +31,7 @@ export async function hazardousEventsLoader(args: LoaderFunctionArgs) {
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
 	const userId = (await getUserIdFromSession(request)) as string;
 	if (!countryAccountsId) {
-		throw redirectLangFromRoute(args, "/user/select-instance");
+		throw redirect("/user/select-instance");
 	}
 
 	const url = new URL(request.url);

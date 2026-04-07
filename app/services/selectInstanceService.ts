@@ -1,6 +1,7 @@
 import {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
+	redirect,
 	redirectDocument,
 } from "react-router";
 import { CountryAccountsRepository } from "~/db/queries/countryAccountsRepository";
@@ -18,7 +19,6 @@ import {
 	getUserFromSession,
 	sessionCookie,
 } from "~/utils/session";
-import { redirectLangFromRoute, replaceLang } from "~/utils/url.backend";
 
 export type LoaderDataType = SelectUserCountryAccounts & {
 	countryAccount: Partial<SelectCountryAccounts> & {
@@ -42,7 +42,7 @@ export const SelectInstanceService = {
 		const { request } = args;
 		const userSession = await getUserFromSession(request);
 		if (!userSession) {
-			return redirectLangFromRoute(args, "/user/login");
+			return redirect("/user/login");
 		}
 
 		const url = new URL(request.url);
@@ -61,7 +61,7 @@ export const SelectInstanceService = {
 		);
 
 		if (!userCountryAccounts || userCountryAccounts.length === 0) {
-			return redirectLangFromRoute(args, "/user/login");
+			return redirect("/user/login");
 		}
 
 		const data: LoaderDataType[] = (
@@ -142,7 +142,7 @@ export const SelectInstanceService = {
 		session.set("countrySettings", countrySettings);
 		const setCookie = await sessionCookie().commitSession(session);
 
-		redirectTo = replaceLang(redirectTo, countrySettings?.language || "en");
+		redirectTo = redirectTo;
 
 		return redirectDocument(redirectTo, {
 			headers: { "Set-Cookie": setCookie },

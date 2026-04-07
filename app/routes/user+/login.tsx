@@ -3,6 +3,7 @@ import {
 	ActionFunctionArgs,
 	Link,
 	LoaderFunctionArgs,
+	redirect,
 	redirectDocument,
 	useNavigate,
 	useNavigation,
@@ -26,7 +27,6 @@ import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRe
 import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
 import { UserRepository } from "~/db/queries/UserRepository";
 import { createCSRFToken } from "~/utils/csrf";
-import { redirectLangFromRoute, replaceLang } from "~/utils/url.backend";
 
 
 
@@ -141,8 +141,7 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 	redirectTo = getSafeRedirectTo(redirectTo);
 
 	if (user?.totpEnabled) {
-		return redirectLangFromRoute(
-			routeArgs,
+		return redirect(
 			`/user/totp-login?redirectTo=${encodeURIComponent(redirectTo)}`,
 			{ headers: headerSession },
 		);
@@ -160,14 +159,13 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 		session.set("countrySettings", countrySettings);
 		const setCookie = await sessionCookie().commitSession(session);
 
-		redirectTo =
-			replaceLang(redirectTo, countrySettings?.language || "en")
+		redirectTo = redirectTo;
 		console.log("redirectTo=", redirectTo)
 		return redirectDocument(redirectTo, {
 			headers: { "Set-Cookie": setCookie },
 		});
 	} else if (userCountryAccounts && userCountryAccounts.length > 1) {
-		return redirectLangFromRoute(routeArgs, "/user/select-instance", {
+		return redirect("/user/select-instance", {
 			headers: headerSession,
 		});
 	}
@@ -206,7 +204,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 					headers: { "Set-Cookie": setCookie },
 				});
 			} else {
-				return redirectLangFromRoute(args, "/user/select-instance", {
+				return redirect("/user/select-instance", {
 					headers: { "Set-Cookie": setCookie },
 				});
 			}

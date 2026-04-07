@@ -22,7 +22,7 @@ import { useState, useEffect, useRef, RefObject } from "react";
 import { ContentPicker } from "~/components/ContentPicker";
 import { contentPickerConfigSector } from "../content-picker-config";
 import { getCountrySettingsFromSession } from "~/utils/session";
-import { redirectLangFromRoute } from "~/utils/url.backend";
+import { redirect } from "react-router";
 
 
 
@@ -156,10 +156,7 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 		};
 		try {
 			await disRecSectorsUpsertRecord(formRecord).catch(console.error);
-			return redirectLangFromRoute(
-				actionArgs,
-				"/disaster-record/edit/" + params.disRecId,
-			);
+			return redirect("/disaster-record/edit/" + params.disRecId);
 		} catch (e) {
 			console.log(e);
 			throw e;

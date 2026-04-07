@@ -1,8 +1,7 @@
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet, redirect, useLoaderData } from "react-router";
 
 import { authLoader } from "~/utils/auth";
 import { NavSettings } from "./nav";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 
 
@@ -10,7 +9,7 @@ export const loader = authLoader(async (loaderArgs) => {
 	const url = new URL(loaderArgs.request.url);
 
 	if (url.pathname === "/settings" || url.pathname === "/settings/") {
-		return redirectLangFromRoute(loaderArgs, "/settings/system", 303);
+		return redirect("/settings/system", 303);
 	}
 
 	const isSettingsPage =

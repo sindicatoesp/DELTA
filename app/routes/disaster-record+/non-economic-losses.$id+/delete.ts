@@ -5,7 +5,7 @@ import {
 	nonecoLossesDeleteById,
 } from "~/backend.server/models/noneco_losses";
 
-import { redirectLangFromRoute } from "~/utils/url.backend";
+import { redirect } from "react-router";
 
 export const loader = authLoaderWithPerm("EditData", async (actionArgs) => {
 	const { params } = actionArgs;
@@ -26,10 +26,7 @@ export const loader = authLoaderWithPerm("EditData", async (actionArgs) => {
 			// Delete noneco losses by id
 			await nonecoLossesDeleteById(xId).catch(console.error);
 
-			return redirectLangFromRoute(
-				actionArgs,
-				"/disaster-record/edit/" + params.id,
-			);
+			return redirect("/disaster-record/edit/" + params.id);
 		} catch (e) {
 			console.log(e);
 			throw e;

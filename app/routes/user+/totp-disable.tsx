@@ -1,4 +1,4 @@
-import { Form, useLoaderData, useActionData, useNavigation } from "react-router";
+import { Form, redirect, useLoaderData, useActionData, useNavigation } from "react-router";
 import { formStringData } from "~/utils/httputil";
 import {
 	authAction,
@@ -12,7 +12,6 @@ import {
 	redirectWithMessage,
 } from "~/utils/session";
 import { MainContainer } from "~/frontend/container";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 
 import { Card } from "primereact/card";
@@ -52,7 +51,7 @@ export const action = authAction(async (actionArgs) => {
 export const loader = authLoader(async (loaderArgs) => {
 	const { user } = authLoaderGetAuth(loaderArgs);
 	if (!user.totpEnabled) {
-		return redirectLangFromRoute(loaderArgs, "/user/totp-enable");
+		return redirect("/user/totp-enable");
 	}
 	return {
 		enabled: user.totpEnabled,

@@ -1,4 +1,4 @@
-import { Form, useActionData, useNavigation } from "react-router";
+import { Form, redirect, useActionData, useNavigation } from "react-router";
 import { formStringData } from "~/utils/httputil";
 import {
 	loginTotp,
@@ -8,7 +8,6 @@ import {
 	authActionAllowNoTotp,
 } from "~/utils/auth";
 import { getCountrySettingsFromSession } from "~/utils/session";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 import { Card } from "primereact/card";
 import { InputMask } from "primereact/inputmask";
 import { Button } from "primereact/button";
@@ -48,16 +47,16 @@ export const action = authActionAllowNoTotp(async (actionArgs) => {
 		};
 		return { errors };
 	}
-	return redirectLangFromRoute(actionArgs, safeRedirectTo);
+	return redirect(safeRedirectTo);
 });
 
 export const loader = authLoaderAllowNoTotp(async (loaderArgs) => {
 	const { user, session } = authLoaderGetAuth(loaderArgs);
 	if (!user.totpEnabled) {
-		return redirectLangFromRoute(loaderArgs, "/");
+		return redirect("/");
 	}
 	if (session.totpAuthed) {
-		return redirectLangFromRoute(loaderArgs, "/");
+		return redirect("/");
 	}
 	return {};
 });

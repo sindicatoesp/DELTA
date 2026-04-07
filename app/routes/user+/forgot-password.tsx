@@ -2,6 +2,7 @@ import {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
 	MetaFunction,
+	redirect,
 	useNavigation,
 } from "react-router";
 import { useLoaderData, useActionData } from "react-router";
@@ -14,7 +15,6 @@ import { sendForgotPasswordEmail } from "~/utils/emailUtil";
 import { randomBytes } from "crypto";
 import { sessionCookie } from "~/utils/session";
 import { createCSRFToken } from "~/utils/csrf";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 
 
@@ -39,7 +39,7 @@ export const loader = async (
 
 	// If form authentication is not supported, redirect to login
 	if (!configAuthSupportedForm()) {
-		return redirectLangFromRoute(loaderArgs, "/user/login");
+		return redirect("/user/login");
 	}
 
 	const csrfToken = createCSRFToken();
@@ -69,7 +69,7 @@ export const action = async (actionArgs: ActionFunctionArgs) => {
 
 	// Check if form authentication is supported
 	if (!configAuthSupportedForm()) {
-		return redirectLangFromRoute(actionArgs, "/user/login");
+		return redirect("/user/login");
 	}
 
 	const formData = formStringData(await request.formData());

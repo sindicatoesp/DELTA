@@ -3,11 +3,6 @@ import { sectorTable } from "~/drizzle/schema/sectorTable";
 
 import { dr, Tx } from "~/db.server";
 
-const ctx: any = {
-	lang: "en",
-	t: (message: { msg: string }) => message.msg,
-};
-
 export type SectorType = {
 	id?: string;
 	sectorname: string;
@@ -23,7 +18,7 @@ export async function getSectors(
 ): Promise<{ id: string; name: string; parent_id: string | null }[]> {
 	const select = {
 		id: sectorTable.id,
-		name: sql<string>`dts_jsonb_localized(${sectorTable.name}, ${ctx.lang})`.as(
+		name: sql<string>`dts_jsonb_localized(${sectorTable.name}, 'en')`.as(
 			"name",
 		),
 		parent_id: sectorTable.parentId,
@@ -82,8 +77,8 @@ export async function getSectorsByLevel(
 			name: sql`
         CASE
           WHEN ${sectorParentTable.id} IS NULL
-          THEN dts_jsonb_localized(${sectorTable.name}, ${ctx.lang})
-          ELSE dts_jsonb_localized(${sectorTable.name}, ${ctx.lang}) || ' (' || dts_jsonb_localized(${sectorParentTable.name}, ${ctx.lang}) || ')'
+          THEN dts_jsonb_localized(${sectorTable.name}, 'en')
+          ELSE dts_jsonb_localized(${sectorTable.name}, 'en') || ' (' || dts_jsonb_localized(${sectorParentTable.name}, 'en') || ')'
         END
       `.as("name"),
 		})
@@ -129,7 +124,7 @@ export async function sectorById(
 			id: true,
 		},
 		extras: {
-			name: sql<string>`dts_jsonb_localized(${sectorTable.name}, ${ctx.lang})`.as(
+			name: sql<string>`dts_jsonb_localized(${sectorTable.name}, 'en')`.as(
 				"name",
 			),
 		},
@@ -145,11 +140,11 @@ export async function sectorChildrenById(parentId: string) {
 	const res = await dr
 		.selectDistinctOn([sectorTable.id], {
 			id: sectorTable.id,
-			name: sql<string>`dts_jsonb_localized(${sectorTable.name}, ${ctx.lang})`.as(
+			name: sql<string>`dts_jsonb_localized(${sectorTable.name}, 'en')`.as(
 				"name",
 			),
 			relatedDescendants: sql`(
-					dts_get_sector_descendants(${ctx.lang}, ${sectorTable.id})
+					dts_get_sector_descendants('en', ${sectorTable.id})
 				)`.as("relatedDescendants"),
 		})
 		.from(sectorTable)
@@ -165,7 +160,7 @@ export async function getSectorFullPathById(sectorId: string) {
 		WITH RECURSIVE ParentCTE AS (
 			SELECT
 				id,
-				dts_jsonb_localized(name, ${ctx.lang}) as name,
+				dts_jsonb_localized(name, 'en') as name,
 				parent_id,
 				ARRAY[id] AS path_ids,
 				ARRAY[sectorname] AS path_names
@@ -176,10 +171,10 @@ export async function getSectorFullPathById(sectorId: string) {
 
 			SELECT
 				t.id,
-				dts_jsonb_localized(t.name, ${ctx.lang}) as name,
+				dts_jsonb_localized(t.name, 'en') as name,
 				t.parent_id,
 				p.path_ids || t.id,
-				p.path_names || (dts_jsonb_localized(t.name, ${ctx.lang}))
+				p.path_names || (dts_jsonb_localized(t.name, 'en'))
 			FROM sector t
 			INNER JOIN ParentCTE p ON t.id = p.parent_id
 		)
@@ -204,7 +199,7 @@ export async function getSectorAncestorById(
     WITH RECURSIVE ParentCTE AS (
       SELECT
 				id,
-				dts_jsonb_localized(name, ${ctx.lang}) as name,
+				dts_jsonb_localized(name, 'en') as name,
 				parent_id,
 				level
       FROM sector
@@ -214,7 +209,7 @@ export async function getSectorAncestorById(
 
       SELECT
 				t.id,
-				dts_jsonb_localized(t.name, ${ctx.lang}) as name,
+				dts_jsonb_localized(t.name, 'en') as name,
 				t.parent_id,
 				t.level
       FROM sector t

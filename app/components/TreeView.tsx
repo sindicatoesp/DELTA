@@ -11,9 +11,6 @@ import {
 
 import { LangLink } from "~/utils/link";
 
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
 const injectStyles = (appendCss?: string) => {
 	const styleLayout = [
 		`
@@ -244,10 +241,6 @@ export const TreeView = forwardRef<HTMLDivElement, TreeViewProps>(
 		{ treeData = [], caption = "", rootCaption = "Root", base_path = "", onApply = null, onClose = null, onRenderItemName = null, multiSelect = false, noSelect = false, appendCss = "", disableButtonSelect = false, dialogMode = true, search = true, onItemClick = undefined, defaultSelectedIds = [], itemLink = "", expandByDefault = false, showActionFooter = null },
 		ref: any,
 	) => {
-		if (ctx == null) {
-			throw new Error("any is required");
-		}
-
 		const expandedNodesRef = useRef<{ [key: string]: boolean }>({});
 		const [expandedNodes, setExpandedNodes] = useState<{
 			[key: string]: boolean;

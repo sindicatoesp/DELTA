@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, ActionFunctionArgs, Form } from "react-router";
+import { LoaderFunctionArgs, ActionFunctionArgs, Form, redirect } from "react-router";
 import { useActionData, useLoaderData } from "react-router";
 import { configAuthSupportedForm } from "~/utils/config";
 
@@ -7,7 +7,6 @@ import { resetPassword } from "~/backend.server/models/user/password";
 
 import { formStringData } from "~/utils/httputil";
 import { redirectWithMessage } from "~/utils/session";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 
 
@@ -27,7 +26,7 @@ export const loader = async (loaderArgs: LoaderFunctionArgs) => {
 
 	// Check if form authentication is supported
 	if (!configAuthSupportedForm()) {
-		return redirectLangFromRoute(loaderArgs, "/user/login");
+		return redirect("/user/login");
 	}
 
 	const { token, email } = getData(request);
@@ -50,7 +49,7 @@ export const action = async (actionArgs: ActionFunctionArgs) => {
 
 	// Check if form authentication is supported
 	if (!configAuthSupportedForm()) {
-		return redirectLangFromRoute(actionArgs, "/user/login");
+		return redirect("/user/login");
 	}
 
 	const { token, email } = getData(request);

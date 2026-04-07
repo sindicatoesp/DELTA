@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { MetaFunction } from "react-router";
-import { useLoaderData, useSubmit } from "react-router";
+import { redirect, useLoaderData, useSubmit } from "react-router";
 
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
 import { NavSettings } from "~/routes/settings/nav";
@@ -33,7 +33,6 @@ import { getSpecificHazardsHandler } from "~/backend.server/handlers/analytics/s
 import { getRelatedHazardDataHandler } from "~/backend.server/handlers/analytics/related-hazard-data";
 
 import type { HazardImpactFilters } from "~/types/hazardImpact";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 
 
@@ -110,8 +109,7 @@ export const loader = authLoaderPublicOrWithPerm(
 		// TEMPORARY RESTRICTION: Redirect unauthenticated users to unauthorized page
 		// This is a temporary measure until business rules for public access are defined
 		if (!countryAccountsId) {
-			return redirectLangFromRoute(
-				loaderArgs,
+			return redirect(
 				"/error/unauthorized?reason=content-not-published",
 			);
 		}

@@ -1,5 +1,6 @@
 import {
 	createCookieSessionStorage,
+	redirect,
 	Session,
 	SessionStorage,
 	SessionData,
@@ -8,7 +9,6 @@ import { dr } from "~/db.server";
 
 import { InferSelectModel, eq, and } from "drizzle-orm";
 import { sessionActivityTimeoutMinutes } from "~/utils/session-activity-config";
-import { redirectLangFromRoute } from "./url.backend";
 import { sessionTable } from "~/drizzle/schema/sessionTable";
 import { userTable, userCountryAccountsTable } from "~/drizzle/schema";
 
@@ -244,7 +244,7 @@ export async function redirectWithMessage(
 		request.headers.get("Cookie"),
 	);
 	flashMessage(session, message);
-	return redirectLangFromRoute(routeArgs, url, {
+	return redirect(url, {
 		headers: {
 			"Set-Cookie": await sessionCookie().commitSession(session),
 		},

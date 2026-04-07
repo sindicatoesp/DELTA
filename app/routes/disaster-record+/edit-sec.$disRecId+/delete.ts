@@ -9,7 +9,7 @@ import { disruptionDeleteBySectorId } from "~/backend.server/models/disruption";
 import { damagesDeleteBySectorId } from "~/backend.server/models/damages";
 import { lossesDeleteBySectorId } from "~/backend.server/models/losses";
 
-import { redirectLangFromRoute } from "~/utils/url.backend";
+import { redirect } from "react-router";
 
 import { disasterRecordsById } from "~/backend.server/models/disaster_record";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
@@ -57,10 +57,7 @@ export const loader = authLoaderWithPerm("EditData", async (actionArgs) => {
 			// Delete disaster record sector relation
 			await deleteRecordsDeleteById(xId).catch(console.error);
 
-			return redirectLangFromRoute(
-				actionArgs,
-				"/disaster-record/edit/" + params.disRecId,
-			);
+			return redirect("/disaster-record/edit/" + params.disRecId);
 		} catch (e) {
 			console.log(e);
 			throw e;

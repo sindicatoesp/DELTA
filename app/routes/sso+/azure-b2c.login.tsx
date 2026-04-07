@@ -15,17 +15,12 @@ import {
 import { loginAzureB2C } from "~/backend.server/models/user/auth";
 import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 import { proxiedFetch } from "~/utils/proxied-fetch";
 
 
 
 import { LangLink } from "~/utils/link";
-import { LoaderFunctionArgs } from "react-router";
-
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
+import { LoaderFunctionArgs, redirect } from "react-router";
 
 type LoaderData = { ok: false; errors: string } | { ok: true };
 
@@ -137,18 +132,17 @@ export const loader = async (
 				session.set("countrySettings", countrySettings);
 				const setCookie = await sessionCookie().commitSession(session);
 
-				return redirectLangFromRoute(loaderArgs, "/", {
+				return redirect("/", {
 					headers: { "Set-Cookie": setCookie },
 				});
 			} else if (userCountryAccounts && userCountryAccounts.length > 1) {
-				return redirectLangFromRoute(
-					loaderArgs,
+				return redirect(
 					"/user/select-instance",
 					{ headers: headers },
 				);
 			}
 
-			return redirectLangFromRoute(loaderArgs, "/", { headers });
+			return redirect("/", { headers });
 			// }
 		} catch (error) {
 			console.error("Error:", error);
@@ -176,14 +170,9 @@ export const loader = async (
 		const adminIntent =
 			origin === "admin" || isAdmin || adminLogin || loginOrigin === "admin";
 
-		// console.log("DEBUG SSO Login: request.url=", request.url);
-		// console.log("DEBUG SSO Login: cookies=", cookieHeader);
-		// console.log("DEBUG SSO Login: origin=", origin, "redirectTo=", redirectTo, "isAdmin=", isAdmin, "adminLogin=", adminLogin, "loginOrigin=", loginOrigin, "adminIntent=", adminIntent);
-
 		// Create a state parameter that includes origin and redirectTo when admin
 		let state: string | object = {
 			action: "azure_sso_b2c-login",
-			lang: ctx.lang,
 		};
 		state = JSON.stringify(state);
 		if (adminIntent) {
@@ -193,7 +182,6 @@ export const loader = async (
 				isAdmin: true,
 				adminLogin: 1,
 				redirectTo: redirectTo || "/admin/country-accounts",
-				lang: ctx.lang,
 			} as const;
 			state = JSON.stringify(stateObj);
 			// console.log("DEBUG SSO Login: Using admin state:", state);

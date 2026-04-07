@@ -1,6 +1,6 @@
 import type { ActionFunction } from "react-router";
+import { redirect } from "react-router";
 import { superAdminSessionCookie } from "~/utils/session";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 // Handle both GET and POST requests for logout
 // export const loader = async (loaderArgs: LoaderFunctionArgs) => {
@@ -20,7 +20,7 @@ async function handleLogout(routeArgs: {
 		request.headers.get("Cookie"),
 	);
 	// Destroy ONLY the super admin session cookie, leaving regular user sessions intact
-	return redirectLangFromRoute(routeArgs, "/admin/login", {
+	return redirect("/admin/login", {
 		headers: {
 			"Set-Cookie": await superAdminSessionCookie().destroySession(session),
 		},

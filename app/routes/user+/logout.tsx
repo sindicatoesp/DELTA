@@ -1,7 +1,6 @@
-import { ActionFunctionArgs } from "react-router";
+import { ActionFunctionArgs, redirect } from "react-router";
 
 import { logout } from "~/utils/auth";
-import { redirectLangFromRoute } from "~/utils/url.backend";
 
 export const action = async (actionArgs: ActionFunctionArgs) => {
 	const { request } = actionArgs;
@@ -11,10 +10,10 @@ export const action = async (actionArgs: ActionFunctionArgs) => {
 		const url = new URL(request.url);
 		const redirectTo = url.searchParams.get("redirectTo");
 		if (redirectTo && redirectTo.startsWith("/")) {
-			return redirectLangFromRoute(actionArgs, redirectTo, { headers });
+			return redirect(redirectTo, { headers });
 		}
-		return redirectLangFromRoute(actionArgs, "/", { headers });
+		return redirect("/", { headers });
 	} catch (error) {
-		return redirectLangFromRoute(actionArgs, "/user/login/");
+		return redirect("/user/login/");
 	}
 };

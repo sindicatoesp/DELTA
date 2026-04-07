@@ -37,10 +37,18 @@ import RegularMenuBar from "./components/RegularMenuBar";
 import SuperAdminMenuBar from "./components/SuperAdminMenuBar";
 import { Footer } from "./frontend/footer/footer";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
-import { isAdminRoute } from "./utils/url.backend";
 
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { getUserRoleFromSession } from "~/utils/session";
+
+function isAdminRoute(request: Request): boolean {
+	const url = new URL(request.url);
+	const segments = url.pathname.split("/").filter((s) => s.length > 0);
+	if (segments.length < 1) {
+		return false;
+	}
+	return segments[0] === "admin";
+}
 
 export const links: LinksFunction = () => [
 	{ rel: "stylesheet", href: "/assets/css/style-dts.css?asof=20250630" },
