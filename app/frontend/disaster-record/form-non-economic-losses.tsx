@@ -17,9 +17,7 @@ import { useEffect } from "react";
 import { approvalStatusField } from "~/frontend/approval";
 
 
-
 import { LangLink } from "~/utils/link";
-import { ViewContext } from "~/frontend/context";
 
 export const route = "/disaster-record";
 
@@ -103,7 +101,6 @@ export function DisasterRecordsForm(props: DisasterRecordsFormProps) {
 }
 
 interface DisasterRecordsViewProps {
-	ctx?: ViewContext;
 	item: DisasterRecordsViewModel;
 	isPublic: boolean;
 }

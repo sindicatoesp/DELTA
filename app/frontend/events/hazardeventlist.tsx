@@ -6,7 +6,6 @@ import { HazardousEventDeleteButton } from "~/frontend/components/delete-dialog"
 import { hazardousEventsLoader } from "~/backend.server/handlers/events/hazardevent";
 import { formatDateDisplay } from "~/utils/date";
 import { route } from "~/frontend/events/hazardeventform";
-import { ViewContext } from "../context";
 import { LangLink } from "~/utils/link";
 import { Tooltip } from "primereact/tooltip";
 import { ListLegend } from "~/components/ListLegend";
@@ -73,7 +72,6 @@ function HazardousEventActionLinks(props: {
 }
 
 interface ListViewArgs {
-	ctx?: ViewContext;
 	isPublic: boolean;
 	basePath: string;
 	linksNewTab?: boolean;

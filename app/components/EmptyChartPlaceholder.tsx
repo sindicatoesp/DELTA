@@ -1,11 +1,7 @@
 import React from "react";
-import { ViewContext } from "~/frontend/context";
-
-
 
 
 const EmptyChartPlaceholder: React.FC<{
-	ctx?: ViewContext;
 	height?: number;
 }> = ({ height = 300 }) => {
 	return (

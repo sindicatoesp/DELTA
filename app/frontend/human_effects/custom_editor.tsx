@@ -6,7 +6,6 @@ import {
 } from "~/frontend/editabletable/base";
 import { HumanEffectsCustomDef } from "~/frontend/human_effects/defs";
 import { useState } from "react";
-import { ViewContext } from "../context";
 
 export interface LocalizedStringEditorProps {
 	label: string;
@@ -25,7 +24,6 @@ export interface EnumEntryWithID extends EnumEntry {
 }
 
 export interface DeleteOrInUseButtonProps {
-	ctx?: ViewContext;
 	isUsed: boolean;
 	onDelete: () => void;
 }
@@ -158,7 +156,6 @@ export function LocalizedStringEditor(props: LocalizedStringEditorProps) {
 }
 
 export interface EnumEntryRowProps {
-	ctx?: ViewContext;
 	entry: EnumEntryWithID;
 	langs: string[];
 	onChange: (e: EnumEntryWithID) => void;
@@ -214,7 +211,6 @@ export function EnumEntryRow(props: EnumEntryRowProps) {
 }
 
 export interface EnumListProps {
-	ctx?: ViewContext;
 	values: EnumEntryWithID[];
 	onChange: (v: EnumEntryWithID[]) => void;
 	langs: string[];
@@ -267,7 +263,6 @@ export function EnumList(props: EnumListProps) {
 }
 
 export interface DefEditorProps {
-	ctx?: ViewContext;
 	value: HumanEffectsCustomDefWithID;
 	langs: string[];
 	onChange: (value: HumanEffectsCustomDefWithID) => void;
@@ -363,7 +358,6 @@ export function DefEditor(props: DefEditorProps) {
 }
 
 export interface EditorProps {
-	ctx?: ViewContext;
 	value: HumanEffectsCustomDefWithID[];
 	langs: string[];
 	onChange: (value: HumanEffectsCustomDefWithID[]) => void;

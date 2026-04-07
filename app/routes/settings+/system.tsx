@@ -20,7 +20,6 @@ import { getCurrencyList } from "~/utils/currency";
 import { getUserRoleFromSession } from "~/utils/session";
 
 import { htmlTitle } from "~/utils/htmlmeta";
-import { getAvailableLanguages } from "~/backend.server/translations";
 
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
@@ -64,7 +63,7 @@ export const loader = authLoaderWithPerm(
 		return {
 			publicURL: configPublicUrl(),
 			currencyArray: currencies,
-			availableLanguages: getAvailableLanguages(),
+			availableLanguages: ["en"],
 			systemLanguage: settings?.language,
 			confEmailObj,
 			instanceSystemSettings: settings,

@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useFetcher } from "react-router";
 import { notifyError } from "../utils/notifications";
 import { ConfirmDialog } from "./ConfirmDialog";
-import { ViewContext } from "../context";
 
 interface DeleteButtonProps {
 	action: string;
@@ -101,7 +100,6 @@ export function DeleteButton(props: DeleteButtonProps) {
  * - Secondary button: "Delete permanently" with trash icon
  */
 export function HazardousEventDeleteButton({ action, useIcon = true }: {
-	ctx?: ViewContext;
 	action: string;
 	useIcon?: boolean;
 }) {

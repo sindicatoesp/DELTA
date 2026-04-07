@@ -9,7 +9,6 @@ import {
 } from "recharts";
 
 import { formatCurrencyWithCode } from "~/frontend/utils/formatters";
-import { ViewContext } from "~/frontend/context";
 
 
 // Note: The colors below are sourced from the UNDRR Visual Identity Guide (colors-typography) as a temporary palette, pending the designer's input for a more aligned and less confusing color set.
@@ -39,7 +38,6 @@ interface PieChartData {
 
 // Define the props for CustomTooltip, compatible with recharts
 interface CustomTooltipProps {
-	ctx?: ViewContext;
 	active?: boolean;
 	payload?: Array<{ payload: PieChartData }>;
 	data: PieChartData[]; // Full dataset for percentage calculation
@@ -144,7 +142,6 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, data, cu
 
 // Main PieChart component
 export default function CustomPieChart({ data, title, chartHeight = 350, boolRenderLabel = true, currency }: {
-	ctx?: ViewContext;
 	data: any[];
 	title?: string;
 	chartHeight?: number;

@@ -4,10 +4,8 @@ import { Toast } from "primereact/toast";
 import { SelectSector } from "~/drizzle/schema/sectorTable";
 import { getRecordStatusOptions } from "../events/hazardevent-filters";
 import { Form } from "react-router";
-import { ViewContext } from "../context";
 
 interface Props {
-	ctx?: ViewContext;
 	disasterEventName?: string;
 	recordingInstitution?: string;
 	fromDate?: string;

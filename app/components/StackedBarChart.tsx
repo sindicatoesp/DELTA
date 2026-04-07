@@ -9,12 +9,9 @@ import {
 	Legend,
 	ResponsiveContainer,
 } from "recharts";
-import { ViewContext } from "~/frontend/context";
-
 
 
 export default function CustomStackedBarChart({ data }: {
-	ctx?: ViewContext;
 	data: any[];
 }) {
 	const [mounted, setMounted] = useState(false);

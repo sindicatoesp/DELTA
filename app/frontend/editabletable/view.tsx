@@ -26,10 +26,8 @@ import { useFetcher } from "react-router";
 import { notifyError, notifyInfo } from "../utils/notifications";
 import { validate } from "./validate";
 import { LangLink } from "~/utils/link";
-import { ViewContext } from "../context";
 
 interface TableProps {
-	ctx?: ViewContext;
 	recordId: string;
 	table: HumanEffectsTable;
 	initialIds: string[];
@@ -404,7 +402,6 @@ function TableClient(props: TableProps) {
 }
 
 interface TableLegendProps {
-	ctx?: ViewContext;
 }
 
 function TableLegend(_props: TableLegendProps) {
@@ -430,7 +427,6 @@ function TableLegend(_props: TableLegendProps) {
 }
 
 interface TableContentProps {
-	ctx?: ViewContext;
 	totals: any[] | null;
 	groupTotals: null | Map<string, number[]>;
 	data: Group<DataWithId>[];
@@ -466,7 +462,7 @@ function colWidth(colWidth: ColWidth | undefined): number {
 }
 
 function TableContent(props: TableContentProps) {
-	const ctx = props.ctx || { t: (message: { msg: string }) => message.msg, lang: "en", url: (path: string) => path, user: undefined };
+	const ctx = { t: (message: { msg: string }) => message.msg, lang: "en", url: (path: string) => path, user: undefined };
 
 	const renderHeader = () => (
 		<thead>
@@ -1033,7 +1029,6 @@ function renderInput(
 }
 
 interface TableActionsProps {
-	ctx?: ViewContext;
 	onSave: () => void;
 	onRevert: () => void;
 	addRowStart: () => void;
@@ -1081,14 +1076,13 @@ function TableActions(props: TableActionsProps) {
 }
 
 interface TableCategoryPresenceProps {
-	ctx?: ViewContext;
 	tblId: HumanEffectsTable;
 	defs: Def[];
 	data: Record<string, any>;
 }
 
 function TableCategoryPresence(props: TableCategoryPresenceProps) {
-	const ctx = props.ctx || { t: (message: { msg: string }) => message.msg, lang: "en", url: (path: string) => path, user: undefined };
+	const ctx = { t: (message: { msg: string }) => message.msg, lang: "en", url: (path: string) => path, user: undefined };
 	let fetcher = useFetcher();
 	const [localData, setLocalData] = useState(props.data);
 

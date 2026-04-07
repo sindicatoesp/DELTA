@@ -1,11 +1,9 @@
 
 import { useRef, useState, useEffect } from "react";
 import MapChart, { MapChartRef } from "~/components/MapChart";
-import { ViewContext } from "~/frontend/context";
 
 
 interface HazardImpactMap2Props {
-	ctx?: ViewContext;
 	hazardName: string;
 	geographicName: string | null;
 	localCurrency: string;

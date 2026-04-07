@@ -25,7 +25,6 @@ import { SpatialFootprintView } from "~/frontend/spatialFootprintView";
 import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
 import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
-import { ViewContext } from "./context";
 
 export function route2(recordId: string): string {
 	return `/disaster-record/edit-sub/${recordId}/losses`;
@@ -255,7 +254,6 @@ export function LossesForm(props: LossesFormProps) {
 }
 
 interface LossesViewProps {
-	ctx?: ViewContext;
 	item: LossesViewModel;
 	fieldDef: FormInputDef<LossesFields>[];
 }

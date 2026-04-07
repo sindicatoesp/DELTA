@@ -10,11 +10,9 @@ import {
 	typeEnumNotAgriculture,
 } from "~/frontend/losses_enums";
 import { ClientOnly } from "./ClientOnly";
-import { ViewContext } from "~/frontend/context";
 
 
 interface Props {
-	ctx?: ViewContext;
 	filters: {
 		sectorId: string | null;
 		subSectorId: string | null;

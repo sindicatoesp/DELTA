@@ -8,9 +8,7 @@ import {
 } from "react";
 
 
-
 import { formatNumberWithoutDecimals } from "~/utils/currency";
-import { ViewContext } from "~/frontend/context";
 
 export type MapChartRef = {
 	getDataSource: () => DataSourceType;
@@ -20,7 +18,6 @@ export type MapChartRef = {
 };
 
 type MapChartProps = {
-	ctx?: ViewContext;
 	id?: string;
 	dataSource: {
 		total: number;

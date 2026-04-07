@@ -18,7 +18,6 @@ import { SpatialFootprintView } from "~/frontend/spatialFootprintView";
 import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
 import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
-import { ViewContext } from "./context";
 
 export const route = "/disaster-record/edit-sub/_/disruptions";
 
@@ -97,7 +96,6 @@ export function DisruptionForm(props: DisruptionFormProps) {
 }
 
 interface DisruptionViewProps {
-	ctx?: ViewContext;
 	item: DisruptionViewModel;
 	fieldDef: FormInputDef<DisruptionFields>[];
 }

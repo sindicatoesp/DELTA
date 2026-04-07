@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useSubmit } from "react-router";
-import { ViewContext } from "~/frontend/context";
 
 
 // Define initial filters for type safety
@@ -45,7 +44,6 @@ interface Hazard {
 }
 
 interface FiltersProps {
-	ctx?: ViewContext;
 	onApplyFilters: (filters: {
 		sectorId: string | null;
 		subSectorId: string | null;

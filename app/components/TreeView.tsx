@@ -9,9 +9,7 @@ import {
 } from "react";
 
 
-
 import { LangLink } from "~/utils/link";
-import { ViewContext } from "~/frontend/context";
 
 const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
 
@@ -219,7 +217,6 @@ const injectStyles = (appendCss?: string) => {
 };
 
 interface TreeViewProps {
-	ctx?: ViewContext;
 	treeData: any[];
 	caption?: string;
 	rootCaption?: string;
@@ -248,7 +245,7 @@ export const TreeView = forwardRef<HTMLDivElement, TreeViewProps>(
 		ref: any,
 	) => {
 		if (ctx == null) {
-			throw new Error("ViewContext is required");
+			throw new Error("any is required");
 		}
 
 		const expandedNodesRef = useRef<{ [key: string]: boolean }>({});

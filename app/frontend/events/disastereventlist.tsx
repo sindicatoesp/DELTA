@@ -13,7 +13,6 @@ import { LangLink } from "~/utils/link";
 import { approvalStatusKeyToLabel } from "../approval";
 
 interface ListViewProps {
-	ctx?: any;
 	titleOverride?: string;
 	hideMainLinks?: boolean;
 	linksNewTab?: boolean;

@@ -26,7 +26,6 @@ import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
 
 import { LangLink } from "~/utils/link";
-import { ViewContext } from "./context";
 import type { JSX } from "react";
 
 export const route = "/disaster-record/edit-sub/_/damages";
@@ -424,7 +423,6 @@ export function DamagesForm(props: DamagesFormProps) {
 }
 
 interface DamagesViewProps {
-	ctx?: ViewContext;
 	item: DamagesViewModel;
 	def: FormInputDef<DamagesFields>[];
 }

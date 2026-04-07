@@ -1,8 +1,6 @@
-import { ViewContext } from "./context";
 
 
 export function AttachmentsView({ id = "", initialData = [], file_viewer_url = "", location = "", countryAccountsId: _countryAccountsId = "" }: {
-	ctx?: ViewContext;
 	id: string;
 	initialData: any[];
 	file_viewer_url: string;

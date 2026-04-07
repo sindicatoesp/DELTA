@@ -10,7 +10,6 @@ import {
 	YAxis,
 	Tooltip as RechartsTooltip,
 } from "recharts";
-import { ViewContext } from "~/frontend/context";
 
 
 // Type for chart variant
@@ -27,7 +26,6 @@ interface ValueData {
 }
 
 interface AreaChartProps {
-	ctx?: ViewContext;
 	data: EventsData[] | ValueData[];
 	variant: AreaChartVariant;
 	formatter: (value: number) => string;

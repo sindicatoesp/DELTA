@@ -3,10 +3,8 @@ import React from "react";
 import { DisasterSummary } from "~/backend.server/models/analytics/hazard-analysis";
 
 import { formatNumberWithoutDecimals } from "~/utils/currency";
-import { ViewContext } from "~/frontend/context";
 
 interface DisasterEventsListProps {
-	ctx?: ViewContext;
 	hazardName: string;
 	geographicName: string | null;
 	disasterSummaryTable: DisasterSummary[];

@@ -16,7 +16,6 @@ import {
 } from "./controls/mapper";
 import "./assets/content-repeater.css";
 import "./assets/mapper.css";
-import { ViewContext } from "~/frontend/context";
 
 
 declare namespace L {
@@ -108,7 +107,6 @@ interface DialogField {
 }
 
 interface ContentRepeaterProps {
-	ctx?: ViewContext;
 	id: string;
 	dnd_order?: boolean; // Enable/disable drag-and-drop
 	base_path?: string;

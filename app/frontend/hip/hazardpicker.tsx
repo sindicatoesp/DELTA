@@ -1,10 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { Field } from "~/frontend/form";
-import { ViewContext } from "../context";
 
 export interface HazardPickerProps {
-	ctx?: ViewContext;
 	// selected/default values
 	typeId?: string | null;
 	clusterId?: string | null;

@@ -25,9 +25,7 @@ import { getCountryAccountsIdFromSession } from "~/utils/session";
 import { getUserRoleFromSession } from "~/utils/session";
 
 
-
 import { LangLink } from "~/utils/link";
-import { ViewContext } from "~/frontend/context";
 
 interface ItemRes {
 	id: number;
@@ -154,7 +152,6 @@ export function LanguageCheckboxes({
 }
 
 type DivisionsTableProps = {
-	ctx?: ViewContext;
 	items: ItemRes[];
 	langs: string[];
 };

@@ -4,11 +4,9 @@ import HorizontalBarChart from "~/components/HorizontalBarChart";
 import EmptyChartPlaceholder from "~/components/EmptyChartPlaceholder";
 import { formatNumberWithoutDecimals } from "~/utils/currency";
 import { Tooltip } from "primereact/tooltip";
-import { ViewContext } from "~/frontend/context";
 
 
 interface HumanAffectsProps {
-	ctx?: ViewContext;
 	totalPeopleAffected: number;
 	totalDeaths: number;
 	totalInjured: number;

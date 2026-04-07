@@ -3,11 +3,9 @@ import { Card } from "primereact/card";
 
 import { Button } from "primereact/button";
 import { LangLink } from "~/utils/link";
-import { ViewContext } from "~/frontend/context";
 
 
 type ErrorStateProps = {
-	ctx?: ViewContext;
 	title: string;
 	message: string;
 	actionLabel?: string;

@@ -1,11 +1,7 @@
 import React from "react";
-import { ViewContext } from "~/frontend/context";
-
-
 
 
 type SpatialFootprintMapViewerProps = {
-  ctx?: ViewContext;
   dataSource: any; // Replace with a stricter type if available
   filterCaption?: string;
 };

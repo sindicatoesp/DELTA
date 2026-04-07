@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import ImpactMapOl from "./Map/ImpactMapOl";
 import type { MetricConfig } from "~/components/CustomMap";
-import { ViewContext } from "~/frontend/context";
 
 
 interface Sector {
@@ -29,7 +28,6 @@ type FilterValues = {
 type Filters = FilterValues | null;
 
 type ImpactMapProps = {
-	ctx?: ViewContext;
 	filters: Filters;
 	currency?: string;
 	geographicImpactData: any;

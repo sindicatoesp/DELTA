@@ -25,7 +25,6 @@ import { formatCurrencyWithCode } from "~/frontend/utils/formatters";
 import ErrorBoundary from "~/frontend/components/ErrorBoundary";
 import Legend from "~/frontend/analytics/sectors/sections/Map/Legend";
 import "~/frontend/analytics/sectors/sections/Map/ImpactMap.css";
-import { ViewContext } from "~/frontend/context";
 
 
 // Extended types for multi-metric support
@@ -105,7 +104,6 @@ export interface MetricConfig {
 }
 
 export interface CustomMapProps {
-	ctx?: ViewContext;
 	geoData: GeoData;
 	selectedMetric: string; // Changed from restricted union to flexible string
 	filters: Filters;

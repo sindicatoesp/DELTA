@@ -34,7 +34,6 @@ import { SpatialFootprintView } from "~/frontend/spatialFootprintView";
 import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
 import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
-import { ViewContext } from "../context";
 
 import { HazardousEventPickerType } from "~/routes/hazardous-event+/picker";
 
@@ -796,14 +795,13 @@ export function DisasterEventForm(props: DisasterEventFormProps) {
 }
 
 interface DisasterEventViewProps {
-	ctx?: ViewContext;
 	item: DisasterEventViewModel;
 	isPublic: boolean;
 	auditLogs?: any[];
 }
 
 export function DisasterEventView(props: DisasterEventViewProps) {
-	const ctx = props.ctx || fallbackCtx;
+	const ctx = fallbackCtx;
 
 	const matches = useMatches();
 	// Find the route where the loader returned `env`

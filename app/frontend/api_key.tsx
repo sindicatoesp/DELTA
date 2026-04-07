@@ -13,7 +13,6 @@ import {
 } from "~/backend.server/models/api_key";
 import React from "react";
 import { formatDate } from "~/utils/date";
-import { ViewContext } from "./context";
 
 
 export const route = "/settings/api-key";
@@ -140,7 +139,6 @@ export function ApiKeyForm(props: ApiKeyFormProps) {
 }
 
 interface ApiKeyViewProps {
-	ctx?: ViewContext;
 	item: ApiKeyViewModel & {
 		isActive?: boolean;
 		issues?: string[];

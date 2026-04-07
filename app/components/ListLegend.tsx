@@ -1,8 +1,6 @@
-import { ViewContext } from "~/frontend/context";
 
 
 interface ListLegendProps {
-	ctx?: ViewContext;
 }
 
 export function ListLegend(_props: ListLegendProps) {

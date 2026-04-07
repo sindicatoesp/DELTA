@@ -2,10 +2,8 @@
 import { useState, memo, useCallback, useMemo } from "react";
 
 import { formatCurrencyWithCode } from "~/frontend/utils/formatters";
-import { ViewContext } from "~/frontend/context";
 
 interface MostDamagingEventsProps {
-	ctx?: ViewContext;
 	filters: {
 		sectorId: string | null;
 		subSectorId: string | null;

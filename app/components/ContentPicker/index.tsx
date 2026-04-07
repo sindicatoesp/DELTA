@@ -3,12 +3,8 @@ import React, { useState, useRef, useEffect, forwardRef } from "react";
 
 import "./assets/content-picker.css";
 import { TreeView } from "~/components/TreeView";
-import { ViewContext } from "~/frontend/context";
 
 const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
 
 
 const injectStyles = (appendCss?: string) => {
@@ -31,7 +27,6 @@ const injectStyles = (appendCss?: string) => {
 };
 
 interface ContentPickerProps {
-	ctx?: ViewContext;
 	id: string;
 	viewMode?: string | "grid" | "tree";
 	dataSources: any;
@@ -57,7 +52,7 @@ export const ContentPicker = forwardRef<HTMLDivElement, ContentPickerProps>(
 		_forwardedRef,
 	) => {
 		if (!ctx) {
-			throw new Error("ViewContext is required");
+			throw new Error("any is required");
 		}
 
 		const dialogRef = useRef<HTMLDialogElement>(null);

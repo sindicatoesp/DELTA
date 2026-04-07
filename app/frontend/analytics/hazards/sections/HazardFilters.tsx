@@ -7,7 +7,6 @@ import Swal from "sweetalert2";
 import { PartialDivision } from "~/backend.server/models/division";
 
 import { buildPrimeReactTreeNodes } from "~/utils/PrimeReactUtil";
-import { ViewContext } from "~/frontend/context";
 
 interface HazardType {
 	id: string;
@@ -27,7 +26,6 @@ interface SpecificHazard {
 }
 
 interface FiltersProps {
-	ctx?: ViewContext;
 	hazardTypes: HazardType[];
 	hazardClusters: HazardCluster[];
 	specificHazards: SpecificHazard[];

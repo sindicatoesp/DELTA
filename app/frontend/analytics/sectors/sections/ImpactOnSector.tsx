@@ -7,7 +7,6 @@ import {
 import AreaChart from "~/components/AreaChart";
 import EmptyChartPlaceholder from "~/components/EmptyChartPlaceholder";
 import { Tooltip } from "primereact/tooltip";
-import { ViewContext } from "~/frontend/context";
 
 
 // Types
@@ -36,7 +35,6 @@ interface ApiResponse {
 }
 
 interface Props {
-	ctx?: ViewContext;
 	sectorId: string;
 	filters: {
 		disasterEventId: any;

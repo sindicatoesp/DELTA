@@ -1,5 +1,3 @@
-import { ViewContext } from "~/frontend/context";
-
 
 
 
@@ -12,7 +10,6 @@ type AuditLog = {
 };
 
 type AuditLogHistoryProps = {
-	ctx?: ViewContext;
 	auditLogs: AuditLog[];
 };
 

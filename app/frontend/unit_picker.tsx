@@ -1,10 +1,8 @@
 
 import { useState } from "react";
 import { Field } from "~/frontend/form";
-import { ViewContext } from "./context";
 
 interface UnitPickerProps {
-	ctx?: ViewContext;
 	labelPrefix?: string;
 	name: string;
 	defaultValue?: string;

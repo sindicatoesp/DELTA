@@ -3,11 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import { getRecordStatusOptions } from "../events/hazardevent-filters";
 import { Form, useFetcher, useSubmit } from "react-router";
-import { ViewContext } from "../context";
 import { Sector } from "~/db/queries/sector";
 
 interface Props {
-	ctx?: ViewContext;
 	clearFiltersUrl: string;
 	formStartElement?: React.ReactNode;
 	disasterEventName: string;

@@ -30,7 +30,6 @@ import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
 import { AttachmentsView } from "~/frontend/attachmentsView";
 
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
-import { ViewContext } from "../context";
 
 import { LangLink } from "~/utils/link";
 
@@ -338,14 +337,13 @@ export function DisasterRecordsForm(props: DisasterRecordsFormProps) {
 }
 
 interface DisasterRecordsViewProps {
-	ctx?: ViewContext;
 	item: DisasterRecordsViewModel;
 	isPublic: boolean;
 	auditLogs?: any[];
 }
 
 export function DisasterRecordsView(props: DisasterRecordsViewProps) {
-	const ctx = props.ctx || { t: (msg: any) => msg.msg, lang: "en", url: (p: string) => p, user: undefined };
+	const ctx = { t: (msg: any) => msg.msg, lang: "en", url: (p: string) => p, user: undefined };
 	const { item } = props;
 	const auditLogs = props.auditLogs;
 	const dataSource = (item as any)?.disasterRecord || [];

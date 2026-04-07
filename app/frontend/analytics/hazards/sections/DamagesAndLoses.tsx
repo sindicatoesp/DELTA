@@ -16,11 +16,9 @@ import {
 import { formatNumberWithoutDecimals } from "~/utils/currency";
 import EmptyChartPlaceholder from "~/components/EmptyChartPlaceholder";
 import { Tooltip } from "primereact/tooltip";
-import { ViewContext } from "~/frontend/context";
 
 
 interface DamagesAndLosesProps {
-	ctx?: ViewContext;
 	localCurrency: string;
 	totalDamages: number;
 	totalLosses: number;

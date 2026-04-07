@@ -12,7 +12,6 @@ import { LoadingSpinner } from "~/frontend/components/LoadingSpinner";
 import { ErrorMessage } from "~/frontend/components/ErrorMessage";
 import { formatCurrencyWithCode } from "~/frontend/utils/formatters";
 import EmptyChartPlaceholder from "~/components/EmptyChartPlaceholder";
-import { ViewContext } from "~/frontend/context";
 
 
 // Types
@@ -32,7 +31,6 @@ const COLORS = [
 ];
 
 interface ImpactByHazardProps {
-	ctx?: ViewContext;
 	filters: {
 		disasterEventId: any;
 		sectorId: string | null;
@@ -170,7 +168,6 @@ const CustomTooltip = ({ active, payload, title, currency }: any) => {
 };
 
 const CustomPieChart = ({ data, title, currency }: {
-	ctx?: ViewContext;
 	data: any[];
 	title: string;
 	currency: string;

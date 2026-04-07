@@ -255,8 +255,6 @@ export function SubmitButton({
 }
 
 interface FormProps<T> {
-	ctx?: any;
-
 	children: React.ReactNode;
 	id?: React.HTMLProps<HTMLFormElement>["id"];
 	errors?: Errors<T>;
@@ -291,8 +289,6 @@ export function Form<T>(props: FormProps<T>) {
 }
 
 export interface UserFormProps<T> {
-	ctx?: any;
-
 	fieldDef?: FormInputDef<T>[];
 	edit: boolean;
 	id: any; // only valid when edit is true
@@ -303,8 +299,6 @@ export interface UserFormProps<T> {
 }
 
 export interface FormScreenOpts<T, D> {
-	ctx?: any;
-
 	extraData: D;
 	fieldsInitial: Partial<T>;
 	form: React.FC<UserFormProps<T> & D>;
@@ -391,7 +385,6 @@ export interface FormInputDefSpecific {
 }
 
 export interface InputsProps<T> {
-	ctx?: any;
 	user?: UserForFrontend;
 	def: FormInputDef<T>[];
 	fields: Partial<T>;
@@ -650,7 +643,6 @@ export function WrapInputBasic(props: WrapInputBasicProps) {
 }
 
 export interface InputProps {
-	ctx?: any;
 	user?: UserForFrontend;
 	def: FormInputDefSpecific;
 	name: string;
@@ -1170,7 +1162,6 @@ export function Input(props: InputProps) {
 }
 
 export interface ViewPropsBase<T> {
-	ctx?: any;
 	def: FormInputDef<T>[];
 }
 
@@ -1370,7 +1361,6 @@ export function FieldView(props: FieldViewProps) {
 
 interface FormScreenProps<T> {
 	loaderData: { item: T | null };
-	ctx?: any;
 	formComponent: any;
 	extraData?: any;
 }
@@ -1393,9 +1383,7 @@ interface ViewScreenPublicApprovedProps<T> {
 		isPublic: boolean;
 		auditLogs?: any[];
 	};
-	ctx?: any;
 	viewComponent: React.ComponentType<{
-		ctx?: any;
 		item: T;
 		isPublic: boolean;
 		auditLogs?: any[];
@@ -1423,7 +1411,6 @@ export function ViewScreenPublicApproved<T>(
 }
 
 interface ViewComponentProps {
-	ctx?: any;
 	isPublic?: boolean;
 	path: string;
 	listUrl?: string;
@@ -1436,7 +1423,6 @@ interface ViewComponentProps {
 }
 
 interface ViewComponentMainDataCollectionProps {
-	ctx?: any;
 	isPublic?: boolean;
 	path: string;
 	listUrl?: string;
@@ -1454,7 +1440,12 @@ interface ViewComponentMainDataCollectionProps {
 export function ViewComponentMainDataCollection(
 	props: ViewComponentMainDataCollectionProps,
 ) {
-	const ctx = props.ctx || { t: (message: { msg: string }) => message.msg, lang: "en", url: (path: string) => path, user: undefined };
+	const ctx = {
+		t: (message: { msg: string }) => message.msg,
+		lang: "en",
+		url: (path: string) => path,
+		user: null as { role?: string } | null,
+	};
 	const [selectedAction, setSelectedAction] =
 		useState<string>("submit-validate");
 	const [visibleModalSubmit, setVisibleModalSubmit] = useState<boolean>(false);
@@ -1872,8 +1863,6 @@ export function ViewComponent(props: ViewComponentProps) {
 }
 
 interface FormViewProps {
-	ctx?: any;
-
 	path: string;
 	listUrl?: string;
 	viewUrl?: string;
@@ -2012,7 +2001,6 @@ export function FormView(props: FormViewProps) {
 }
 
 interface ActionLinksProps {
-	ctx?: any;
 	route: string;
 	id: string | number;
 	deleteMessage?: string;
@@ -2027,7 +2015,12 @@ interface ActionLinksProps {
 }
 
 export function ActionLinks(props: ActionLinksProps) {
-	const ctx = props.ctx || { t: (message: { msg: string }) => message.msg, lang: "en", url: (path: string) => path, user: undefined };
+	const ctx = {
+		t: (message: { msg: string }) => message.msg,
+		lang: "en",
+		url: (path: string) => path,
+		user: null as { role?: string } | null,
+	};
 	return (
 		<div style={{ display: "flex", justifyContent: "space-evenly" }}>
 			{!props.hideEditButton && (

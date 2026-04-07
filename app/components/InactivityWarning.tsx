@@ -6,10 +6,8 @@ import {
     sessionActivityTimeoutMinutes,
     sessionActivityWarningBeforeTimeoutMinutes,
 } from "~/utils/session-activity-config";
-import type { ViewContext } from "~/frontend/context";
 
 interface InactivityWarningProps {
-    ctx?: ViewContext;
     loggedIn: boolean;
 }
 

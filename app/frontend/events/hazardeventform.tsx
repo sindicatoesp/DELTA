@@ -29,14 +29,12 @@ import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
 
 
-
 import { LangLink } from "~/utils/link";
 
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { canAddNewRecord } from "../user/roles";
-import { ViewContext } from "~/frontend/context";
 
 export const route = "/hazardous-event";
 
@@ -242,7 +240,7 @@ interface UserValidator {
 }
 
 export function HazardousEventForm(props: HazardousEventFormProps) {
-	const ctx = props.ctx || fallbackCtx;
+	const ctx = fallbackCtx;
 	const fields = props.fields;
 	const treeData = props.treeData;
 	const ctryIso3 = props.ctryIso3;
@@ -658,7 +656,6 @@ export function HazardousEventForm(props: HazardousEventFormProps) {
 }
 
 interface HazardousEventViewProps {
-	ctx?: ViewContext;
 	item: HazardousEventViewModel;
 	isPublic: boolean;
 	auditLogs?: any[];
@@ -666,7 +663,7 @@ interface HazardousEventViewProps {
 }
 
 export function HazardousEventView(props: HazardousEventViewProps) {
-	const ctx = props.ctx || fallbackCtx;
+	const ctx = fallbackCtx;
 	const item = props.item;
 	const parent = props.item.parent;
 	const children = props.item.children;

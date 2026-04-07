@@ -23,7 +23,6 @@ import {
 } from "~/backend.server/models/api_key";
 
 import { LangLink } from "~/utils/link";
-import { ViewContext } from "~/frontend/context";
 
 // Define interface for enhanced API key with status information
 interface EnhancedApiKey {
@@ -115,7 +114,6 @@ export const loader = authLoaderWithPerm("EditAPIKeys", async (args) => {
 
 // Define a custom interface for our ApiKeyDataScreen props
 interface ApiKeyDataScreenProps {
-	ctx?: ViewContext;
 	plural: string;
 	isPublic?: boolean;
 	baseRoute: string;
