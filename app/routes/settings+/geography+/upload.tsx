@@ -1,8 +1,8 @@
-import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
+﻿import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 
 import { useActionData } from "react-router";
 
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import { MainContainer } from "~/frontend/container";
 import { handleRequest } from "~/backend.server/handlers/geography_upload";
 
@@ -111,4 +111,5 @@ export default function Screen() {
 		</MainContainer>
 	);
 }
+
 

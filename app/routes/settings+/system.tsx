@@ -1,9 +1,9 @@
-import type { ActionFunction, MetaFunction } from "react-router";
+﻿import type { ActionFunction, MetaFunction } from "react-router";
 import { Form, useActionData, useLoaderData } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { authLoaderWithPerm } from "~/utils/auth";
 import { configApplicationEmail, configPublicUrl } from "~/utils/config";
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import { MainContainer } from "~/frontend/container";
 import { getSystemInfo } from "~/db/queries/dtsSystemInfo";
 
@@ -263,7 +263,7 @@ export default function Settings() {
 							].map(({ label, value }) => (
 								<div key={label} className="flex flex-col gap-1 px-5 py-4">
 									<dt className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</dt>
-									<dd className="text-sm font-semibold text-gray-900">{value ?? <span className="text-gray-400 font-normal">—</span>}</dd>
+									<dd className="text-sm font-semibold text-gray-900">{value ?? <span className="text-gray-400 font-normal">-</span>}</dd>
 								</div>
 							))}
 						</dl>
@@ -306,7 +306,7 @@ export default function Settings() {
 							].map(({ label, value }) => (
 								<div key={label} className="flex flex-col gap-1 px-5 py-4">
 									<dt className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</dt>
-									<dd className="text-sm font-semibold text-gray-900 break-all">{value ?? <span className="text-gray-400 font-normal">—</span>}</dd>
+									<dd className="text-sm font-semibold text-gray-900 break-all">{value ?? <span className="text-gray-400 font-normal">-</span>}</dd>
 								</div>
 							))}
 						</dl>
@@ -328,7 +328,7 @@ export default function Settings() {
 									{"DELTA Resilience version"}
 								</dt>
 								<dd className="text-sm font-semibold text-gray-900">
-									{loaderData.dtsSystemInfo?.versionNo ?? <span className="text-gray-400 font-normal">—</span>}
+									{loaderData.dtsSystemInfo?.versionNo ?? <span className="text-gray-400 font-normal">-</span>}
 								</dd>
 							</div>
 						</section>
@@ -366,7 +366,7 @@ export default function Settings() {
 								].map(({ label, value }) => (
 									<div key={label} className="flex flex-col gap-1 px-5 py-4">
 										<dt className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</dt>
-										<dd className="text-sm font-semibold text-gray-900">{value ?? <span className="text-gray-400 font-normal">—</span>}</dd>
+										<dd className="text-sm font-semibold text-gray-900">{value ?? <span className="text-gray-400 font-normal">-</span>}</dd>
 									</div>
 								))}
 							</dl>
@@ -595,4 +595,5 @@ export default function Settings() {
 		</MainContainer>
 	);
 }
+
 

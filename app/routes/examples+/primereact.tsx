@@ -1,4 +1,4 @@
-import { NavSettings } from "~/routes/settings/nav";
+﻿import { NavSettings } from "~/frontend/components/nav-settings";
 import { MainContainer } from "~/frontend/container";
 import { useState } from "react";
 import {
@@ -103,7 +103,7 @@ export default function PrimeReactTestPage() {
 			return;
 		}
 
-		// ✅ Fetch filtered assets from backend
+		// Fetch filtered assets from backend
 		const res = await fetch(
 			`/api/asset/getassets?q=${encodeURIComponent(query)}`,
 		);
@@ -632,4 +632,5 @@ export default function PrimeReactTestPage() {
 		</MainContainer>
 	);
 }
+
 

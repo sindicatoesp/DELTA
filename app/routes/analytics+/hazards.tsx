@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, MetaFunction } from "react-router";
+﻿import { ActionFunctionArgs, MetaFunction } from "react-router";
 import { useEffect, useState } from "react";
 import { useActionData, useLoaderData } from "react-router";
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
@@ -23,7 +23,7 @@ import {
 	getTotalLossesByYear,
 } from "~/backend.server/models/analytics/hazard-analysis";
 import { MainContainer } from "~/frontend/container";
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import HazardFilters from "~/frontend/analytics/hazards/sections/HazardFilters";
 import ImpactByHazard from "~/frontend/analytics/hazards/sections/ImpactByHazard";
 import {
@@ -453,7 +453,7 @@ export default function HazardAnalysis() {
 									marginBottom: "0.71rem",
 								}}
 							>
-								{"Welcome to the hazard dashboard! 🌟"}
+								{"Welcome to the hazard dashboard! *"}
 							</h3>
 							<p>
 								{"Please select and apply filters above to view the analysis."}
@@ -564,4 +564,5 @@ export const meta: MetaFunction = () => {
 		},
 	];
 };
+
 

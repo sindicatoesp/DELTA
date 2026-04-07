@@ -1,6 +1,6 @@
-import { authLoaderWithPerm } from "~/utils/auth";
+﻿import { authLoaderWithPerm } from "~/utils/auth";
 
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import {
 	divisionBreadcrumb,
 	DivisionBreadcrumbRow,
@@ -351,4 +351,5 @@ export default function Screen() {
 		</MainContainer>
 	);
 }
+
 

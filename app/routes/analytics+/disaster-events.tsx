@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 import type { MetaFunction } from "react-router";
 import { useLoaderData, Outlet } from "react-router";
 
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import { MainContainer } from "~/frontend/container";
 
 import { ContentPicker } from "~/components/ContentPicker";
@@ -632,7 +632,7 @@ function DisasterEventsAnalysisContent() {
 									textAlign: "center",
 								}}
 							>
-								{"Welcome to the disaster events dashboard! 🌟"}
+								{"Welcome to the disaster events dashboard! *"}
 							</h3>
 							<p style={{ textAlign: "center" }}>
 								{"Please select and apply filters above to view the analysis."}
@@ -1391,4 +1391,5 @@ function DisasterEventsAnalysisContent() {
 export default function DisasterEventsAnalysis() {
 	return <DisasterEventsAnalysisContent />;
 }
+
 

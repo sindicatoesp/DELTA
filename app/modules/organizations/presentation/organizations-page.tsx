@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { FilterMatchMode } from "primereact/api";
 import { Button } from "primereact/button";
@@ -9,7 +9,7 @@ import { Paginator } from "primereact/paginator";
 
 import { MainContainer } from "~/frontend/container";
 import type { ListOrganizationsResult } from "~/modules/organizations/domain/repositories/organization-repository";
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 
 type OrganizationItem = { id: string; name: string };
 type OrganizationTableFilters = {
@@ -229,3 +229,4 @@ export default function OrganizationManagementPage({
         </MainContainer>
     );
 }
+

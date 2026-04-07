@@ -1,6 +1,6 @@
-import type { MetaFunction } from "react-router";
+﻿import type { MetaFunction } from "react-router";
 
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import { MainContainer } from "~/frontend/container";
 
 import { loadMarkdownContent } from "~/utils/loadMarkdownContent";
@@ -78,4 +78,5 @@ export default function Methodologies() {
 		</MainContainer>
 	);
 }
+
 

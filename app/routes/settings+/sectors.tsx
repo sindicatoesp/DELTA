@@ -1,6 +1,6 @@
-import { authLoader } from "~/utils/auth";
+﻿import { authLoader } from "~/utils/auth";
 
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import { MainContainer } from "~/frontend/container";
 import { dr } from "~/db.server";
 import { sectorTable } from "~/drizzle/schema/sectorTable";
@@ -392,4 +392,5 @@ export default function SectorsPage() {
 		</MainContainer>
 	);
 }
+
 

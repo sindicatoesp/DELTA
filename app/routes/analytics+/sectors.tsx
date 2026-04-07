@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import type { MetaFunction } from "react-router";
 import { redirect, useLoaderData, useSubmit } from "react-router";
 
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
-import { NavSettings } from "~/routes/settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import { MainContainer } from "~/frontend/container";
 
 import ErrorBoundary from "~/frontend/components/ErrorBoundary";
@@ -746,7 +746,7 @@ function SectorsAnalysisContent() {
 									marginBottom: "0.71rem",
 								}}
 							>
-								{"Welcome to the sectors dashboard! 🌟"}
+								{"Welcome to the sectors dashboard! *"}
 							</h3>
 							<p>
 								{"Please select and apply filters above to view the analysis."}
@@ -860,4 +860,5 @@ function SectorsAnalysisContent() {
 export default function SectorsAnalysis() {
 	return <SectorsAnalysisContent />;
 }
+
 
