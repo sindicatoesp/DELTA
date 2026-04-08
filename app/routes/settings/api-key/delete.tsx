@@ -12,7 +12,10 @@ import { authActionWithPerm, requirePermission } from "~/utils/auth";
 import { getCountryAccountsIdFromSession, redirectWithMessage } from "~/utils/session";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
-    const userSession = await requirePermission(request, PERMISSIONS.API_KEYS_EDIT);
+    const userSession = await requirePermission(
+        request,
+        PERMISSIONS.API_KEYS_DELETE,
+    );
     const countryAccountsId = await getCountryAccountsIdFromSession(request);
     const id = params.id ?? "";
     const currentUserId = userSession.user?.id ?? "";
@@ -29,7 +32,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     return { item };
 }
 
-export const action = authActionWithPerm(PERMISSIONS.API_KEYS_EDIT, async (args) => {
+export const action = authActionWithPerm(PERMISSIONS.API_KEYS_DELETE, async (args) => {
     const id = args.params.id ?? "";
     const countryAccountsId = await getCountryAccountsIdFromSession(args.request);
 

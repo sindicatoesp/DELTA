@@ -24,10 +24,9 @@ export class GetApiKeyFormDataUseCase {
 	async execute(
 		input: GetApiKeyFormDataInput,
 	): Promise<GetApiKeyFormDataResult> {
-		const isAdmin = roleHasPermission(
-			input.userRole,
-			PERMISSIONS.API_KEYS_EDIT,
-		);
+		const isAdmin =
+			roleHasPermission(input.userRole, PERMISSIONS.API_KEYS_CREATE) ||
+			roleHasPermission(input.userRole, PERMISSIONS.API_KEYS_UPDATE);
 		let item: ApiKeyViewItem | null = null;
 
 		if (input.id && input.id !== "new") {

@@ -45,7 +45,10 @@ export type PermissionId =
 	| "ViewUsers"
 	| "EditUsers"
 	| "InviteUsers"
-	| "EditAPIKeys"
+	| "api-keys.list"
+	| "api-keys.create"
+	| "api-keys.update"
+	| "api-keys.delete"
 	| "ViewData"
 	| "EditData"
 	| "ViewApiDocs"
@@ -53,6 +56,12 @@ export type PermissionId =
 	| "ValidateData"
 	| "DeleteValidatedData"
 	| "ManageCountrySettings"
+	| "assets.list"
+	| "assets.create"
+	| "assets.update"
+	| "assets.delete"
+	| "assets.import"
+	| "assets.export"
 	| "organizations.list"
 	| "organizations.create"
 	| "organizations.update"
@@ -74,7 +83,10 @@ export const PERMISSIONS = {
 	USERS_VIEW: "ViewUsers",
 	USERS_EDIT: "EditUsers",
 	USERS_INVITE: "InviteUsers",
-	API_KEYS_EDIT: "EditAPIKeys",
+	API_KEYS_LIST: "api-keys.list",
+	API_KEYS_CREATE: "api-keys.create",
+	API_KEYS_UPDATE: "api-keys.update",
+	API_KEYS_DELETE: "api-keys.delete",
 	DATA_VIEW: "ViewData",
 	DATA_EDIT: "EditData",
 	API_DOCS_VIEW: "ViewApiDocs",
@@ -82,6 +94,12 @@ export const PERMISSIONS = {
 	DATA_VALIDATE: "ValidateData",
 	VALIDATED_DATA_DELETE: "DeleteValidatedData",
 	COUNTRY_SETTINGS_MANAGE: "ManageCountrySettings",
+	ASSETS_LIST: "assets.list",
+	ASSETS_CREATE: "assets.create",
+	ASSETS_UPDATE: "assets.update",
+	ASSETS_DELETE: "assets.delete",
+	ASSETS_IMPORT: "assets.import",
+	ASSETS_EXPORT: "assets.export",
 	ORGANIZATIONS_LIST: "organizations.list",
 	ORGANIZATIONS_CREATE: "organizations.create",
 	ORGANIZATIONS_UPDATE: "organizations.update",
@@ -124,9 +142,24 @@ export function permissions(): PermissionOption[] {
 			label: "Invite users",
 		},
 		{
-			id: "EditAPIKeys",
+			id: "api-keys.list",
 			role: "admin",
-			label: "Edit API Keys",
+			label: "List API keys",
+		},
+		{
+			id: "api-keys.create",
+			role: "admin",
+			label: "Create API keys",
+		},
+		{
+			id: "api-keys.update",
+			role: "admin",
+			label: "Update API keys",
+		},
+		{
+			id: "api-keys.delete",
+			role: "admin",
+			label: "Delete API keys",
 		},
 		{
 			id: "ViewData",
@@ -162,6 +195,36 @@ export function permissions(): PermissionOption[] {
 			id: "ManageCountrySettings",
 			role: "admin",
 			label: "Manage country settings",
+		},
+		{
+			id: "assets.list",
+			role: "admin",
+			label: "List assets",
+		},
+		{
+			id: "assets.create",
+			role: "admin",
+			label: "Create assets",
+		},
+		{
+			id: "assets.update",
+			role: "admin",
+			label: "Update assets",
+		},
+		{
+			id: "assets.delete",
+			role: "admin",
+			label: "Delete assets",
+		},
+		{
+			id: "assets.import",
+			role: "admin",
+			label: "Import assets",
+		},
+		{
+			id: "assets.export",
+			role: "admin",
+			label: "Export assets",
 		},
 		{
 			id: "organizations.list",
@@ -274,7 +337,16 @@ export const roles: {
 		"ViewUsers",
 		"EditUsers",
 		"InviteUsers",
-		"EditAPIKeys",
+		"assets.list",
+		"assets.create",
+		"assets.update",
+		"assets.delete",
+		"assets.import",
+		"assets.export",
+		"api-keys.list",
+		"api-keys.create",
+		"api-keys.update",
+		"api-keys.delete",
 		"EditHumanEffectsCustomDsg",
 		"ManageCountrySettings",
 		"organizations.list",

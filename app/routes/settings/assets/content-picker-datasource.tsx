@@ -1,13 +1,14 @@
-import { authLoaderPublicOrWithPerm } from "~/utils/auth";
+import { authLoaderWithPerm } from "~/utils/auth";
 import {
 	fetchData,
 	getTotalRecords,
 } from "~/components/ContentPicker/DataSource";
 import { contentPickerConfigSector } from "~/routes/disaster-record/content-picker-config";
+import { PERMISSIONS } from "~/frontend/user/roles";
 
 
-export const loader = authLoaderPublicOrWithPerm(
-	"ViewData",
+export const loader = authLoaderWithPerm(
+	PERMISSIONS.ASSETS_LIST,
 	async (loaderArgs: any) => {
 		const { request } = loaderArgs;
 		const url = new URL(request.url);

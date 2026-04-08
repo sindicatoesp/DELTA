@@ -28,6 +28,7 @@ import { authLoaderWithPerm } from "~/utils/auth";
 
 import { stringifyCSV } from "~/utils/csv";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
+import type { PermissionId } from "~/frontend/user/roles";
 
 interface CreateActionArgs<T extends ObjectWithImportId> {
 	fieldsDef: () => Promise<FormInputDef<T>[]>;
@@ -44,6 +45,7 @@ interface CreateActionArgs<T extends ObjectWithImportId> {
 		countryAccountsId: string,
 	) => Promise<UpdateResult<T>>;
 	idByImportId: (tx: Tx, importId: string) => Promise<string | null>;
+	permission?: PermissionId;
 }
 
 interface ErrorRes {
@@ -60,7 +62,7 @@ export function createAction<T extends ObjectWithImportId>(
 	args: CreateActionArgs<T>,
 ) {
 	return authActionWithPerm(
-		"EditData",
+		args.permission ?? "EditData",
 		async (actionArgs: ActionFunctionArgs): Promise<Res> => {
 			const { request } = actionArgs;
 

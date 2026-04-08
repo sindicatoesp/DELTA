@@ -14,7 +14,8 @@ import { createOrUpdateAction } from "~/backend.server/handlers/form/form";
 import { getTableName } from "drizzle-orm";
 import { assetTable } from "~/drizzle/schema/assetTable";
 import { useLoaderData } from "react-router";
-import { authLoaderWithPerm } from "~/utils/auth";
+import { requirePermission } from "~/utils/auth";
+import { PERMISSIONS } from "~/frontend/user/roles";
 
 import { dr } from "~/db.server";
 import { contentPickerConfigSector } from "~/frontend/asset-content-picker-config";
@@ -43,10 +44,18 @@ export const action = async (args: ActionFunctionArgs) => {
 		tableName: getTableName(assetTable),
 		action: (isCreate) => (isCreate ? "Create asset" : "Update asset"),
 		countryAccountsId,
+		createPermission: PERMISSIONS.ASSETS_CREATE,
+		updatePermission: PERMISSIONS.ASSETS_UPDATE,
 	})(args);
 };
 
-export const loader = authLoaderWithPerm("EditData", async (args) => {
+export const loader = async (args: { request: Request; params: { id?: string } }) => {
+	await requirePermission(
+		args.request,
+		args.params.id === "new"
+			? PERMISSIONS.ASSETS_CREATE
+			: PERMISSIONS.ASSETS_UPDATE,
+	);
 
 	const { request, params } = args;
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
@@ -82,7 +91,7 @@ export const loader = authLoaderWithPerm("EditData", async (args) => {
 		...extra,
 		selectedDisplay,
 	};
-});
+};
 
 export default function Screen() {
 	let ld = useLoaderData<typeof loader>();

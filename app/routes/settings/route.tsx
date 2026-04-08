@@ -1,9 +1,6 @@
-import { Outlet, redirect, useLoaderData } from "react-router";
+import { Outlet, redirect } from "react-router";
 
 import { authLoader } from "~/utils/auth";
-import { NavSettings } from "~/frontend/components/nav-settings";
-
-
 
 export const loader = authLoader(async (loaderArgs) => {
 	const url = new URL(loaderArgs.request.url);
@@ -12,24 +9,9 @@ export const loader = authLoader(async (loaderArgs) => {
 		return redirect("/settings/system", 303);
 	}
 
-	const isSettingsPage =
-		url.pathname.startsWith("/settings") &&
-		!url.pathname.startsWith("/settings/");
-
-	return {
-		isSettingsPage,
-	};
+	return null;
 });
 
 export default function SettingsLayout() {
-	const ld = useLoaderData<typeof loader>();
-
-
-	return (
-		<>
-			{/* Render NavSettings dynamically */}
-			{ld.isSettingsPage && <NavSettings />}
-			<Outlet />
-		</>
-	);
+	return <Outlet />;
 }

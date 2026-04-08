@@ -8,7 +8,7 @@ import { requirePermission } from "~/utils/auth";
 import { getCountryAccountsIdFromSession, getUserRoleFromSession } from "~/utils/session";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	await requirePermission(request, PERMISSIONS.API_KEYS_EDIT);
+	await requirePermission(request, PERMISSIONS.API_KEYS_LIST);
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
 	const userRole = await getUserRoleFromSession(request);
 	const url = new URL(request.url);
@@ -23,9 +23,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		pageSize,
 	});
 
-	const canCreate = roleHasPermission(userRole, PERMISSIONS.API_KEYS_EDIT);
-	const canUpdate = roleHasPermission(userRole, PERMISSIONS.API_KEYS_EDIT);
-	const canDelete = roleHasPermission(userRole, PERMISSIONS.API_KEYS_EDIT);
+	const canCreate = roleHasPermission(userRole, PERMISSIONS.API_KEYS_CREATE);
+	const canUpdate = roleHasPermission(userRole, PERMISSIONS.API_KEYS_UPDATE);
+	const canDelete = roleHasPermission(userRole, PERMISSIONS.API_KEYS_DELETE);
 
 	return {
 		apiKeys: data,

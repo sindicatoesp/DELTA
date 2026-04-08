@@ -23,7 +23,10 @@ import {
 import ApiKeyDialog from "~/modules/api-keys/presentation/api-key-dialog";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
-	const userSession = await requirePermission(request, PERMISSIONS.API_KEYS_EDIT);
+	const userSession = await requirePermission(
+		request,
+		PERMISSIONS.API_KEYS_UPDATE,
+	);
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
 	const userRole = await getUserRoleFromSession(request);
 	const currentUserId = userSession.user?.id ?? "";
@@ -42,7 +45,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	return data;
 }
 
-export const action = authActionWithPerm(PERMISSIONS.API_KEYS_EDIT, async (actionArgs) => {
+	export const action = authActionWithPerm(PERMISSIONS.API_KEYS_UPDATE, async (actionArgs) => {
 	const auth = authActionGetAuth(actionArgs);
 	const { request } = actionArgs;
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);

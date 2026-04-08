@@ -11,9 +11,10 @@ import { getCountryAccountsIdFromSession } from "~/utils/session";
 import { getItem2 } from "~/backend.server/handlers/view";
 import { useLoaderData } from "react-router";
 import { authLoaderWithPerm } from "~/utils/auth";
+import { PERMISSIONS } from "~/frontend/user/roles";
 
 
-export const loader = authLoaderWithPerm("ViewData", async (loaderArgs) => {
+export const loader = authLoaderWithPerm(PERMISSIONS.ASSETS_LIST, async (loaderArgs) => {
 
 	const { request, params } = loaderArgs;
 	const countryAccountId = await getCountryAccountsIdFromSession(request);

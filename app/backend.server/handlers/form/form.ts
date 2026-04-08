@@ -26,6 +26,7 @@ import {
 	authActionGetAuth,
 	authLoaderGetAuth,
 	authLoaderGetUserForFrontend,
+	requirePermission,
 } from "~/utils/auth";
 
 import { getItem2 } from "~/backend.server/handlers/view";
@@ -479,10 +480,17 @@ interface CreateActionArgs<T> {
 	action?: (isCreate: boolean) => string;
 	postProcess?: (id: string, data: T) => Promise<void>;
 	countryAccountsId: string;
+	createPermission?: PermissionId;
+	updatePermission?: PermissionId;
 }
 
 export function createOrUpdateAction<T>(args: CreateActionArgs<T>) {
-	return authActionWithPerm("EditData", async (actionArgs) => {
+	return (async (actionArgs: ActionFunctionArgs) => {
+		const isCreate = (actionArgs.params["id"] || null) === "new";
+		const permission = isCreate
+			? (args.createPermission ?? "EditData")
+			: (args.updatePermission ?? args.createPermission ?? "EditData");
+		const userSession = await requirePermission(actionArgs.request, permission);
 		let fieldsDef: FormInputDef<T>[] = [];
 		if (typeof args.fieldsDef == "function") {
 			fieldsDef = await args.fieldsDef();
@@ -490,11 +498,17 @@ export function createOrUpdateAction<T>(args: CreateActionArgs<T>) {
 			fieldsDef = args.fieldsDef;
 		}
 		return formSave<T>({
-			actionArgs,
+			actionArgs: {
+				...(actionArgs as any),
+				userSession,
+			},
 			fieldsDef,
 			save: async (tx, id, data) => {
 				data = { ...data, countryAccountsId: args.countryAccountsId };
-				const user = authActionGetAuth(actionArgs);
+				const user = authActionGetAuth({
+					...(actionArgs as any),
+					userSession,
+				});
 				user.user.id;
 				if (!id) {
 					const newRecord = await args.create(tx, data, args.countryAccountsId);
@@ -536,7 +550,7 @@ export function createOrUpdateAction<T>(args: CreateActionArgs<T>) {
 			redirectTo: args.redirectTo,
 			postProcess: args.postProcess,
 		});
-	});
+	}) as any;
 }
 
 interface CreateActionArgsWithCountryAccountsId<T> {
@@ -746,6 +760,7 @@ interface DeleteActionArgsWithCountryAccounts {
 	postProcess?: (id: string, data: any) => Promise<void>;
 	redirectToSuccess?: (id: string, oldRecord?: any) => string;
 	countryAccountsId?: string;
+	permission?: PermissionId;
 }
 
 export function createDeleteAction(args: DeleteActionArgs) {
@@ -754,7 +769,10 @@ export function createDeleteAction(args: DeleteActionArgs) {
 export function createDeleteActionWithCountryAccounts(
 	args: DeleteActionArgsWithCountryAccounts,
 ) {
-	return createDeleteActionWithPermAndCountryAccounts("EditData", args);
+	return createDeleteActionWithPermAndCountryAccounts(
+		args.permission ?? "EditData",
+		args,
+	);
 }
 
 export function createDeleteActionWithPerm(

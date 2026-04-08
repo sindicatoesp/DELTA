@@ -5,16 +5,17 @@ import { DataScreen } from "~/frontend/data_screen";
 import { ActionLinks, Field } from "~/frontend/form";
 
 import { route } from "~/frontend/asset";
-import { authLoaderPublicOrWithPerm } from "~/utils/auth";
+import { authLoaderWithPerm } from "~/utils/auth";
 import { assetLoader } from "~/backend.server/handlers/asset";
+import { PERMISSIONS } from "~/frontend/user/roles";
 
 import { Filters } from "~/frontend/components/list-page-filters";
 
 
 import { LangLink } from "~/utils/link";
 
-export const loader = authLoaderPublicOrWithPerm(
-	"ViewData",
+export const loader = authLoaderWithPerm(
+	PERMISSIONS.ASSETS_LIST,
 	async (loaderArgs) => {
 		return assetLoader({ loaderArgs });
 	},

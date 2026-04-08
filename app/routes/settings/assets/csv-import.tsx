@@ -1,4 +1,5 @@
 import { authLoaderWithPerm } from "~/utils/auth";
+import { PERMISSIONS } from "~/frontend/user/roles";
 
 import {
 	assetCreate,
@@ -21,7 +22,7 @@ import { useActionData } from "react-router";
 
 
 
-export const loader = authLoaderWithPerm("EditData", async () => {
+export const loader = authLoaderWithPerm(PERMISSIONS.ASSETS_IMPORT, async () => {
 	return {};
 });
 
@@ -36,6 +37,7 @@ export let action = async (args: ActionFunctionArgs) => {
 
 	// Create the action with tenant-aware functions
 	const csvAction = createAction({
+		permission: PERMISSIONS.ASSETS_IMPORT,
 		fieldsDef: fieldsDefApi,
 		create: async (
 			tx: Tx,

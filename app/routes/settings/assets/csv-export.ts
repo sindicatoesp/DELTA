@@ -6,8 +6,10 @@ import { sql, asc, eq, and } from "drizzle-orm";
 
 import { csvExportLoader } from "~/backend.server/handlers/form/csv_export";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
+import { PERMISSIONS } from "~/frontend/user/roles";
 
 export const loader = csvExportLoader({
+	permission: PERMISSIONS.ASSETS_EXPORT,
 	table: assetTable,
 	fetchData: async (request: Request) => {
 		// Get the country accounts ID from the session using the request passed from the loader
