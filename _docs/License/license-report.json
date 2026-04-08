@@ -3634,8 +3634,8 @@
 		"publisher": "Isaac Z. Schlueter",
 		"email": "i@izs.me",
 		"url": "http://blog.izs.me",
-		"path": "node_modules\\remix-flat-routes\\node_modules\\minimatch",
-		"licenseFile": "node_modules\\remix-flat-routes\\node_modules\\minimatch\\LICENSE"
+		"path": "node_modules\\minimatch",
+		"licenseFile": "node_modules\\minimatch\\LICENSE"
 	},
 	"minimatch@9.0.5": {
 		"licenses": "ISC",
@@ -4848,15 +4848,6 @@
 		"url": "https://sergiodxa.com",
 		"path": "node_modules\\remix-auth",
 		"licenseFile": "node_modules\\remix-auth\\LICENSE"
-	},
-	"remix-flat-routes@0.8.5": {
-		"licenses": "MIT",
-		"repository": "https://github.com/kiliman/remix-flat-routes",
-		"publisher": "Kiliman",
-		"email": "kiliman@gmail.com",
-		"url": "https://kiliman.dev",
-		"path": "node_modules\\remix-flat-routes",
-		"licenseFile": "node_modules\\remix-flat-routes\\LICENSE.md"
 	},
 	"remix-utils@8.5.0": {
 		"licenses": "MIT",

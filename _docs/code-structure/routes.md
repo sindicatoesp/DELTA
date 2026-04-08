@@ -4,15 +4,9 @@
 
 `app/routes`
 
-Follows standard Remix routing.
+Routes are defined explicitly in `app/routes.ts`.
 
 https://remix.run/docs/en/main/route/action
-
-We also use remix-flat-routes plugin to organize routes into folders.
-
-Folders ending with `+` are special, these are handled by this plugin and are grouped in folders with paths matching url structure.
-
-https://github.com/kiliman/remix-flat-routes
 
 ## Notes on specific routes
 

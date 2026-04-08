@@ -1,26 +1,10 @@
 import type { RouteConfig } from "@react-router/dev/routes";
 import { remixRoutesOptionAdapter } from "@react-router/remix-routes-option-adapter";
-import { flatRoutes } from "remix-flat-routes"; // your existing package
 
 export default remixRoutesOptionAdapter((defineRoutes) => {
-	const autoRoutes = flatRoutes("routes", defineRoutes, {
-		ignoredRouteFiles: [
-			"**/.*",
-			"settings/**",
-			"user/**",
-			"admin/**",
-			"setup/**",
-			"about/**",
-			"analytics/**",
-			"error/**",
-			"faq/**",
-			"sso/**",
-			"examples/**",
-			"hazardous-event/**",
-			"disaster-event/**",
-			"disaster-record/**",
-			"api/**",
-		],
+	const rootRoutes = defineRoutes((route) => {
+		route("/", "routes/_index.tsx");
+		route("*", "routes/$.tsx");
 	});
 
 	const settingsRoutes = defineRoutes((route) => {
@@ -646,7 +630,7 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 	});
 
 	return {
-		...autoRoutes,
+		...rootRoutes,
 		...settingsRoutes,
 		...userRoutes,
 		...adminRoutes,
