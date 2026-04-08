@@ -105,7 +105,10 @@ export default function SuperAdminMenuBar({
     );
 
     const end = isLoggedIn ? (
-        <div className="ml-auto shrink-0 flex items-center gap-1 md:gap-2">
+        <div
+            className="shrink-0 flex items-center gap-1 md:gap-2"
+            style={{ marginInlineStart: "auto" }}
+        >
             <Divider layout="vertical" className="hidden md:block !mx-1" />
 
             <button
@@ -134,7 +137,10 @@ export default function SuperAdminMenuBar({
     ) : location.pathname.includes("/admin/login") ? (
         ""
     ) : (
-        <div className="ml-auto shrink-0 flex items-center gap-1 md:gap-2">
+        <div
+            className="shrink-0 flex items-center gap-1 md:gap-2"
+            style={{ marginInlineStart: "auto" }}
+        >
             <Divider layout="vertical" className="hidden md:block !mx-1" />
 
             <Link to="/admin/login">
@@ -185,10 +191,16 @@ export default function SuperAdminMenuBar({
                     className: "flex-1 min-w-0",
                 },
                 end: {
-                    className: "shrink-0 ml-auto",
+                    className: "shrink-0",
+                    style: { marginInlineStart: "auto" },
                 },
                 submenu: {
-                    className: "min-w-[260px] w-[300px] md:w-[340px]",
+                    className:
+                        "min-w-[16rem] w-[min(21.25rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)]",
+                    style: {
+                        insetInlineStart: "auto",
+                        insetInlineEnd: 0,
+                    },
                 },
                 menu: {
                     className: "min-w-0 md:flex-1 md:flex md:justify-end",
