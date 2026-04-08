@@ -7,9 +7,12 @@ import { InputText } from "primereact/inputtext";
 
 import {
     FictitiousCountryNotFoundError,
-    FictitiousCountryService,
     FictitiousCountryValidationError,
-} from "~/services/fictitiousCountryService";
+} from "~/modules/fictitious-country/application/errors/fictitious-country-error";
+import {
+    makeGetFictitiousCountryUseCase,
+    makeUpdateFictitiousCountryUseCase,
+} from "~/modules/fictitious-country/fictitious-country-module.server";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 
@@ -22,12 +25,15 @@ export const loader = authLoaderWithPerm(
     "EditFictitiousCountry",
     async (loaderArgs) => {
         const id = loaderArgs.params.id!;
-        const country = await FictitiousCountryService.getById(id);
-        if (!country) {
-            throw new Response("Not Found", { status: 404 });
+        try {
+            const country = await makeGetFictitiousCountryUseCase().execute(id);
+            return { country };
+        } catch (error) {
+            if (error instanceof FictitiousCountryNotFoundError) {
+                throw new Response("Not Found", { status: 404 });
+            }
+            throw error;
         }
-
-        return { country };
     },
 );
 
@@ -41,7 +47,7 @@ export const action = authActionWithPerm(
         const name = String(formData.get("name") ?? "");
 
         try {
-            await FictitiousCountryService.update(id, name);
+            await makeUpdateFictitiousCountryUseCase().execute(id, name);
 
             return redirectWithMessage(actionArgs, "/admin/fictitious-country-mgmt", {
                 type: "success",

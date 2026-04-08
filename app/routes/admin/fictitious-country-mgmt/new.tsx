@@ -6,9 +6,9 @@ import { InputText } from "primereact/inputtext";
 
 
 import {
-    FictitiousCountryService,
     FictitiousCountryValidationError,
-} from "~/services/fictitiousCountryService";
+} from "~/modules/fictitious-country/application/errors/fictitious-country-error";
+import { makeCreateFictitiousCountryUseCase } from "~/modules/fictitious-country/fictitious-country-module.server";
 import { authActionWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 
@@ -26,7 +26,7 @@ export const action = authActionWithPerm(
         const name = String(formData.get("name") ?? "");
 
         try {
-            await FictitiousCountryService.create(name);
+            await makeCreateFictitiousCountryUseCase().execute(name);
 
             return redirectWithMessage(actionArgs, "/admin/fictitious-country-mgmt", {
                 type: "success",

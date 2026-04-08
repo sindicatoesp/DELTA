@@ -4,7 +4,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 
 import { MainContainer } from "~/frontend/container";
-import { FictitiousCountryService } from "~/services/fictitiousCountryService";
+import { makeListFictitiousCountriesUseCase } from "~/modules/fictitious-country/fictitious-country-module.server";
 import { NavSettings } from "~/frontend/components/nav-settings";
 import { authLoaderWithPerm } from "~/utils/auth";
 
@@ -16,7 +16,7 @@ type LoaderData = {
 export const loader = authLoaderWithPerm(
     "ViewFictitiousCountries",
     async () => {
-        const items = await FictitiousCountryService.getAllFictionalOrderByName();
+        const items = await makeListFictitiousCountriesUseCase().execute();
 
         return { items } satisfies LoaderData;
     },
@@ -64,7 +64,7 @@ export default function FictitiousCountryManagementLayout() {
                                         severity="secondary"
                                         onClick={() =>
                                             navigate(
-                                                `/admin/fictitious-country-mgmt/edit/${row.id}`,
+                                                `/admin/fictitious-country-mgmt/${row.id}/edit`,
                                             )
                                         }
                                         className="p-2"
@@ -76,7 +76,7 @@ export default function FictitiousCountryManagementLayout() {
                                         severity="danger"
                                         onClick={() =>
                                             navigate(
-                                                `/admin/fictitious-country-mgmt/delete/${row.id}`,
+                                                `/admin/fictitious-country-mgmt/${row.id}/delete`,
                                             )
                                         }
                                         className="p-2"

@@ -112,15 +112,11 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 
 		route(
 			"admin/fictitious-country-mgmt",
-			"routes/admin/fictitious-country-mgmt/_layout.tsx",
+			"routes/admin/fictitious-country-mgmt/index.tsx",
 			() => {
-				route("", "routes/admin/fictitious-country-mgmt/_index.tsx");
 				route("new", "routes/admin/fictitious-country-mgmt/new.tsx");
-				route("edit/:id", "routes/admin/fictitious-country-mgmt/edit.$id.tsx");
-				route(
-					"delete/:id",
-					"routes/admin/fictitious-country-mgmt/delete.$id.tsx",
-				);
+				route(":id/edit", "routes/admin/fictitious-country-mgmt/edit.tsx");
+				route(":id/delete", "routes/admin/fictitious-country-mgmt/delete.tsx");
 			},
 		);
 	});
