@@ -79,9 +79,14 @@ The DELTA Resilience Shared Instance uses a **Single Database Multi-Tenancy** ar
 
    ### Docker Environment Configuration (docker-compose.yml)
 
-   Open `docker-compose.yml` and update the `environment:` block for the `app` service with your values. Many configuration settings that were previously environment variables have been moved to the database and are now managed through the super admin interface.
+   Open `docker-compose.yml` and update the `environment:` block for the `app` service with your values. Many configuration settings that were previously environment variables have been moved to the database and are now managed through authenticated country settings screens.
 
-   #### Required Environment Variables (`docker-compose.yml` `environment:` block)
+   #### Environment Variables (`docker-compose.yml` `environment:` block)
+
+   > **Important**:
+   >
+   > - The repository's default `docker-compose.yml` includes a minimal local-development baseline (`NODE_ENV`, `PORT`, `DATABASE_URL`).
+   > - For production or email/SSO-enabled environments, provide the additional variables below in your deployment-specific compose/secret configuration.
 
    ```yaml
    # Database Configuration (Required)
@@ -90,7 +95,7 @@ The DELTA Resilience Shared Instance uses a **Single Database Multi-Tenancy** ar
    # Authentication & Security (Required)
    SESSION_SECRET: "your-secure-random-string"
 
-   # Email Configuration (Required)
+   # Email Configuration (required when EMAIL_TRANSPORT=smtp)
    EMAIL_TRANSPORT: "smtp"
    EMAIL_FROM: "noreply@your-domain.com"
    SMTP_HOST: "your-smtp-server.com"
@@ -115,7 +120,7 @@ The DELTA Resilience Shared Instance uses a **Single Database Multi-Tenancy** ar
    # SSO_AZURE_B2C_USERFLOW_RESET_REDIRECT_URL: ""
 
    # Application Environment
-   NODE_ENV: "development"  # Use "production" for production environment.
+   NODE_ENV: "development" # Use "production" for production environment.
    ```
 
 4. **Build and Start the Application**
@@ -232,8 +237,9 @@ WHERE email = 'admin@admin.com';"
    As a super admin, you can:
    - View a list of all countries in the system
    - Create new country accounts
-   - Modify only the short description and status (active/inactive) of existing country accounts
+   - Modify country account status and short description
    - Assign primary administrators when creating country accounts
+   - Manage fictitious countries from the dedicated **Fictitious Country Management** section
 
 5. **After completing country account management tasks**, use the logout option to exit the system.
 
@@ -273,23 +279,22 @@ The system will automatically:
 
 ### 6.1 Database-Stored Configuration
 
-Most application settings are now stored in the database rather than environment variables. These can be configured through the super admin interface:
+Most application settings are now stored in the database rather than environment variables. These are configured per country instance through the settings UI by users with the country admin role only:
 
 #### 6.1.1 System-Wide Settings (instance_system_settings table)
 
-After logging in as super admin, navigate to **System Settings** to configure:
+Configuration is managed at the country-instance level by authenticated users with the country admin role only (not from super-admin country account management screens):
 
 **Application Branding:**
 
 - **Website Logo** (`website_logo`): URL or path to logo image
 - **Website Name** (`website_name`): Display name for the application
-- **Website URL** (`website_url`): Base URL for the application
+- **Website URL**: Managed via `PUBLIC_URL` environment variable
 
 **Instance Configuration:**
 
-- **Instance Type** (`dts_instance_type`): Set to "shared" for multi-tenant
 - **Country ISO3** (`dts_instance_ctry_iso3`): Default country code
-- **Currency Codes** (`currency_codes`): Comma-separated list (e.g., "CDF,YER,PHP")
+- **Currency Code** (`currency_code`): Currency for the country instance (e.g., `USD`)
 
 **Security & Privacy:**
 
@@ -308,7 +313,6 @@ UPDATE instance_system_settings
 SET
     website_name = 'DELTA Resilience Shared Instance',
     website_logo = '/assets/shared-instance-logo.png',
-    dts_instance_type = 'shared',
     totp_issuer = 'DELTA Resilience Shared System',
     approved_records_are_public = false
 WHERE id = 'your-settings-id';
@@ -367,7 +371,7 @@ These are automatically created when a country account is established and can be
 1. **Verify the user exists in the database:**
 
    ```sql
-   SELECT id, first_name, last_name, email FROM super_admin_users WHERE email = 'superadmin@your-domain.com';
+   SELECT id, first_name, last_name, email FROM super_admin_users WHERE email = 'admin@admin.com';
    ```
 
 2. **Reset the password using the script method above**
@@ -460,7 +464,7 @@ These are automatically created when a country account is established and can be
 
 - **Use strong passwords** (minimum 12 characters with mixed case, numbers, and symbols)
 - **Change default passwords** immediately after installation
-- **Enable two-factor authentication** for super admin accounts
+- **Super admin 2FA status**: Super admin login currently uses email/password. Use strong passwords, restricted network access, and SSO where applicable.
 - **Regularly rotate passwords** (quarterly recommended)
 
 ### 8.2 Database Security
