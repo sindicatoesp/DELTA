@@ -17,9 +17,11 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { UserRepository } from "~/db/queries/UserRepository";
-import { OrganizationRepository } from "~/db/queries/organizationRepository";
+import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
 import { Dialog } from "primereact/dialog";
 import { AccessManagementService, AccessManagementServiceError } from "~/services/accessManagementService";
+
+const organizationRepository = makeOrganizationRepository();
 
 export const meta: MetaFunction = () => {
 	return [
@@ -52,7 +54,7 @@ export const loader = authLoaderWithPerm("EditUsers", async (loaderArgs) => {
 			countryAccountsId,
 		);
 	const organizations =
-		await OrganizationRepository.getByCountryAccountsId(countryAccountsId);
+		await organizationRepository.getByCountryAccountsId(countryAccountsId);
 
 	if (!userCountryAccount) {
 		throw new Response(

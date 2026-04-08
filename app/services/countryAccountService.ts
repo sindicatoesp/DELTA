@@ -8,7 +8,7 @@ import {
 } from "~/backend.server/models/user/invite";
 import { dr } from "~/db.server";
 import { AffectedRepository } from "~/db/queries/affectedRepository";
-import { ApiKeyRepository } from "~/db/queries/apiKeyRepository";
+import { makeApiKeyRepository } from "~/modules/api-keys/api-keys-module.server";
 import { AssetRepository } from "~/db/queries/assetRepository";
 import { AuditLogsRepository } from "~/db/queries/auditLogsRepository";
 import { CountryRepository } from "~/db/queries/countriesRepository";
@@ -34,7 +34,7 @@ import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSett
 import { LossesRepository } from "~/db/queries/lossesRepository";
 import { MissingRepository } from "~/db/queries/missingRepository";
 import { NonEcoLossesRepository } from "~/db/queries/nonEcoLossesRepository";
-import { OrganizationRepository } from "~/db/queries/organizationRepository";
+import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
 import { SectorDisasterRecordsRelationRepository } from "~/db/queries/sectorDisasterRecordsRelationRepository";
 import { UserRepository } from "~/db/queries/UserRepository";
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
@@ -77,6 +77,8 @@ function toPosixPath(filePath: string) {
 function stripLeadingSlash(filePath: string) {
 	return filePath.replace(/^\/+/, "");
 }
+
+const organizationRepository = makeOrganizationRepository();
 
 function findTenantSegmentIndex(parts: string[]) {
 	return parts.findIndex((part) => /^tenant-[\w-]+$/.test(part));
@@ -576,13 +578,13 @@ export const CountryAccountService = {
 				);
 			}
 
-			const organizations = await OrganizationRepository.getByCountryAccountsId(
+			const organizations = await organizationRepository.getByCountryAccountsId(
 				countryAccountId,
 				tx,
 			);
 			const organizationIdMap = createIdMap(organizations.map((row) => row.id));
 			if (organizations.length > 0) {
-				await OrganizationRepository.createMany(
+				await organizationRepository.createMany(
 					organizations.map((row) => ({
 						...row,
 						id: getMappedId(organizationIdMap, row.id, "organization"),
@@ -673,13 +675,14 @@ export const CountryAccountService = {
 				);
 			}
 
-			const apiKeys = await ApiKeyRepository.getByCountryAccountsId(
+			const apiKeyRepository = makeApiKeyRepository();
+			const apiKeys = await apiKeyRepository.getByCountryAccountsId(
 				countryAccountId,
 				tx,
 			);
 			const apiKeyIdMap = createIdMap(apiKeys.map((row) => row.id));
 			if (apiKeys.length > 0) {
-				await ApiKeyRepository.createMany(
+				await apiKeyRepository.createMany(
 					apiKeys.map((row) => ({
 						...row,
 						id: getMappedId(apiKeyIdMap, row.id, "api key"),
@@ -1305,7 +1308,8 @@ export const CountryAccountService = {
 				false,
 				tx,
 			);
-			await ApiKeyRepository.deleteByCountryAccountId(countryAccountId, tx);
+			const apiKeyRepository = makeApiKeyRepository();
+			await apiKeyRepository.deleteByCountryAccountId(countryAccountId, tx);
 			await AuditLogsRepository.deleteByCountryAccountId(countryAccountId, tx);
 			await HumanDsgConfigRepository.deleteByCountryAccountId(
 				countryAccountId,
@@ -1317,7 +1321,7 @@ export const CountryAccountService = {
 				false,
 				tx,
 			);
-			await OrganizationRepository.deleteByCountryAccountId(
+			await organizationRepository.deleteByCountryAccountId(
 				countryAccountId,
 				tx,
 			);

@@ -10,12 +10,14 @@ import {
 } from "~/utils/session";
 import "react-toastify/dist/ReactToastify.css";
 import { htmlTitle } from "~/utils/htmlmeta";
-import { OrganizationRepository } from "~/db/queries/organizationRepository";
+import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { AccessManagementService, AccessManagementServiceError } from "~/services/accessManagementService";
+
+const organizationRepository = makeOrganizationRepository();
 
 export const meta: MetaFunction = () => {
 	return [
@@ -33,7 +35,7 @@ export const loader = authLoaderWithPerm("InviteUsers", async (args) => {
 	const { request } = args;
 
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
-	const organizations = await OrganizationRepository.getByCountryAccountsId(countryAccountsId);
+	const organizations = await organizationRepository.getByCountryAccountsId(countryAccountsId);
 
 	return {
 		organizations

@@ -1,6 +1,6 @@
 import { MetaFunction, Outlet } from "react-router";
 import { getUserCountryAccountsWithUserByCountryAccountsId } from "~/db/queries/userCountryAccountsRepository";
-import { OrganizationRepository } from "~/db/queries/organizationRepository";
+import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
 import { paginationQueryFromURL } from "~/frontend/pagination/api.server";
 import { authLoaderWithPerm } from "~/utils/auth";
 import {
@@ -10,6 +10,8 @@ import {
 
 import { htmlTitle } from "~/utils/htmlmeta";
 import AccessManagementPage from "~/pages/AccessManagementPage";
+
+const organizationRepository = makeOrganizationRepository();
 
 export const meta: MetaFunction = () => {
 
@@ -33,7 +35,7 @@ export const loader = authLoaderWithPerm("ViewUsers", async (loaderArgs) => {
 	const search = url.searchParams.get("search") || "";
 
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
-	const organizations = await OrganizationRepository.getByCountryAccountsId(
+	const organizations = await organizationRepository.getByCountryAccountsId(
 		countryAccountsId,
 	);
 

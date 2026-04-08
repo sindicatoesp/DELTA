@@ -1,57 +1,35 @@
-import {
-	apiKeyById,
-	ApiSecurityAudit,
-	TokenAssignmentParser,
-} from "~/backend.server/models/api_key";
-
 import { ApiKeyView } from "~/frontend/api_key";
 
-import { authLoaderGetAuth, authLoaderWithPerm } from "~/utils/auth";
-
-import { getItem2 } from "~/backend.server/handlers/view";
+import { PERMISSIONS } from "~/frontend/user/roles";
+import { makeGetApiKeyByIdUseCase } from "~/modules/api-keys/api-keys-module.server";
+import { requirePermission } from "~/utils/auth";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 
 
 
 import { useLoaderData } from "react-router";
+import type { LoaderFunctionArgs } from "react-router";
 
 
-export const loader = authLoaderWithPerm("EditAPIKeys", async (args) => {
-
-	const { params, request } = args;
+export async function loader({ params, request }: LoaderFunctionArgs) {
+	const userSession = await requirePermission(request, PERMISSIONS.API_KEYS_EDIT);
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
+	const id = params.id ?? "";
+	const currentUserId = userSession.user?.id ?? "";
 
-	const item = await getItem2(params, apiKeyById);
+	const item = await makeGetApiKeyByIdUseCase().execute({
+		id,
+		countryAccountsId,
+		requestingUserId: currentUserId,
+	});
 	if (!item) {
 		throw new Response("Not Found", { status: 404 });
 	}
-	if (item.countryAccountsId !== countryAccountsId) {
-		throw new Response("Unauthorized access", { status: 401 });
-	}
-	const auth = authLoaderGetAuth(args);
-	if (item.managedByUserId != auth.user.id) {
-		item.secret = "Secret is only visible to the user who owns this API key";
-	}
-
-	// Get token assignment and validation status
-	const auditResult = await ApiSecurityAudit.auditSingleKeyEnhanced(item);
-	const assignment = TokenAssignmentParser.getTokenAssignment(item);
-
-	// Add status information to the item
-	const enhancedItem = {
-		...item,
-		assignedUserId: assignment.assignedUserId,
-		cleanName: assignment.cleanName,
-		isActive: auditResult.issues.length === 0,
-		tokenType: assignment.isUserAssigned ? "user_assigned" : "admin_managed",
-		issues: auditResult.issues,
-		assignedUserEmail: auditResult.assignedUserEmail,
-	};
 
 	return {
-		item: enhancedItem,
+		item,
 	};
-});
+}
 
 export default function Screen() {
 	const ld = useLoaderData<typeof loader>();
@@ -60,6 +38,6 @@ export default function Screen() {
 	}
 
 	return ApiKeyView({
-		item: ld.item,
+		item: ld.item as any,
 	});
 }

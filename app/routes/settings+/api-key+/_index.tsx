@@ -1,116 +1,41 @@
 import { useLoaderData } from "react-router";
-
-import { apiKeyTable } from "~/drizzle/schema/apiKeyTable";
-
-import { dr } from "~/db.server";
-
-import { createPaginatedLoader } from "~/backend.server/handlers/view";
-
-import { desc, eq } from "drizzle-orm";
+import type { LoaderFunctionArgs } from "react-router";
 import { DataMainLinks } from "~/frontend/data_screen";
 import { MainContainer } from "~/frontend/container";
 import { Pagination } from "~/frontend/pagination/view";
 
 import { ActionLinks } from "~/frontend/form";
 
-import { authLoaderWithPerm } from "~/utils/auth";
+import type { ApiKeyListItem } from "~/modules/api-keys/domain/entities/api-key";
+import { makeListApiKeysUseCase } from "~/modules/api-keys/api-keys-module.server";
+import { PERMISSIONS } from "~/frontend/user/roles";
+import { requirePermission } from "~/utils/auth";
 import { route } from "~/frontend/api_key";
 import { formatDate } from "~/utils/date";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
-import {
-	ApiSecurityAudit,
-	TokenAssignmentParser,
-} from "~/backend.server/models/api_key";
 
 import { LangLink } from "~/utils/link";
 
 // Define interface for enhanced API key with status information
-interface EnhancedApiKey {
-	id: string;
-	name: string;
-	createdAt: Date;
-	managedByUserId: string;
-	managedByUser: { email: string };
-	assignedUserId?: string | null;
-	cleanName?: string;
-	isActive: boolean;
-	tokenType?: "user_assigned" | "admin_managed";
-	issues: string[];
-}
+type EnhancedApiKey = ApiKeyListItem;
 
-export const loader = authLoaderWithPerm("EditAPIKeys", async (args) => {
-	const { request } = args;
+export async function loader({ request }: LoaderFunctionArgs) {
+	await requirePermission(request, PERMISSIONS.API_KEYS_EDIT);
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
+	const url = new URL(request.url);
+	const pageRaw = parseInt(url.searchParams.get("page") || "1", 10);
+	const pageSizeRaw = parseInt(url.searchParams.get("pageSize") || "50", 10);
+	const page = Math.max(1, Number.isNaN(pageRaw) ? 1 : pageRaw);
+	const pageSize = Math.max(1, Number.isNaN(pageSizeRaw) ? 50 : pageSizeRaw);
 
-	return createPaginatedLoader(
-		async (offsetLimit) => {
-			// Fetch API keys with user information
-			const keys = await dr.query.apiKeyTable.findMany({
-				...offsetLimit,
-				columns: {
-					id: true,
-					createdAt: true,
-					name: true,
-					managedByUserId: true,
-				},
-				where: eq(apiKeyTable.countryAccountsId, countryAccountsId),
-				orderBy: [desc(apiKeyTable.name)],
-				with: {
-					managedByUser: true,
-				},
-			});
+	const data = await makeListApiKeysUseCase().execute({
+		countryAccountsId,
+		page,
+		pageSize,
+	});
 
-			// Enhance keys with status information
-			const enhancedKeys = await Promise.all(
-				keys.map(async (key) => {
-					// Get complete key data first to ensure all required properties are available
-					const completeKey = await dr.query.apiKeyTable.findFirst({
-						where: eq(apiKeyTable.id, key.id),
-						with: {
-							managedByUser: true,
-						},
-					});
-
-					if (!completeKey) {
-						// Create a default enhanced key if complete key not found
-						return {
-							...key,
-							assignedUserId: null,
-							cleanName: key.name,
-							isActive: false,
-							tokenType: "admin_managed" as const,
-							issues: ["Key data incomplete"],
-						} as EnhancedApiKey;
-					}
-
-					// Get token assignment and validation status
-					const auditResult =
-						await ApiSecurityAudit.auditSingleKeyEnhanced(completeKey);
-					const assignment =
-						TokenAssignmentParser.getTokenAssignment(completeKey);
-
-					// Return properly typed enhanced key
-					return {
-						...key,
-						assignedUserId: assignment.assignedUserId,
-						cleanName: assignment.cleanName,
-						isActive: auditResult.issues.length === 0,
-						tokenType: assignment.isUserAssigned
-							? "user_assigned"
-							: "admin_managed",
-						issues: auditResult.issues,
-					} as EnhancedApiKey;
-				}),
-			);
-
-			return enhancedKeys as EnhancedApiKey[];
-		},
-		await dr.$count(
-			apiKeyTable,
-			eq(apiKeyTable.countryAccountsId, countryAccountsId),
-		),
-	)(args);
-});
+	return { data };
+}
 
 // Define a custom interface for our ApiKeyDataScreen props
 interface ApiKeyDataScreenProps {

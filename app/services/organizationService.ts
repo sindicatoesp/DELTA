@@ -1,5 +1,6 @@
-import { OrganizationRepository } from "~/db/queries/organizationRepository";
-import { dr } from "~/db.server";
+import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
+
+const organizationRepository = makeOrganizationRepository();
 
 interface GetOrganizationsPageDataArgs {
 	request: Request;
@@ -34,7 +35,7 @@ export const OrganizationService = {
 		const search = (url.searchParams.get("search") || "").trim();
 		const filters = { search };
 
-		const data = await OrganizationRepository.listByCountryAccountsId({
+		const data = await organizationRepository.listByCountryAccountsId({
 			countryAccountsId,
 			search,
 			pagination: {
@@ -67,7 +68,7 @@ export const OrganizationService = {
 				}
 
 				const duplicate =
-					await OrganizationRepository.getByNameAndCountryAccountsId(
+					await organizationRepository.findByNameAndCountryAccountsId(
 						name,
 						countryAccountsId,
 					);
@@ -78,15 +79,10 @@ export const OrganizationService = {
 					};
 				}
 
-				const result = await dr.transaction((tx) =>
-					OrganizationRepository.create(
-						{
-							name,
-							countryAccountsId,
-						},
-						tx,
-					),
-				);
+				const result = await organizationRepository.create({
+					name,
+					countryAccountsId,
+				});
 
 				if (!result) {
 					return { ok: false, error: "Unable to create organization" };
@@ -110,13 +106,13 @@ export const OrganizationService = {
 					};
 				}
 
-				const existing = await OrganizationRepository.getById(id);
+				const existing = await organizationRepository.findById(id);
 				if (!existing || existing.countryAccountsId !== countryAccountsId) {
 					throw new Response("Unauthorized access", { status: 401 });
 				}
 
 				const duplicate =
-					await OrganizationRepository.getByNameAndCountryAccountsId(
+					await organizationRepository.findByNameAndCountryAccountsId(
 						name,
 						countryAccountsId,
 					);
@@ -127,9 +123,7 @@ export const OrganizationService = {
 					};
 				}
 
-				const result = await dr.transaction((tx) =>
-					OrganizationRepository.updateById(id, { name }, tx),
-				);
+				const result = await organizationRepository.updateById(id, { name });
 
 				if (!result) {
 					return { ok: false, error: "Unable to update organization" };
@@ -145,12 +139,12 @@ export const OrganizationService = {
 					return { ok: false, error: "Organization id is required" };
 				}
 
-				const existing = await OrganizationRepository.getById(id);
+				const existing = await organizationRepository.findById(id);
 				if (!existing || existing.countryAccountsId !== countryAccountsId) {
 					throw new Response("Unauthorized access", { status: 401 });
 				}
 
-				const result = await OrganizationRepository.deleteById(id);
+				const result = await organizationRepository.deleteById(id);
 				if (!result) {
 					return { ok: false, error: "Unable to delete organization" };
 				}

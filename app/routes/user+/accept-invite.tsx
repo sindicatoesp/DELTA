@@ -274,8 +274,34 @@ export default function Screen() {
 
 						{/* Password */}
 						<div className="flex flex-col gap-2">
-							<label htmlFor="password" className="font-semibold text-gray-800">
-								{"Confirm password"}
+							<label htmlFor="password" className="font-semibold text-gray-800">								{"Password"}
+								<span className="text-red-500"> *</span>
+							</label>
+
+							<Password
+								id="password"
+								name="password"
+								toggleMask
+								feedback={true}
+								minLength={12}
+								required
+								invalid={!!errors.password}
+								pt={{
+									iconField: { root: { className: "w-full" } },
+									input: { className: "w-full" },
+								}}
+							/>
+
+							{errors.password && (
+								<small className="text-sm text-red-500">
+									{errors.password}
+								</small>
+							)}
+						</div>
+
+						{/* Confirm Password */}
+						<div className="flex flex-col gap-2">
+							<label htmlFor="passwordRepeat" className="font-semibold text-gray-800">								{"Confirm password"}
 								<span className="text-red-500"> *</span>
 							</label>
 

@@ -8,7 +8,7 @@ import {
 } from "~/backend.server/handlers/form/form";
 import { deleteByIdForStringId } from "./common";
 import { randomBytes } from "crypto";
-import { ApiKeyRepository } from "~/db/queries/apiKeyRepository";
+import { makeApiKeyRepository } from "~/modules/api-keys/api-keys-module.server";
 
 import { userTable } from "~/drizzle/schema";
 
@@ -97,9 +97,10 @@ export async function apiAuth(request: Request): Promise<SelectApiKey> {
 	if (!authToken) {
 		throw new Response("Unauthorized", { status: 401 });
 	}
-	const key = await ApiKeyRepository.getBySecret(authToken);
+	const apiKeyRepository = makeApiKeyRepository();
+	const key = await apiKeyRepository.getBySecret(authToken);
 
-	if (!key) {
+	if (!key || key.length === 0) {
 		throw new Response("Unauthorized", { status: 401 });
 	}
 

@@ -10,6 +10,10 @@ function buildOrganizationRepository() {
 	return new DrizzleOrganizationRepository(getOrganizationDb());
 }
 
+export function makeOrganizationRepository(): DrizzleOrganizationRepository {
+	return buildOrganizationRepository();
+}
+
 export function makeListOrganizationsUseCase(): ListOrganizationsUseCase {
 	return new ListOrganizationsUseCase(buildOrganizationRepository());
 }

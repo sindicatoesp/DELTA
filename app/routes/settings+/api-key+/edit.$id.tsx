@@ -1,7 +1,4 @@
 import {
-	apiKeyCreate,
-	apiKeyUpdate,
-	apiKeyById,
 	UserCentricApiKeyFields,
 } from "~/backend.server/models/api_key";
 
@@ -12,89 +9,45 @@ import { route } from "~/frontend/api_key";
 import {
 	authActionGetAuth,
 	authActionWithPerm,
-	authLoaderWithPerm,
 } from "~/utils/auth";
 import {
 	getCountryAccountsIdFromSession,
 	getUserRoleFromSession,
 } from "~/utils/session";
-import { dr } from "~/db.server";
-import { roleHasPermission } from "~/frontend/user/roles";
-import { userCountryAccountsTable } from "~/drizzle/schema/userCountryAccountsTable";
-import { eq } from "drizzle-orm";
+import { PERMISSIONS } from "~/frontend/user/roles";
+import {
+	makeGetApiKeyFormDataUseCase,
+	makeSaveApiKeyUseCase,
+} from "~/modules/api-keys/api-keys-module.server";
+import { requirePermission } from "~/utils/auth";
 
 
 
 import { useLoaderData } from "react-router";
+import type { LoaderFunctionArgs } from "react-router";
 
 
-export const loader = authLoaderWithPerm("EditAPIKeys", async (args) => {
-
-	const { params, request } = args;
-	// Get user role from session and check if they have EditAPIKeys permission
-	const userRole = await getUserRoleFromSession(request);
-	const isAdmin = roleHasPermission(userRole, "EditAPIKeys");
-
-	// Debug info
-	// console.log("DEBUG - User role:", userRole);
-	// console.log("DEBUG - Is admin with EditAPIKeys permission:", isAdmin);
-
-	// Get the API key if editing
-	let item = null;
-	if (params.id !== "new" && params.id) {
-		item = await apiKeyById(params.id);
-	}
-
-	// Get users for admin selection
-	const userOptions: Array<{ value: string; label: string }> = [];
-
-	// Get the current country account ID from the session
+export async function loader({ params, request }: LoaderFunctionArgs) {
+	const userSession = await requirePermission(request, PERMISSIONS.API_KEYS_EDIT);
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
-	// console.log("DEBUG - Current country account ID:", countryAccountsId);
+	const userRole = await getUserRoleFromSession(request);
+	const currentUserId = userSession.user?.id ?? "";
 
-	// Get the current user ID from the userSession
-	const currentUserId = (args as any).userSession?.user?.id;
-	// console.log("DEBUG - Current user ID:", currentUserId);
+	const data = await makeGetApiKeyFormDataUseCase().execute({
+		id: params.id,
+		countryAccountsId,
+		currentUserId,
+		userRole: userRole ?? null,
+	});
 
-	if (isAdmin) {
-		// Get users that belong to the same country account (tenant isolation)
-		const usersInSameAccount = await dr.query.userCountryAccountsTable.findMany({
-			where: eq(userCountryAccountsTable.countryAccountsId, countryAccountsId),
-			with: {
-				user: true,
-			},
-		});
-
-		// console.log("DEBUG - Users in same account count:", usersInSameAccount.length);
-
-		// Filter to only include verified users and exclude the current admin user
-		const verifiedUsers = usersInSameAccount.filter(
-			(ua) => ua.user.emailVerified && ua.user.id !== currentUserId,
-		);
-		// console.log("DEBUG - Verified users (excluding current admin) count:", verifiedUsers.length);
-
-		// Create options for the dropdown
-		verifiedUsers.forEach((ua) => {
-			const user = ua.user;
-			if (user.id && user.email && user.firstName && user.lastName) {
-				userOptions.push({
-					value: user.id,
-					label: `${user.firstName} ${user.lastName} (${user.email})`,
-				});
-			}
-		});
+	if (params.id && params.id !== "new" && !data.item) {
+		throw new Response("Not Found", { status: 404 });
 	}
 
-	// console.log("DEBUG - User options for dropdown:", userOptions);
+	return data;
+}
 
-	return {
-		item,
-		userOptions,
-		isAdmin,
-	};
-});
-
-export const action = authActionWithPerm("EditAPIKeys", async (actionArgs) => {
+export const action = authActionWithPerm(PERMISSIONS.API_KEYS_EDIT, async (actionArgs) => {
 
 	const auth = authActionGetAuth(actionArgs);
 	const { request } = actionArgs;
@@ -104,33 +57,16 @@ export const action = authActionWithPerm("EditAPIKeys", async (actionArgs) => {
 	return formSave<UserCentricApiKeyFields>({
 		actionArgs,
 		fieldsDef: fieldsDef(),
-		save: async (tx, id, fields) => {
-			// Prepare data with user ID and country account
-			const data = {
-				...fields,
-				assignedToUserId: fields.assignedToUserId || undefined,
-				managedByUserId: auth.user?.id,
+		save: async (_tx, id, fields) => {
+			const result = await makeSaveApiKeyUseCase().execute({
+				id,
 				countryAccountsId,
-			};
+				managedByUserId: auth.user?.id || "",
+				name: fields.name,
+				assignedToUserId: fields.assignedToUserId || undefined,
+			});
 
-			// Create or update based on ID
-			if (!id) {
-				return apiKeyCreate(tx, data);
-			} else {
-				// For update, we need to use only the fields that apiKeyUpdate expects
-				// The apiKeyUpdate function only requires the name field
-				return apiKeyUpdate(tx, id, {
-					name: fields.assignedToUserId
-						? `${fields.name}__ASSIGNED_USER_${fields.assignedToUserId}`
-						: fields.name,
-					// These fields are required by the ApiKeyFields type but not used in the update function
-					updatedAt: null,
-					createdAt: new Date(), // Placeholder, not used
-					secret: "", // Placeholder, not used
-					managedByUserId: auth.user?.id || "",
-					countryAccountsId: countryAccountsId,
-				});
-			}
+			return { ok: true, id: result.id };
 		},
 		redirectTo: (id) => `${route}/${id}`,
 	});
