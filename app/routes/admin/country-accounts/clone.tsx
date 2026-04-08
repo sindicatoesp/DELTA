@@ -7,9 +7,9 @@ import { InputText } from "primereact/inputtext";
 import { authActionWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 import {
-    CountryAccountService,
-    CountryAccountValidationError,
-} from "~/services/countryAccountService";
+    makeCloneCountryAccountUseCase,
+} from "~/modules/country-account/country-account-module.server";
+import { CountryAccountValidationError } from "~/modules/country-account/application/errors/country-account-error";
 
 type ActionData = {
     errors: string[];
@@ -24,7 +24,10 @@ export const action = authActionWithPerm(
         const shortDescription = formData.get("shortDescription") as string;
 
         try {
-            await CountryAccountService.clone(countryAccountId, shortDescription);
+            await makeCloneCountryAccountUseCase().execute({
+                countryAccountId,
+                shortDescription,
+            });
 
             return redirectWithMessage(actionArgs, "/admin/country-accounts", {
                 type: "success",

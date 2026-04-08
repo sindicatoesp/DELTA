@@ -57,7 +57,7 @@ export const loader = authLoaderWithPerm("EditData", async (actionArgs) => {
 			// Delete disaster record sector relation
 			await deleteRecordsDeleteById(xId).catch(console.error);
 
-			return redirect("/disaster-record/edit/" + params.disRecId);
+			return redirect("/disaster-record/" + params.disRecId + "/edit");
 		} catch (e) {
 			console.log(e);
 			throw e;

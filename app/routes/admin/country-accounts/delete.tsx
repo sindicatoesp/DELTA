@@ -11,7 +11,7 @@ import { Button } from "primereact/button";
 import { Message } from "primereact/message";
 
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
-import { CountryAccountService } from "~/services/countryAccountService";
+import { makeDeleteCountryAccountUseCase } from "~/modules/country-account/country-account-module.server";
 
 
 import { CountryAccountsRepository } from "~/db/queries/countryAccountsRepository";
@@ -41,7 +41,9 @@ export const action = authActionWithPerm(
 
 
         try {
-            await CountryAccountService.deleteInstance(id);
+            await makeDeleteCountryAccountUseCase().execute({
+                countryAccountId: id,
+            });
             return redirectWithMessage(actionArgs, "/admin/country-accounts", {
                 type: "success",
                 text: "Instance has been deleted successfully",

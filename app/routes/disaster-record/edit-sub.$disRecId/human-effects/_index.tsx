@@ -98,7 +98,7 @@ export default function Screen() {
 		<MainContainer
 			title={"Human effects"}
 		>
-			<LangLink lang="en" to={"/disaster-record/edit/" + ld.recordId}
+			<LangLink lang="en" to={"/disaster-record/" + ld.recordId + "/edit"}
 				className="text-[#00afae] hover:text-blue-800 underline mb-4 inline-block">
 				{"Back to disaster record"}
 			</LangLink>

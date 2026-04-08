@@ -119,7 +119,7 @@ export default function Data() {
 
 	return DataScreen({
 		headerElement: (
-			<LangLink lang="en" to={"/disaster-record/edit/" + ld.recordId}>
+			<LangLink lang="en" to={"/disaster-record/" + ld.recordId + "/edit"}>
 				{"Back to disaster record"}
 			</LangLink>
 		),

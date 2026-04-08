@@ -24,9 +24,9 @@ import {
 import { COUNTRY_TYPE, CountryType } from "~/drizzle/schema/countriesTable";
 import { userCountryAccountsTable } from "~/drizzle/schema/userCountryAccountsTable";
 import {
-    CountryAccountService,
-    CountryAccountValidationError,
-} from "~/services/countryAccountService";
+    makeUpdateCountryAccountStatusUseCase,
+} from "~/modules/country-account/country-account-module.server";
+import { CountryAccountValidationError } from "~/modules/country-account/application/errors/country-account-error";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 
@@ -84,11 +84,11 @@ export const action = authActionWithPerm(
 
         try {
             // Update status and short description
-            await CountryAccountService.updateStatus(
+            await makeUpdateCountryAccountStatusUseCase().execute({
                 id,
-                Number(status),
+                status: Number(status) as CountryAccountStatus,
                 shortDescription,
-            );
+            });
             return redirectWithMessage(actionArgs, "/admin/country-accounts", {
                 type: "info",
                 text: "Country account updated successfully",

@@ -83,7 +83,7 @@ function Common({ loaderData }: CommonProps) {
 			<h1>
 				{"Division details"}
 			</h1>
-			<LangLink lang="en" to={`/settings/geography/edit/${division.id}`}>
+			<LangLink lang="en" to={`/settings/geography/${division.id}/edit`}>
 				{"Edit"}
 			</LangLink>
 			<p>

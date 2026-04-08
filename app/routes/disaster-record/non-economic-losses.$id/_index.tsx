@@ -97,7 +97,7 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 
 		try {
 			await upsertRecord(formRecord).catch(console.error);
-			return redirect("/disaster-record/edit/" + params.id);
+			return redirect("/disaster-record/" + params.id + "/edit");
 		} catch (e) {
 			console.log(e);
 			throw e;
@@ -136,7 +136,7 @@ export default function Screen() {
 			<>
 				<a
 					data-discover="true"
-					href={`/disaster-record/edit/${loaderData.disRecId}`}
+					href={`/disaster-record/${loaderData.disRecId}/edit`}
 				>
 					{"Back to disaster record"}
 				</a>

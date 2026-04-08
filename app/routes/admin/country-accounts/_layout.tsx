@@ -170,7 +170,7 @@ export default function CountryAccountsLayout() {
                     tooltip={"Edit"}
                     onClick={() =>
                         navigate(
-                            `/admin/country-accounts/edit/${countryAccount.id}`,
+                            `/admin/country-accounts/${countryAccount.id}/edit`,
                         )
                     }
                     className="p-2"
@@ -186,7 +186,7 @@ export default function CountryAccountsLayout() {
                         className="p-2"
                         onClick={() =>
                             navigate(
-                                `/admin/country-accounts/resend-invitation/${countryAccount.id}`,
+                                `/admin/country-accounts/${countryAccount.id}/resend-invitation`,
                             )
                         }
                     >
@@ -200,7 +200,7 @@ export default function CountryAccountsLayout() {
                         tooltip="Clone Instance"
                         onClick={() =>
                             navigate(
-                                `/admin/country-accounts/clone/${countryAccount.id}`,
+                                `/admin/country-accounts/${countryAccount.id}/clone`,
                             )
                         }
                         className="p-2"
@@ -216,7 +216,7 @@ export default function CountryAccountsLayout() {
                         severity="danger"
                         onClick={() =>
                             navigate(
-                                `/admin/country-accounts/delete/${countryAccount.id}`,
+                                `/admin/country-accounts/${countryAccount.id}/delete`,
                             )
                         }
                         className="p-2"

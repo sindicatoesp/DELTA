@@ -16,9 +16,9 @@ import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 import { CountryAccountsRepository } from "~/db/queries/countryAccountsRepository";
 import {
-    CountryAccountService,
-    CountryAccountValidationError,
-} from "~/services/countryAccountService";
+    makeResendCountryAccountInvitationUseCase,
+} from "~/modules/country-account/country-account-module.server";
+import { CountryAccountValidationError } from "~/modules/country-account/application/errors/country-account-error";
 
 type ActionData = { errors: string[] };
 
@@ -49,7 +49,9 @@ export const action = authActionWithPerm(
 
 
         try {
-            await CountryAccountService.resendInvitation(id);
+            await makeResendCountryAccountInvitationUseCase().execute({
+                countryAccountId: id,
+            });
 
             return redirectWithMessage(actionArgs, "/admin/country-accounts", {
                 type: "success",

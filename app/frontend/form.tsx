@@ -2024,7 +2024,7 @@ export function ActionLinks(props: ActionLinksProps) {
 	return (
 		<div style={{ display: "flex", justifyContent: "space-evenly" }}>
 			{!props.hideEditButton && (
-				<LangLink lang={'en'} to={`${props.route}/edit/${props.id}`}>
+				<LangLink lang={'en'} to={`${props.route}/${props.id}/edit`}>
 					<button
 						type="button"
 						className="mg-button mg-button-table"
@@ -2052,7 +2052,7 @@ export function ActionLinks(props: ActionLinksProps) {
 			{!props.hideDeleteButton && canDelete(props.approvalStatus, ctx.user) && (
 				<DeleteButton
 					key={props.id}
-					action={('/' + String(`${props.route}/delete/${props.id}`).replace(/^\/+/, ''))}
+					action={('/' + String(`${props.route}/${props.id}/delete`).replace(/^\/+/, ''))}
 					useIcon
 					confirmMessage={props.deleteMessage}
 					title={props.deleteTitle}

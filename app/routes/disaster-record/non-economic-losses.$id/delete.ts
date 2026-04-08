@@ -26,7 +26,7 @@ export const loader = authLoaderWithPerm("EditData", async (actionArgs) => {
 			// Delete noneco losses by id
 			await nonecoLossesDeleteById(xId).catch(console.error);
 
-			return redirect("/disaster-record/edit/" + params.id);
+			return redirect("/disaster-record/" + params.id + "/edit");
 		} catch (e) {
 			console.log(e);
 			throw e;

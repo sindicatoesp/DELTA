@@ -194,7 +194,7 @@ export function DivisionsTable({ items, langs }: DivisionsTableProps) {
 								&nbsp;
 								<LangLink
 									lang="en"
-									to={`/settings/geography/edit/${item.id}`}
+									to={`/settings/geography/${item.id}/edit`}
 								>
 									{"Edit"}
 								</LangLink>
@@ -326,7 +326,7 @@ export default function Screen() {
 											noSelect={true}
 											search={true}
 											expanded={true}
-											itemLink="/settings/geography/edit/[id]?view=tree"
+											itemLink="/settings/geography/[id]/edit?view=tree"
 											expandByDefault={true}
 										/>
 									</div>

@@ -14,7 +14,7 @@ import {
 	cleanupTestAssets,
 	createTestDamageRecord,
 } from "./test-helpers";
-import { action as deleteAction } from "~/routes/settings/assets/delete.$id";
+import { action as deleteAction } from "~/routes/settings/assets/delete";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-delete@");
@@ -24,7 +24,7 @@ setupSessionMocks();
 async function callAction(params: { id: string }) {
 	const form = new URLSearchParams({ _action: "delete" });
 	const request = new Request(
-		`${TEST_BASE_URL}/en/settings/assets/delete/${params.id}`,
+		`${TEST_BASE_URL}/en/settings/assets/${params.id}/delete`,
 		{
 			method: "POST",
 			body: form,

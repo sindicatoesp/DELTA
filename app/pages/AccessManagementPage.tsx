@@ -97,7 +97,7 @@ export default function AccessManagementPage() {
             type="button"
             link
             label={`${item.user.firstName} ${item.user.lastName}`}
-            onClick={() => navigate(`/settings/access-mgmnt/edit/${item.user.id}`)}
+            onClick={() => navigate(`/settings/access-mgmnt/${item.user.id}/edit`)}
         />
     );
 
@@ -121,7 +121,7 @@ export default function AccessManagementPage() {
                 type="button"
                 text
                 aria-label={"Edit"}
-                onClick={() => navigate(`/settings/access-mgmnt/edit/${item.user.id}`)}
+                onClick={() => navigate(`/settings/access-mgmnt/${item.user.id}/edit`)}
             >
                 <i className="pi pi-pencil" aria-hidden="true" />
             </Button>
@@ -132,7 +132,9 @@ export default function AccessManagementPage() {
                     severity="help"
                     aria-label={"Resend invitation email"}
                     title={"Resend invitation email"}
-                    onClick={() => navigate(`/settings/access-mgmnt/resend-invitation/${item.user.id}`)}
+                    onClick={() =>
+                        navigate(`/settings/access-mgmnt/${item.user.id}/resend-invitation`)
+                    }
                 >
                     <i className="pi pi-envelope" aria-hidden="true" />
                 </Button>
@@ -142,7 +144,7 @@ export default function AccessManagementPage() {
                 text
                 severity="danger"
                 aria-label={"Delete User"}
-                onClick={() => navigate(`/settings/access-mgmnt/delete/${item.user.id}`)}
+                onClick={() => navigate(`/settings/access-mgmnt/${item.user.id}/delete`)}
             >
                 <i className="pi pi-trash" aria-hidden="true" />
             </Button>

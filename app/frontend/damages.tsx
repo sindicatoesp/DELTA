@@ -261,7 +261,7 @@ export function DamagesForm(props: DamagesFormProps) {
 									lang="en"
 									target="_blank"
 									to={
-										"/settings/assets/edit/new?sectorId=" +
+										"/settings/assets/new/edit?sectorId=" +
 										props.fields.sectorId
 									}
 								>

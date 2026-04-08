@@ -22,9 +22,9 @@ import {
 } from "~/drizzle/schema/countryAccountsTable";
 import { COUNTRY_TYPE, CountryType } from "~/drizzle/schema/countriesTable";
 import {
-	CountryAccountService,
-	CountryAccountValidationError,
-} from "~/services/countryAccountService";
+	makeCreateCountryAccountUseCase,
+} from "~/modules/country-account/country-account-module.server";
+import { CountryAccountValidationError } from "~/modules/country-account/application/errors/country-account-error";
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 import { redirectWithMessage } from "~/utils/session";
 
@@ -60,13 +60,13 @@ export const action = authActionWithPerm(
 		const countryAccountType = formData.get("countryAccountTypeChoice") as string;
 
 		try {
-			await CountryAccountService.create(
+			await makeCreateCountryAccountUseCase().execute({
 				countryId,
 				shortDescription,
 				email,
-				Number(status),
+				status: Number(status),
 				countryAccountType,
-			);
+			});
 			return redirectWithMessage(actionArgs, "/admin/country-accounts", {
 				type: "success",
 				text: "Country account created successfully",

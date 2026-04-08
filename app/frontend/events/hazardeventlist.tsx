@@ -34,7 +34,7 @@ function HazardousEventActionLinks(props: {
 	return (
 		<>
 			{!props.hideEditButton && (
-				<LangLink lang={"en"} to={`${props.route}/edit/${props.id}`}>
+				<LangLink lang={"en"} to={`${props.route}/${props.id}/edit`}>
 					<button
 						type="button"
 						className="mg-button mg-button-table"
@@ -63,7 +63,7 @@ function HazardousEventActionLinks(props: {
 				props.approvalStatus !== "validated" &&
 				props.approvalStatus !== "published" && (
 					<HazardousEventDeleteButton
-						action={`${props.route}/delete/${props.id}`}
+						action={`${props.route}/${props.id}/delete`}
 						useIcon
 					/>
 				)}

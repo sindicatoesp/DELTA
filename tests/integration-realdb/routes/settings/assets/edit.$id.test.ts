@@ -16,7 +16,7 @@ import {
 import {
 	loader as editLoader,
 	action as editAction,
-} from "~/routes/settings/assets/edit.$id";
+} from "~/routes/settings/assets/edit";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-edit@");
@@ -25,7 +25,7 @@ setupSessionMocks();
 
 async function callLoader(params: { id: string }) {
 	const request = new Request(
-		`${TEST_BASE_URL}/en/settings/assets/edit/${params.id}`,
+		`${TEST_BASE_URL}/en/settings/assets/${params.id}/edit`,
 	);
 	return await editLoader({
 		request,
@@ -40,7 +40,7 @@ async function callAction(
 ) {
 	const form = new URLSearchParams(formData);
 	const request = new Request(
-		`${TEST_BASE_URL}/en/settings/assets/edit/${params.id}`,
+		`${TEST_BASE_URL}/en/settings/assets/${params.id}/edit`,
 		{
 			method: "POST",
 			body: form,

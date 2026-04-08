@@ -28,18 +28,18 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 			route("access-mgmnt", "routes/settings/access-mgmnt/_layout.tsx", () => {
 				route("", "routes/settings/access-mgmnt/_index.tsx");
 				route("new", "routes/settings/access-mgmnt/new.tsx");
-				route("edit/:id", "routes/settings/access-mgmnt/edit.$id.tsx");
-				route("delete/:id", "routes/settings/access-mgmnt/delete.$id.tsx");
+				route(":id/edit", "routes/settings/access-mgmnt/edit.tsx");
+				route(":id/delete", "routes/settings/access-mgmnt/delete.tsx");
 				route(
-					"resend-invitation/:id",
-					"routes/settings/access-mgmnt/resend-invitation.$id.tsx",
+					":id/resend-invitation",
+					"routes/settings/access-mgmnt/resend-invitation.tsx",
 				);
 			});
 
 			route("assets", "routes/settings/assets/_index.tsx");
 			route("assets/:id", "routes/settings/assets/$id.tsx");
-			route("assets/edit/:id", "routes/settings/assets/edit.$id.tsx");
-			route("assets/delete/:id", "routes/settings/assets/delete.$id.tsx");
+			route("assets/:id/edit", "routes/settings/assets/edit.tsx");
+			route("assets/:id/delete", "routes/settings/assets/delete.tsx");
 			route("assets/csv-import", "routes/settings/assets/csv-import.tsx");
 			route("assets/csv-export", "routes/settings/assets/csv-export.ts");
 			route(
@@ -49,7 +49,7 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 
 			route("geography", "routes/settings/geography/_index.tsx");
 			route("geography/:id", "routes/settings/geography/$id.tsx");
-			route("geography/edit/:id", "routes/settings/geography/edit.$id.tsx");
+			route("geography/:id/edit", "routes/settings/geography/edit.tsx");
 			route("geography/upload", "routes/settings/geography/upload.tsx");
 			route("geography/csv-export", "routes/settings/geography/csv-export.ts");
 
@@ -100,12 +100,12 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 			() => {
 				route("", "routes/admin/country-accounts/_index.tsx");
 				route("new", "routes/admin/country-accounts/new.tsx");
-				route("edit/:id", "routes/admin/country-accounts/edit.$id.tsx");
-				route("delete/:id", "routes/admin/country-accounts/delete.$id.tsx");
-				route("clone/:id", "routes/admin/country-accounts/clone.$id.tsx");
+				route(":id/edit", "routes/admin/country-accounts/edit.tsx");
+				route(":id/delete", "routes/admin/country-accounts/delete.tsx");
+				route(":id/clone", "routes/admin/country-accounts/clone.tsx");
 				route(
-					"resend-invitation/:id",
-					"routes/admin/country-accounts/resend-invitation.$id.tsx",
+					":id/resend-invitation",
+					"routes/admin/country-accounts/resend-invitation.tsx",
 				);
 			},
 		);
@@ -171,11 +171,11 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		route("examples/dev-example1", "routes/examples/dev-example1/_index.tsx");
 		route("examples/dev-example1/:id", "routes/examples/dev-example1/$id.tsx");
 		route(
-			"examples/dev-example1/edit/:id",
+			"examples/dev-example1/:id/edit",
 			"routes/examples/dev-example1/edit.$id.tsx",
 		);
 		route(
-			"examples/dev-example1/delete/:id",
+			"examples/dev-example1/:id/delete",
 			"routes/examples/dev-example1/delete.$id.tsx",
 		);
 		route(
@@ -251,11 +251,8 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		route("hazardous-event/new", "routes/hazardous-event/new.tsx");
 		route("hazardous-event/picker", "routes/hazardous-event/picker.tsx");
 		route("hazardous-event/:id", "routes/hazardous-event/$id.tsx");
-		route("hazardous-event/edit/:id", "routes/hazardous-event/edit.$id.tsx");
-		route(
-			"hazardous-event/delete/:id",
-			"routes/hazardous-event/delete.$id.tsx",
-		);
+		route("hazardous-event/:id/edit", "routes/hazardous-event/edit.tsx");
+		route("hazardous-event/:id/delete", "routes/hazardous-event/delete.tsx");
 		route(
 			"hazardous-event/csv-import",
 			"routes/hazardous-event/csv-import.tsx",
@@ -280,8 +277,8 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		route("disaster-event", "routes/disaster-event/_index.tsx");
 		route("disaster-event/csv-export", "routes/disaster-event/csv-export.ts");
 		route("disaster-event/csv-import", "routes/disaster-event/csv-import.tsx");
-		route("disaster-event/delete/:id", "routes/disaster-event/delete.$id.tsx");
-		route("disaster-event/edit/:id", "routes/disaster-event/edit.$id.tsx");
+		route("disaster-event/:id/delete", "routes/disaster-event/delete.tsx");
+		route("disaster-event/:id/edit", "routes/disaster-event/edit.tsx");
 		route(
 			"disaster-event/file-pre-upload",
 			"routes/disaster-event/file-pre-upload.tsx",
@@ -313,11 +310,8 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 			"disaster-record/csv-import",
 			"routes/disaster-record/csv-import.tsx",
 		);
-		route(
-			"disaster-record/delete/:id",
-			"routes/disaster-record/delete.$id.tsx",
-		);
-		route("disaster-record/edit/:id", "routes/disaster-record/edit.$id.tsx");
+		route("disaster-record/:id/delete", "routes/disaster-record/delete.tsx");
+		route("disaster-record/:id/edit", "routes/disaster-record/edit.tsx");
 		route(
 			"disaster-record/edit-sec/:disRecId",
 			"routes/disaster-record/edit-sec.$disRecId/_index.tsx",
@@ -343,11 +337,11 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 			"routes/disaster-record/edit-sub.$disRecId/damages/csv-import.tsx",
 		);
 		route(
-			"disaster-record/edit-sub/:disRecId/damages/delete/:id",
+			"disaster-record/edit-sub/:disRecId/damages/:id/delete",
 			"routes/disaster-record/edit-sub.$disRecId/damages/delete.$id.tsx",
 		);
 		route(
-			"disaster-record/edit-sub/:disRecId/damages/edit/:id",
+			"disaster-record/edit-sub/:disRecId/damages/:id/edit",
 			"routes/disaster-record/edit-sub.$disRecId/damages/edit.$id.tsx",
 		);
 		route(
@@ -367,11 +361,11 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 			"routes/disaster-record/edit-sub.$disRecId/disruptions/csv-import.tsx",
 		);
 		route(
-			"disaster-record/edit-sub/:disRecId/disruptions/delete/:id",
+			"disaster-record/edit-sub/:disRecId/disruptions/:id/delete",
 			"routes/disaster-record/edit-sub.$disRecId/disruptions/delete.$id.tsx",
 		);
 		route(
-			"disaster-record/edit-sub/:disRecId/disruptions/edit/:id",
+			"disaster-record/edit-sub/:disRecId/disruptions/:id/edit",
 			"routes/disaster-record/edit-sub.$disRecId/disruptions/edit.$id.tsx",
 		);
 		route(
@@ -419,11 +413,11 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 			"routes/disaster-record/edit-sub.$disRecId/losses/csv-import.tsx",
 		);
 		route(
-			"disaster-record/edit-sub/:disRecId/losses/delete/:id",
+			"disaster-record/edit-sub/:disRecId/losses/:id/delete",
 			"routes/disaster-record/edit-sub.$disRecId/losses/delete.$id.tsx",
 		);
 		route(
-			"disaster-record/edit-sub/:disRecId/losses/edit/:id",
+			"disaster-record/edit-sub/:disRecId/losses/:id/edit",
 			"routes/disaster-record/edit-sub.$disRecId/losses/edit.$id.tsx",
 		);
 		route(
