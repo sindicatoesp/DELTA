@@ -54,6 +54,10 @@ export function NavSettings({ userRole = "" }: NavSettingsProps) {
                     link: "settings/access-mgmnt",
                     text: "Access management",
                 },
+                {
+                    link: "settings/api-key",
+                    text: "API keys",
+                },
                 { link: "settings/organizations", text: "Organizations" },
             ];
         }

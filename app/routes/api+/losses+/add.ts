@@ -7,7 +7,7 @@ import { lossesCreate } from "~/backend.server/models/losses";
 import { ActionFunctionArgs } from "react-router";
 import { apiAuth } from "~/backend.server/models/api_key";
 import { SelectLosses } from "~/drizzle/schema/lossesTable";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 
 export const loader = authLoaderApi(async () => {
 	return Response.json("Use POST");
@@ -22,12 +22,14 @@ export const action = async (args: ActionFunctionArgs) => {
 	}
 
 	const apiKey = await apiAuth(request);
+	const instanceSystemSettingsRepository =
+		makeInstanceSystemSettingsRepository();
 	const countryAccountsId = apiKey.countryAccountsId;
 	if (!countryAccountsId) {
 		throw new Response("Unauthorized", { status: 401 });
 	}
 	const settings =
-		await InstanceSystemSettingRepository.getByCountryAccountId(
+		await instanceSystemSettingsRepository.getByCountryAccountId(
 			countryAccountsId,
 		);
 	const currencies = [settings?.currencyCode || "USD"];

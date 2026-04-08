@@ -2,6 +2,7 @@ export type ApiKeyTokenType = "user_assigned" | "admin_managed";
 
 export interface ApiKeyListItem {
 	id: string;
+	secret: string;
 	name: string;
 	createdAt: Date;
 	managedByUserId: string;
@@ -14,7 +15,6 @@ export interface ApiKeyListItem {
 }
 
 export interface ApiKeyViewItem extends ApiKeyListItem {
-	secret: string;
 	countryAccountsId: string | null;
 	assignedUserEmail: string | null;
 }

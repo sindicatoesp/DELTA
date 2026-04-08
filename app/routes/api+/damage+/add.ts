@@ -4,7 +4,7 @@ import { fieldsDefApi } from "~/backend.server/models/damages";
 
 import { jsonCreate } from "~/backend.server/handlers/form/form_api";
 import { damagesCreate } from "~/backend.server/models/damages";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 import { apiAuth } from "~/backend.server/models/api_key";
 import { ActionFunctionArgs } from "react-router";
 
@@ -27,8 +27,10 @@ export const action = async (args: ActionFunctionArgs) => {
 	}
 
 	const data = await args.request.json();
+	const instanceSystemSettingsRepository =
+		makeInstanceSystemSettingsRepository();
 	const settings =
-		await InstanceSystemSettingRepository.getByCountryAccountId(
+		await instanceSystemSettingsRepository.getByCountryAccountId(
 			countryAccountsId,
 		);
 

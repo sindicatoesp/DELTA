@@ -10,7 +10,7 @@ import { jsonUpsert } from "~/backend.server/handlers/form/form_api";
 
 import { damagesCreate, damagesUpdate } from "~/backend.server/models/damages";
 import { ActionFunctionArgs } from "react-router";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 import { apiAuth } from "~/backend.server/models/api_key";
 import { SelectDamages } from "~/drizzle/schema/damagesTable";
 import { FormInputDef } from "~/frontend/form";
@@ -34,9 +34,11 @@ export const action = async (args: ActionFunctionArgs) => {
 	}
 
 	let data: SelectDamages[] = await args.request.json();
+	const instanceSystemSettingsRepository =
+		makeInstanceSystemSettingsRepository();
 
 	const settings =
-		await InstanceSystemSettingRepository.getByCountryAccountId(
+		await instanceSystemSettingsRepository.getByCountryAccountId(
 			countryAccountsId,
 		);
 	let currencies: string[] = ["USD"];

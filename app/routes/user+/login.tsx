@@ -24,7 +24,7 @@ import {
 } from "~/utils/config";
 import { CountryAccountsRepository } from "~/db/queries/countryAccountsRepository";
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 import { UserRepository } from "~/db/queries/UserRepository";
 import { createCSRFToken } from "~/utils/csrf";
 
@@ -148,7 +148,8 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 	}
 
 	if (userCountryAccounts && userCountryAccounts.length === 1) {
-		const countrySettings = await InstanceSystemSettingRepository.getByCountryAccountId(
+		const instanceSystemSettingsRepository = makeInstanceSystemSettingsRepository();
+		const countrySettings = await instanceSystemSettingsRepository.getByCountryAccountId(
 			userCountryAccounts[0].countryAccountsId,
 		);
 

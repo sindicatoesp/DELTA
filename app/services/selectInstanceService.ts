@@ -6,7 +6,7 @@ import {
 } from "react-router";
 import { CountryAccountsRepository } from "~/db/queries/countryAccountsRepository";
 import { CountryRepository } from "~/db/queries/countriesRepository";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import {
 	countryAccountStatuses,
@@ -132,9 +132,11 @@ export const SelectInstanceService = {
 		const session = await sessionCookie().getSession(
 			request.headers.get("Cookie"),
 		);
+		const instanceSystemSettingsRepository =
+			makeInstanceSystemSettingsRepository();
 
 		const countrySettings =
-			await InstanceSystemSettingRepository.getByCountryAccountId(
+			await instanceSystemSettingsRepository.getByCountryAccountId(
 				countryAccountsId,
 			);
 

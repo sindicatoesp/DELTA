@@ -9,7 +9,7 @@ import { jsonUpsert } from "~/backend.server/handlers/form/form_api";
 
 import { lossesCreate, lossesUpdate } from "~/backend.server/models/losses";
 import { apiAuth } from "~/backend.server/models/api_key";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 import { ActionFunctionArgs } from "react-router";
 
 export const loader = authLoaderApi(async () => {
@@ -25,12 +25,14 @@ export const action = async (args: ActionFunctionArgs) => {
 	}
 
 	const apiKey = await apiAuth(request);
+	const instanceSystemSettingsRepository =
+		makeInstanceSystemSettingsRepository();
 	const countryAccountsId = apiKey.countryAccountsId;
 	if (!countryAccountsId) {
 		throw new Response("Unauthorized", { status: 401 });
 	}
 	const settings =
-		await InstanceSystemSettingRepository.getByCountryAccountId(
+		await instanceSystemSettingsRepository.getByCountryAccountId(
 			countryAccountsId,
 		);
 	const currencies = [settings?.currencyCode || "USD"];

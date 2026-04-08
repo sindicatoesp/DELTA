@@ -13,7 +13,7 @@ import {
 	loginGetCode,
 } from "~/utils/ssoauzeb2c";
 import { loginAzureB2C } from "~/backend.server/models/user/auth";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { proxiedFetch } from "~/utils/proxied-fetch";
 
@@ -119,8 +119,9 @@ export const loader = async (
 			);
 
 			if (userCountryAccounts && userCountryAccounts.length === 1) {
+				const instanceSystemSettingsRepository = makeInstanceSystemSettingsRepository();
 				const countrySettings =
-					await InstanceSystemSettingRepository.getByCountryAccountId(
+					await instanceSystemSettingsRepository.getByCountryAccountId(
 						userCountryAccounts[0].countryAccountsId,
 					);
 

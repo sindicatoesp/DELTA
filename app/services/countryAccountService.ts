@@ -30,7 +30,7 @@ import { HumanCategoryPresenceRepository } from "~/db/queries/humanCategoryPrese
 import { HumanDsgConfigRepository } from "~/db/queries/humanDsgConfigRepository";
 import { HumanDsgRepository } from "~/db/queries/humanDsgRepository";
 import { InjuredRepository } from "~/db/queries/injuredRepository";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 import { LossesRepository } from "~/db/queries/lossesRepository";
 import { MissingRepository } from "~/db/queries/missingRepository";
 import { NonEcoLossesRepository } from "~/db/queries/nonEcoLossesRepository";
@@ -299,6 +299,8 @@ export const CountryAccountService = {
 
 		const isPrimaryAdmin = true;
 		return dr.transaction(async (tx) => {
+			const instanceSystemSettingsRepository =
+				makeInstanceSystemSettingsRepository();
 			const countryAccount = await CountryAccountsRepository.create(
 				{
 					countryId,
@@ -337,7 +339,7 @@ export const CountryAccountService = {
 				throw new CountryAccountValidationError(errors);
 			}
 			const instanceSystemSetting =
-				await InstanceSystemSettingRepository.create(
+				await instanceSystemSettingsRepository.create(
 					{
 						countryName: country.name,
 						dtsInstanceCtryIso3: country.iso3 || "",
@@ -540,6 +542,8 @@ export const CountryAccountService = {
 		}
 
 		return dr.transaction(async (tx) => {
+			const instanceSystemSettingsRepository =
+				makeInstanceSystemSettingsRepository();
 			const newCountryAccount = await CountryAccountsRepository.create(
 				{
 					countryId: countryAccount.countryId,
@@ -553,14 +557,14 @@ export const CountryAccountService = {
 			const newCountryAccountId = newCountryAccount.id;
 
 			const sourceInstanceSettings =
-				await InstanceSystemSettingRepository.getByCountryAccountId(
+				await instanceSystemSettingsRepository.getByCountryAccountId(
 					countryAccountId,
 					tx,
 				);
 			if (sourceInstanceSettings) {
 				const { id: _sourceId, ...sourceSettingsWithoutId } =
 					sourceInstanceSettings;
-				await InstanceSystemSettingRepository.create(
+				await instanceSystemSettingsRepository.create(
 					{
 						...sourceSettingsWithoutId,
 						countryAccountsId: newCountryAccountId,
@@ -568,7 +572,7 @@ export const CountryAccountService = {
 					tx,
 				);
 			} else {
-				await InstanceSystemSettingRepository.create(
+				await instanceSystemSettingsRepository.create(
 					{
 						countryName: countryAccount.country.name,
 						dtsInstanceCtryIso3: countryAccount.country.iso3 || "",

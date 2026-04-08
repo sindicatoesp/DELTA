@@ -5,10 +5,10 @@ import { PERMISSIONS, roleHasPermission } from "~/frontend/user/roles";
 import OrganizationManagementPage from "~/modules/organizations/presentation/organizations-page";
 import { makeListOrganizationsUseCase } from "~/modules/organizations/organization-module.server";
 import { requirePermission } from "~/utils/auth";
-import { getCountryAccountsIdFromSession } from "~/utils/session";
+import { getCountryAccountsIdFromSession, getUserRoleFromSession } from "~/utils/session";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const user = await requirePermission(
+	await requirePermission(
 		request,
 		PERMISSIONS.ORGANIZATIONS_LIST,
 	);
@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			pageSize,
 			search,
 		});
-	const userRole = user?.user?.role ?? null;
+	const userRole = await getUserRoleFromSession(request);
 	const canCreate = roleHasPermission(userRole, PERMISSIONS.ORGANIZATIONS_CREATE);
 	const canUpdate = roleHasPermission(userRole, PERMISSIONS.ORGANIZATIONS_UPDATE);
 	const canDelete = roleHasPermission(userRole, PERMISSIONS.ORGANIZATIONS_DELETE);
@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		canCreate,
 		canUpdate,
 		canDelete,
-		userRole,
+		userRole: userRole ?? null,
 	};
 }
 

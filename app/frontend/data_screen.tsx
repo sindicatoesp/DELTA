@@ -101,6 +101,7 @@ interface DataMainLinksProps {
 	noCreate?: boolean;
 	noExport?: boolean;
 	noImport?: boolean;
+	userRole?: string | null;
 
 	relLinkToNew?: string;
 	isPublic?: boolean;
@@ -130,7 +131,7 @@ export function DataMainLinks(props: DataMainLinksProps) {
 							id="add_new_event_link"
 							className="mg-button mg-button--small mg-button-primary"
 							label={props.addNewLabel ?? "Add"}
-							visible={canAddNewRecord(null)}
+							visible={canAddNewRecord(props.userRole ?? null)}
 							onClick={() => {
 								document.location.href =
 									props.baseRoute +

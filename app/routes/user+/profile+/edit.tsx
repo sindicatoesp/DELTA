@@ -7,7 +7,10 @@ import { Button } from "primereact/button";
 import { authAction, authActionGetAuth, authLoader, authLoaderGetAuth } from "~/utils/auth";
 
 import { redirectWithMessage } from "~/utils/session";
-import { UserProfileService } from "~/services/userProfileService";
+import {
+    makeGetUserProfileForEditUseCase,
+    makeUpdateUserProfileUseCase,
+} from "~/modules/user-profile/user-profile-module.server";
 
 type ActionData = {
     ok: boolean;
@@ -24,7 +27,7 @@ type ActionData = {
 export const loader = authLoader(async (loaderArgs) => {
     const { user } = authLoaderGetAuth(loaderArgs);
 
-    return UserProfileService.getUserProfileForEdit({
+    return makeGetUserProfileForEditUseCase().execute({
         firstName: user.firstName,
         lastName: user.lastName,
     });
@@ -37,7 +40,7 @@ export const action = authAction(async (actionArgs): Promise<ActionData | Respon
 
     const formData = await request.formData();
 
-    const result = await UserProfileService.updateUserProfile({
+    const result = await makeUpdateUserProfileUseCase().execute({
 
         userId: user.id,
         formData,

@@ -1,5 +1,5 @@
 import { apiAuth } from "~/backend.server/models/api_key";
-import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { makeInstanceSystemSettingsRepository } from "~/modules/system-settings/system-settings-module.server";
 
 export interface ApiContext {
 	countryAccountsId: string;
@@ -10,13 +10,15 @@ export interface ApiContext {
 // Avoids repetitive code across multiple API endpoints
 export async function getApiContext(request: Request): Promise<ApiContext> {
 	const apiKey = await apiAuth(request);
+	const instanceSystemSettingsRepository =
+		makeInstanceSystemSettingsRepository();
 	const countryAccountsId = apiKey.countryAccountsId;
 	if (!countryAccountsId) {
 		throw new Response("Unauthorized", { status: 401 });
 	}
 
 	const settings =
-		await InstanceSystemSettingRepository.getByCountryAccountId(
+		await instanceSystemSettingsRepository.getByCountryAccountId(
 			countryAccountsId,
 		);
 
