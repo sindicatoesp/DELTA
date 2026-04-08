@@ -8,7 +8,12 @@ import {
 	HazardousEventForm,
 } from "~/frontend/events/hazardeventform";
 
-import { formScreen } from "~/frontend/form";
+import {
+	HazardousEventDialogRoute,
+	useHazardousEventFormState,
+} from "~/modules/hazardous-event/presentation/hazardous-event-route-form";
+import { approvalStatusKeyToLabel, type approvalStatusIds } from "~/frontend/approval";
+import { formatDateDisplay } from "~/utils/date";
 
 import { formSave } from "~/backend.server/handlers/form/form";
 
@@ -37,6 +42,13 @@ import { and, eq, isNotNull, isNull } from "drizzle-orm";
 
 
 import { getUserCountryAccountsWithValidatorRole } from "~/db/queries/userCountryAccountsRepository";
+
+function renderValue(value: unknown) {
+	if (value === null || value === undefined || value === "") {
+		return "-";
+	}
+	return String(value);
+}
 
 export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 	const { params, request } = loaderArgs;
@@ -161,7 +173,13 @@ export default function Screen() {
 	if (!ld.item) {
 		throw "invalid";
 	}
-	let fieldsInitial = {
+
+	const hazardName =
+		ld.item.hipHazard?.name || ld.item.hipCluster?.name || ld.item.hipType?.name || "Unknown";
+	const workflowStatusLabel = ld.item.approvalStatus
+		? approvalStatusKeyToLabel(ld.item.approvalStatus as approvalStatusIds)
+		: "-";
+	const initialFields = {
 		// both ld.item.event and ld.item have description fields, description field on event is not used
 		// TODO: remove those fields from db
 		...ld.item,
@@ -179,26 +197,56 @@ export default function Screen() {
 		updatedAt: ld.item.updatedAt ? new Date(ld.item.updatedAt) : undefined,
 		createdAt: ld.item.createdAt ? new Date(ld.item.createdAt) : undefined,
 	};
+	const { fields, errors } = useHazardousEventFormState(initialFields);
 
-	return formScreen({
-		extraData: {
-			hip: ld.hip,
-			// @ts-ignore
-			parent: ld.parent,
-			treeData: ld.treeData,
-			// @ts-ignore
-			ctryIso3: ld.ctryIso3,
-			user: ld.user,
-			// @ts-ignore
-			divisionGeoJSON: ld.divisionGeoJSON,
-			// @ts-ignore
-			countryAccountsId: ld.countryAccountsId,
-		},
-		fieldsInitial,
-		//form: HazardousEventForm,
-		form: HazardousEventForm,
-		edit: true,
-		id: ld.item.id,
-		usersWithValidatorRole: ld.usersWithValidatorRole ?? [],
-	});
+	return (
+		<HazardousEventDialogRoute header={"Edit hazardous event"}>
+			<div className="space-y-4 p-2 md:p-3">
+				<section className="rounded-lg border border-gray-200 bg-white p-5">
+					<div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+						<div>
+							<p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+								Editing
+							</p>
+							<h2 className="text-xl font-semibold text-gray-900">{hazardName}</h2>
+							<p className="mt-3 text-sm leading-6 text-gray-600">Update fields and save changes to this event record.</p>
+						</div>
+						<div className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
+							<div className="grid gap-1 text-sm text-gray-700">
+								<p>
+									<span className="font-semibold">ID:</span> {ld.item.id}
+								</p>
+								<p>
+									<span className="font-semibold">Status:</span> {workflowStatusLabel}
+								</p>
+								<p>
+									<span className="font-semibold">Created:</span> {renderValue(formatDateDisplay(ld.item.createdAt, "dd MMM yyyy"))}
+								</p>
+								<p>
+									<span className="font-semibold">Updated:</span> {renderValue(formatDateDisplay(ld.item.updatedAt, "dd MMM yyyy"))}
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section className="rounded-lg border border-gray-200 bg-white p-3 md:p-4">
+					<HazardousEventForm
+						edit
+						id={ld.item.id}
+						hideInnerHeader
+						fields={fields}
+						errors={errors}
+						hip={ld.hip}
+						parent={ld.parent as any}
+						treeData={ld.treeData}
+						ctryIso3={ld.ctryIso3 as any}
+						user={ld.user}
+						divisionGeoJSON={ld.divisionGeoJSON as any}
+						usersWithValidatorRole={ld.usersWithValidatorRole ?? []}
+					/>
+				</section>
+			</div>
+		</HazardousEventDialogRoute>
+	);
 }

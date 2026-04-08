@@ -199,6 +199,7 @@ interface HazardousEventFormProps extends UserFormProps<HazardousEventFields> {
 	treeData?: any[];
 	usersWithValidatorRole?: any[];
 	extraHiddenFields?: any;
+	hideInnerHeader?: boolean;
 }
 
 export function hazardousEventLabel(args: {
@@ -571,6 +572,7 @@ export function HazardousEventForm(props: HazardousEventFormProps) {
 				path={route}
 				edit={props.edit}
 				id={props.id}
+				hideInnerHeader={props.hideInnerHeader}
 				title={"Hazardous events"}
 				editLabel={"Edit hazardous event"}
 				addLabel={"Add hazardous event"}
@@ -660,6 +662,7 @@ interface HazardousEventViewProps {
 	isPublic: boolean;
 	auditLogs?: any[];
 	countryAccountsId?: string;
+	hideInnerHeader?: boolean;
 }
 
 export function HazardousEventView(props: HazardousEventViewProps) {
@@ -692,6 +695,7 @@ export function HazardousEventView(props: HazardousEventViewProps) {
 
 	return (
 		<ViewComponentMainDataCollection
+			hideInnerHeader={props.hideInnerHeader}
 			recordDate={recordDate}
 			recordTitle={recordTitle}
 			recordRecipient={recordRecipient}

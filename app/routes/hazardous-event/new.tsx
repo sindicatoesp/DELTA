@@ -17,7 +17,10 @@ import {
 	fieldsDef,
 	HazardousEventForm,
 } from "~/frontend/events/hazardeventform";
-import { formScreen } from "~/frontend/form";
+import {
+	HazardousEventDialogRoute,
+	useHazardousEventFormState,
+} from "~/modules/hazardous-event/presentation/hazardous-event-route-form";
 import {
 	authActionGetAuth,
 	authActionWithPerm,
@@ -29,6 +32,13 @@ import {
 	getCountrySettingsFromSession,
 	type UserSession,
 } from "~/utils/session";
+
+function renderValue(value: unknown) {
+	if (value === null || value === undefined || value === "") {
+		return "-";
+	}
+	return String(value);
+}
 
 export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 	const { request } = loaderArgs;
@@ -155,25 +165,61 @@ export const action = authActionWithPerm("EditData", async (actionArgs) => {
 
 export default function Screen() {
 	let ld = useLoaderData<typeof loader>();
-
-	// @ts-ignore
-	let fieldsInitial = { parent: ld.parentId };
-
-	return formScreen({
-		extraData: {
-			hip: ld.hip,
-			// @ts-ignore
-			parent: ld.parent,
-			treeData: ld.treeData,
-			ctryIso3: ld.ctryIso3,
-			user: ld.user,
-			// @ts-ignore
-			divisionGeoJSON: ld.divisionGeoJSON,
-			countryAccountsId: ld.countryAccountsId,
-		},
-		fieldsInitial,
-		form: HazardousEventForm,
-		edit: false,
-		usersWithValidatorRole: ld.usersWithValidatorRole,
+	const { fields, errors } = useHazardousEventFormState({
+		parent: ld.parentId,
 	});
+
+	return (
+		<HazardousEventDialogRoute header={"Add new hazardous event"}>
+			<div className="space-y-4 p-2 md:p-3">
+				<section className="rounded-lg border border-gray-200 bg-white p-5">
+					<div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+						<div>
+							<p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+								Creating
+							</p>
+							<h2 className="text-xl font-semibold text-gray-900">New Hazardous Event</h2>
+							<p className="mt-3 text-sm leading-6 text-gray-600">
+								Fill in the details below, then save as draft or submit for validation.
+							</p>
+						</div>
+						<div className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
+							<div className="grid gap-1 text-sm text-gray-700">
+								<p>
+									<span className="font-semibold">Initial status:</span> Draft
+								</p>
+								<p>
+									<span className="font-semibold">Parent:</span>{" "}
+									{renderValue((ld.parent as any)?.id ? (ld.parent as any).id.slice(0, 8) : "None")}
+								</p>
+								<p>
+									<span className="font-semibold">Validators:</span>{" "}
+									{Array.isArray(ld.usersWithValidatorRole)
+										? ld.usersWithValidatorRole.length
+										: 0}
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section className="rounded-lg border border-gray-200 bg-white p-3 md:p-4">
+					<HazardousEventForm
+						edit={false}
+						id={undefined}
+						hideInnerHeader
+						fields={fields}
+						errors={errors}
+						hip={ld.hip}
+						parent={ld.parent as any}
+						treeData={ld.treeData}
+						ctryIso3={ld.ctryIso3}
+						user={ld.user}
+						divisionGeoJSON={ld.divisionGeoJSON as any}
+						usersWithValidatorRole={ld.usersWithValidatorRole}
+					/>
+				</section>
+			</div>
+		</HazardousEventDialogRoute>
+	);
 }

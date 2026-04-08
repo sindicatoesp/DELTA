@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { PartialDivision } from "~/backend.server/models/division";
 
 import { buildPrimeReactTreeNodes } from "~/utils/PrimeReactUtil";
+import { Button } from "primereact/button";
 
 interface HazardType {
 	id: string;
@@ -259,24 +260,19 @@ const HazardFilters: React.FC<FiltersProps> = ({ hazardTypes, hazardClusters, sp
 				{/* Buttons */}
 				<div className="flex justify-end gap-2 mt-6">
 
-					<button
+					<Button
 						type="button"
 						onClick={handleClear}
 						disabled={isSubmitting}
-						className="mg-button mg-button--small mg-button-outline"
-					>
-						{"Clear"}
-					</button>
+						label={"Clear"}
+						outlined
+					/>
 
-					<button
+					<Button
 						type="submit"
 						disabled={isSubmitting}
-						className="mg-button mg-button--small mg-button-primary"
-					>
-						{isSubmitting
-							? "Applying..."
-							: "Apply filters"}
-					</button>
+						label={isSubmitting ? "Applying..." : "Apply filters"}
+					/>
 
 				</div>
 

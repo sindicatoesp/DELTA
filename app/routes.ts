@@ -247,29 +247,18 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 	});
 
 	const hazardousEventRoutes = defineRoutes((route) => {
-		route("hazardous-event", "routes/hazardous-event/_index.tsx");
-		route("hazardous-event/new", "routes/hazardous-event/new.tsx");
-		route("hazardous-event/picker", "routes/hazardous-event/picker.tsx");
-		route("hazardous-event/:id", "routes/hazardous-event/$id.tsx");
-		route("hazardous-event/:id/edit", "routes/hazardous-event/edit.tsx");
-		route("hazardous-event/:id/delete", "routes/hazardous-event/delete.tsx");
-		route(
-			"hazardous-event/csv-import",
-			"routes/hazardous-event/csv-import.tsx",
-		);
-		route("hazardous-event/csv-export", "routes/hazardous-event/csv-export.ts");
-		route(
-			"hazardous-event/file-viewer",
-			"routes/hazardous-event/file-viewer.tsx",
-		);
-		route(
-			"hazardous-event/file-temp-viewer",
-			"routes/hazardous-event/file-temp-viewer.tsx",
-		);
-		route(
-			"hazardous-event/file-pre-upload",
-			"routes/hazardous-event/file-pre-upload.tsx",
-		);
+		route("hazardous-event", "routes/hazardous-event/_index.tsx", () => {
+			route("new", "routes/hazardous-event/new.tsx");
+			route(":id", "routes/hazardous-event/$id.tsx");
+			route(":id/edit", "routes/hazardous-event/edit.tsx");
+			route(":id/delete", "routes/hazardous-event/delete.tsx");
+			route("picker", "routes/hazardous-event/picker.tsx");
+			route("csv-import", "routes/hazardous-event/csv-import.tsx");
+			route("csv-export", "routes/hazardous-event/csv-export.ts");
+			route("file-viewer", "routes/hazardous-event/file-viewer.tsx");
+			route("file-temp-viewer", "routes/hazardous-event/file-temp-viewer.tsx");
+			route("file-pre-upload", "routes/hazardous-event/file-pre-upload.tsx");
+		});
 	});
 
 	const disasterEventRoutes = defineRoutes((route) => {

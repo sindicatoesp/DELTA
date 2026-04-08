@@ -8,12 +8,6 @@ import { apiAuth } from "~/backend.server/models/api_key";
 import { hipHazardTable } from "~/drizzle/schema/hipHazardTable";
 import { hipClusterTable } from "~/drizzle/schema/hipClusterTable";
 import { hipTypeTable } from "~/drizzle/schema/hipTypeTable";
-import { HazardousEventRepository } from "~/db/queries/hazardousEventRepository";
-
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
 
 export const loader = async (args: LoaderFunctionArgs) => {
 	const { request } = args;
@@ -25,8 +19,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
 	return createApiListLoader(
 		async () => {
-			return HazardousEventRepository.countByCountryAccountsId(
-				countryAccountsId,
+			return dr.$count(
+				hazardousEventTable,
+				eq(hazardousEventTable.countryAccountsId, countryAccountsId),
 			);
 		},
 		async (offsetLimit) => {
@@ -38,7 +33,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 					hipHazard: {
 						columns: { id: true, code: true },
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, ${ctx.lang})`.as(
+							name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, 'en')`.as(
 								"name",
 							),
 						},
@@ -46,7 +41,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 					hipCluster: {
 						columns: { id: true },
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipClusterTable.name}, ${ctx.lang})`.as(
+							name: sql<string>`dts_jsonb_localized(${hipClusterTable.name}, 'en')`.as(
 								"name",
 							),
 						},
@@ -54,7 +49,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 					hipType: {
 						columns: { id: true },
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`.as(
+							name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, 'en')`.as(
 								"name",
 							),
 						},

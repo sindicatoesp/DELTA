@@ -1,17 +1,11 @@
-import { DataMainLinks } from "~/frontend/data_screen";
+import { makeListHazardousEventsUseCase } from "~/modules/hazardous-event/hazardous-event-module.server";
+import HazardousEventsManagementPage from "~/modules/hazardous-event/presentation/hazardous-events-management-page";
+import { PERMISSIONS, roleHasPermission } from "~/frontend/user/roles";
 
-import { hazardousEventsLoader } from "~/backend.server/handlers/events/hazardevent";
-
-import { ListView } from "~/frontend/events/hazardeventlist";
-import { HazardEventHeader } from "~/components/EventCounter";
-
-import { MetaFunction, useLoaderData } from "react-router";
+import { MetaFunction, Outlet, useLoaderData } from "react-router";
 
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
-
-import { getCountrySettingsFromSession } from "~/utils/session";
-
-import { MainContainer } from "~/frontend/container";
+import { getUserRoleFromSession } from "~/utils/session";
 
 import { htmlTitle } from "~/utils/htmlmeta";
 
@@ -32,45 +26,42 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = authLoaderPublicOrWithPerm("ViewData", async (args) => {
-	// Get the hazardous events data
-	const eventsData = await hazardousEventsLoader(args);
+	const listData = await makeListHazardousEventsUseCase().execute({ args });
+	const userRole = await getUserRoleFromSession(args.request);
 
-	// Get the instance settings to access the website name
-	const settings = await getCountrySettingsFromSession(args.request);
-
-	// Return both the events data and the instance name
 	return {
-		...eventsData,
-		instanceName: settings?.websiteName || "DELTA Resilience",
+		...listData,
+		canCreate:
+			!listData.isPublic &&
+			roleHasPermission(userRole, PERMISSIONS.DATA_EDIT),
+		canUpdate:
+			!listData.isPublic &&
+			roleHasPermission(userRole, PERMISSIONS.DATA_EDIT),
+		canDelete:
+			!listData.isPublic &&
+			roleHasPermission(userRole, PERMISSIONS.VALIDATED_DATA_DELETE),
+		userRole: userRole ?? null,
 	};
 });
 
 export default function Data() {
 	const ld = useLoaderData<typeof loader>();
 
-
 	return (
-		<MainContainer
-			title={"Hazardous events"}
-		>
-			<>
-				{/* Header with count and instance name */}
-				<HazardEventHeader
-					totalCount={ld.data.pagination.totalItems}
-					instanceName={ld.instanceName}
-				/>
-				<DataMainLinks
-					relLinkToNew="/new"
-					isPublic={ld.isPublic}
-					baseRoute="/hazardous-event"
-					addNewLabel={"Add new event"}
-					csvExportLinks={false} /* CSV Export and Import buttons disabled */
-				/>
-				<ListView
-					isPublic={ld.isPublic}
-					basePath="/hazardous-event"
-				></ListView>
-			</>
-		</MainContainer>
+		<>
+			<HazardousEventsManagementPage
+				instanceName={ld.instanceName}
+				isPublic={ld.isPublic}
+				filters={ld.filters}
+				hip={ld.hip}
+				organizations={ld.organizations}
+				data={ld.data}
+				canCreate={ld.canCreate}
+				canUpdate={ld.canUpdate}
+				canDelete={ld.canDelete}
+				userRole={ld.userRole}
+			/>
+			<Outlet />
+		</>
 	);
 }

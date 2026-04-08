@@ -1428,6 +1428,7 @@ interface ViewComponentMainDataCollectionProps {
 	listUrl?: string;
 	id: any;
 	title: string;
+	hideInnerHeader?: boolean;
 	extraActions?: React.ReactNode;
 	extraInfo?: React.ReactNode;
 	children?: React.ReactNode;
@@ -1758,14 +1759,16 @@ export function ViewComponentMainDataCollection(
 					</Dialog>
 				</div>
 			</fetcher.Form>
-			<MainContainer title={props.title}>
+			<MainContainer title={props.title} showHeader={!props.hideInnerHeader}>
 				<>
 					<form className="dts-form">
-						<p>
-							<LangLink lang={'en'} to={props.listUrl || props.path}>
-								{props.title}
-							</LangLink>
-						</p>
+						{!props.hideInnerHeader && (
+							<p>
+								<LangLink lang={'en'} to={props.listUrl || props.path}>
+									{props.title}
+								</LangLink>
+							</p>
+						)}
 						{!props.isPublic && (
 							<>
 								<div style={{ textAlign: "right" }}>
@@ -1806,11 +1809,13 @@ export function ViewComponentMainDataCollection(
 								</div>
 							</>
 						)}
-						<h2>{props.title}</h2>
-						<p>
-							{"ID"}
-							: {String(props.id)}
-						</p>
+						{!props.hideInnerHeader && <h2>{props.title}</h2>}
+						{!props.hideInnerHeader && (
+							<p>
+								{"ID"}
+								: {String(props.id)}
+							</p>
+						)}
 						{props.extraInfo}
 						{props.children}
 					</form>
@@ -1868,6 +1873,7 @@ interface FormViewProps {
 	viewUrl?: string;
 	edit: boolean;
 	id?: any;
+	hideInnerHeader?: boolean;
 	infoNodes?: React.ReactNode;
 	errors: any;
 	fields: any;
@@ -1929,33 +1935,35 @@ export function FormView(props: FormViewProps) {
 	}, [intClickedCtr, isSubmitting]);
 
 	return (
-		<MainContainer title={title}>
+		<MainContainer title={title} showHeader={!props.hideInnerHeader}>
 			<>
-				<section className="dts-page-section">
-					<p>
-						<LangLink lang={'en'} to={props.listUrl || props.path}>
-							{title}
-						</LangLink>
-					</p>
-					{props.edit && props.id && (
+				{!props.hideInnerHeader && (
+					<section className="dts-page-section">
 						<p>
-							<LangLink
-								lang={'en'}
-								to={props.viewUrl || `${props.path}/${props.id}`}
-							>
-								{"View"}
+							<LangLink lang={'en'} to={props.listUrl || props.path}>
+								{title}
 							</LangLink>
 						</p>
-					)}
-					<h2>{props.edit ? props.editLabel : props.addLabel}</h2>
-					{props.edit && props.id && (
-						<p>
-							{"ID"}
-							: {String(props.id)}
-						</p>
-					)}
-					{props.infoNodes}
-				</section>
+						{props.edit && props.id && (
+							<p>
+								<LangLink
+									lang={'en'}
+									to={props.viewUrl || `${props.path}/${props.id}`}
+								>
+									{"View"}
+								</LangLink>
+							</p>
+						)}
+						<h2>{props.edit ? props.editLabel : props.addLabel}</h2>
+						{props.edit && props.id && (
+							<p>
+								{"ID"}
+								: {String(props.id)}
+							</p>
+						)}
+						{props.infoNodes}
+					</section>
+				)}
 
 				<Form
 					formRef={props.formRef}

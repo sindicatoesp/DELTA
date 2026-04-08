@@ -24,7 +24,6 @@ import { EntityValidationAssignmentRepository } from "~/db/queries/entityValidat
 import { EventRepository } from "~/db/queries/eventRepository";
 import { EventRelationshipRepository } from "~/db/queries/eventRelationshipRepository";
 import { EntityValidationRejectionRepository } from "~/db/queries/entityValidationRejectionRepository";
-import { HazardousEventRepository } from "~/db/queries/hazardousEventRepository";
 import { HumanCategoryPresenceRepository } from "~/db/queries/humanCategoryPresenceRepository";
 import { HumanDsgConfigRepository } from "~/db/queries/humanDsgConfigRepository";
 import { HumanDsgRepository } from "~/db/queries/humanDsgRepository";
@@ -42,11 +41,13 @@ import {
 	countryAccountStatuses,
 	countryAccountTypesTable,
 } from "~/drizzle/schema/countryAccountsTable";
+import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
 import { CountryAccountValidationError } from "~/modules/country-account/application/errors/country-account-error";
 import type { CountryAccountRepositoryPort } from "~/modules/country-account/domain/repositories/country-account-repository";
 import type { CountryAccountDb } from "~/modules/country-account/infrastructure/db/client.server";
 import { COUNTRY_TYPE } from "~/drizzle/schema/countriesTable";
 import { BASE_UPLOAD_PATH } from "~/utils/paths";
+import { eq } from "drizzle-orm";
 
 function createIdMap(ids: string[]) {
 	return new Map(ids.map((id) => [id, randomUUID()]));
@@ -713,11 +714,10 @@ export class DrizzleCountryAccountRepository implements CountryAccountRepository
 				);
 			}
 
-			const hazardousEvents =
-				await HazardousEventRepository.getByCountryAccountsId(
-					countryAccountId,
-					tx,
-				);
+			const hazardousEvents = await tx
+				.select()
+				.from(hazardousEventTable)
+				.where(eq(hazardousEventTable.countryAccountsId, countryAccountId));
 			const disasterEvents =
 				await DisasterEventRepository.getByCountryAccountsId(
 					countryAccountId,
@@ -744,18 +744,21 @@ export class DrizzleCountryAccountRepository implements CountryAccountRepository
 			}
 
 			if (hazardousEvents.length > 0) {
-				await HazardousEventRepository.createMany(
-					hazardousEvents.map((row) => ({
-						...row,
-						id: getMappedId(eventIdMap, row.id, "hazardous event"),
-						countryAccountsId: newCountryAccountId,
-						attachments: cloneAttachmentsForCountryAccount(
-							row.attachments,
-							newCountryAccountId,
-						),
-					})),
-					tx,
-				);
+				await tx
+					.insert(hazardousEventTable)
+					.values(
+						hazardousEvents.map((row) => ({
+							...row,
+							id: getMappedId(eventIdMap, row.id, "hazardous event"),
+							countryAccountsId: newCountryAccountId,
+							attachments: cloneAttachmentsForCountryAccount(
+								row.attachments,
+								newCountryAccountId,
+							),
+						})),
+					)
+					.returning()
+					.execute();
 			}
 
 			if (disasterEvents.length > 0) {
@@ -1231,11 +1234,10 @@ export class DrizzleCountryAccountRepository implements CountryAccountRepository
 				);
 			const recordIds = disasterRecords.map((r) => r.id);
 
-			const hazardousEvents =
-				await HazardousEventRepository.getByCountryAccountsId(
-					countryAccountId,
-					tx,
-				);
+			const hazardousEvents = await tx
+				.select()
+				.from(hazardousEventTable)
+				.where(eq(hazardousEventTable.countryAccountsId, countryAccountId));
 			const hazardousEventIds = hazardousEvents.map((r) => r.id);
 
 			const disasterEvents =
@@ -1343,10 +1345,9 @@ export class DrizzleCountryAccountRepository implements CountryAccountRepository
 				countryAccountId,
 				tx,
 			);
-			await HazardousEventRepository.deleteByCountryAccountId(
-				countryAccountId,
-				tx,
-			);
+			await tx
+				.delete(hazardousEventTable)
+				.where(eq(hazardousEventTable.countryAccountsId, countryAccountId));
 			// 4. Finally, delete the country account itself
 			await CountryAccountsRepository.deleteById(countryAccountId, tx);
 

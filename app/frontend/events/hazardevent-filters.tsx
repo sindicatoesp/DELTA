@@ -1,6 +1,7 @@
 
 import { Form } from "react-router";
 import { useState, useEffect } from "react";
+import { Button } from "primereact/button";
 // import { canAddNewRecord } from '../user/roles';
 
 interface Organization {
@@ -579,22 +580,19 @@ export function HazardousEventFilters({
 									msg: "Clear",
 								})}
 							</a>
-							<button
+							<Button
+								severity="secondary"
 								type="submit"
-								className="mg-button mg-button--small mg-button-primary"
-							>
-								{t({
-									code: "common.apply_filters",
-									msg: "Apply filters",
-								})}
-							</button>
+								label=
+								"Apply filters"
+							/>
 						</div>
 					</div>
 
 					{/* Hidden search field to maintain compatibility */}
 					{search && <input type="hidden" name="search" value={search} />}
 				</div>
-			</Form>
+			</Form >
 		</>
 	);
 }
