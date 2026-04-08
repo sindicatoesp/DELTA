@@ -1,7 +1,5 @@
 import { MetaFunction, Outlet } from "react-router";
-import { getUserCountryAccountsWithUserByCountryAccountsId } from "~/db/queries/userCountryAccountsRepository";
-import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
-import { paginationQueryFromURL } from "~/frontend/pagination/api.server";
+import { makeListAccessManagementUseCase } from "~/modules/access-management/access-management-module.server";
 import { authLoaderWithPerm } from "~/utils/auth";
 import {
 	getCountryAccountsIdFromSession,
@@ -10,8 +8,6 @@ import {
 
 import { htmlTitle } from "~/utils/htmlmeta";
 import AccessManagementPage from "~/pages/AccessManagementPage";
-
-const organizationRepository = makeOrganizationRepository();
 
 export const meta: MetaFunction = () => {
 
@@ -31,30 +27,15 @@ export const meta: MetaFunction = () => {
 
 export const loader = authLoaderWithPerm("ViewUsers", async (loaderArgs) => {
 	const { request } = loaderArgs;
-	const url = new URL(request.url);
-	const search = url.searchParams.get("search") || "";
 
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
-	const organizations = await organizationRepository.getByCountryAccountsId(
-		countryAccountsId,
-	);
-
-	const pagination = paginationQueryFromURL(request, []);
-
-	const items = await getUserCountryAccountsWithUserByCountryAccountsId(
-		pagination.query.skip,
-		pagination.query.take,
-		countryAccountsId,
-	);
-
 	const userRole = await getUserRoleFromSession(request);
 
-	return {
-		...items,
-		organizations,
-		search,
-		userRole,
-	};
+	return makeListAccessManagementUseCase().execute({
+		request,
+		countryAccountsId,
+		userRole: userRole ?? null,
+	});
 });
 
 export default function AccessManagementLayout() {

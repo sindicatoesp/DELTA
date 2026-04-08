@@ -15,7 +15,8 @@ import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { AccessManagementService, AccessManagementServiceError } from "~/services/accessManagementService";
+import { makeInviteUserUseCase } from "~/modules/access-management/access-management-module.server";
+import { AccessManagementError } from "~/modules/access-management/application/errors/access-management-error";
 
 const organizationRepository = makeOrganizationRepository();
 
@@ -59,7 +60,7 @@ export const action = authActionWithPerm("InviteUsers", async (actionArgs) => {
 	const countrySettings = await getCountrySettingsFromSession(request);
 
 	try {
-		await AccessManagementService.inviteUser({
+		await makeInviteUserUseCase().execute({
 			email,
 			organization,
 			role,
@@ -68,7 +69,7 @@ export const action = authActionWithPerm("InviteUsers", async (actionArgs) => {
 			loggedInUserEmail: loggedInUser?.user.email,
 		});
 	} catch (error) {
-		if (error instanceof AccessManagementServiceError && error.fieldErrors) {
+		if (error instanceof AccessManagementError && error.fieldErrors) {
 			return { ok: false, errors: error.fieldErrors };
 		}
 		throw error;

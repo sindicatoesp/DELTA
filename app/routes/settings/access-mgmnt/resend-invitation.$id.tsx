@@ -24,7 +24,8 @@ import { UserRepository } from "~/db/queries/UserRepository";
 
 
 import { htmlTitle } from "~/utils/htmlmeta";
-import { AccessManagementService, AccessManagementServiceError } from "~/services/accessManagementService";
+import { makeResendInvitationUseCase } from "~/modules/access-management/access-management-module.server";
+import { AccessManagementError } from "~/modules/access-management/application/errors/access-management-error";
 
 type ActionData = {
     errors: string[];
@@ -90,13 +91,13 @@ export const action = authActionWithPerm("EditUsers", async (actionArgs: ActionF
     const countrySettings = await getCountrySettingsFromSession(request);
 
     try {
-        await AccessManagementService.resendInvitation({
+        await makeResendInvitationUseCase().execute({
             id,
             countryAccountsId,
             countrySettings,
         });
     } catch (err) {
-        if (err instanceof AccessManagementServiceError) {
+        if (err instanceof AccessManagementError) {
             return { errors: [err.errors?.[0] || err.message] } satisfies ActionData;
         }
 

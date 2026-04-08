@@ -13,7 +13,8 @@ import { UserRepository } from "~/db/queries/UserRepository";
 import { htmlTitle } from "~/utils/htmlmeta";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
-import { AccessManagementService, AccessManagementServiceError } from "~/services/accessManagementService";
+import { makeDeleteUserUseCase } from "~/modules/access-management/access-management-module.server";
+import { AccessManagementError } from "~/modules/access-management/application/errors/access-management-error";
 
 type DeleteActionData = {
 	ok: false;
@@ -87,7 +88,7 @@ export const action = authActionWithPerm("EditUsers", async (actionArgs) => {
 	}
 
 	try {
-		await AccessManagementService.deleteUser({
+		await makeDeleteUserUseCase().execute({
 			id,
 			countryAccountsId,
 		});
@@ -97,7 +98,7 @@ export const action = authActionWithPerm("EditUsers", async (actionArgs) => {
 			text: "User deleted successfully.",
 		});
 	} catch (err) {
-		if (err instanceof AccessManagementServiceError) {
+		if (err instanceof AccessManagementError) {
 			return Response.json(
 				{ ok: false, error: err.message },
 				{ status: err.status },

@@ -19,7 +19,8 @@ import { InputText } from "primereact/inputtext";
 import { UserRepository } from "~/db/queries/UserRepository";
 import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
 import { Dialog } from "primereact/dialog";
-import { AccessManagementService, AccessManagementServiceError } from "~/services/accessManagementService";
+import { makeUpdateUserUseCase } from "~/modules/access-management/access-management-module.server";
+import { AccessManagementError } from "~/modules/access-management/application/errors/access-management-error";
 
 const organizationRepository = makeOrganizationRepository();
 
@@ -92,14 +93,14 @@ export const action = authActionWithPerm("EditUsers", async (actionArgs) => {
 	organization = organization && organization.trim() !== "" ? organization : null;
 
 	try {
-		await AccessManagementService.updateUser({
+		await makeUpdateUserUseCase().execute({
 			id,
 			countryAccountsId,
 			role,
 			organization,
 		});
 	} catch (error) {
-		if (error instanceof AccessManagementServiceError) {
+		if (error instanceof AccessManagementError) {
 			if (error.fieldErrors) {
 				return { ok: false, errors: error.fieldErrors };
 			}
