@@ -160,8 +160,6 @@ export const action = async (routeArgs: ActionFunctionArgs) => {
 		session.set("countrySettings", countrySettings);
 		const setCookie = await sessionCookie().commitSession(session);
 
-		redirectTo = redirectTo;
-		console.log("redirectTo=", redirectTo)
 		return redirectDocument(redirectTo, {
 			headers: { "Set-Cookie": setCookie },
 		});
@@ -243,7 +241,7 @@ export function getSafeRedirectTo(
 	if (redirectTo && redirectTo.startsWith("/")) {
 		return redirectTo;
 	}
-	return "/";
+	return "/hazardous-event";
 }
 
 export const meta: MetaFunction = () => {
