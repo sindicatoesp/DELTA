@@ -14,7 +14,7 @@ import { createTestDamage } from "./test-helpers";
 import {
 	loader as editLoader,
 	action as editAction,
-} from "~/routes/disaster-record+/edit-sub.$disRecId+/damages+/edit.$id";
+} from "~/routes/disaster-record/edit-sub.$disRecId/damages/edit.$id";
 
 let testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-edit@");
@@ -342,3 +342,4 @@ describe("edit.$id.tsx", () => {
 		});
 	});
 });
+

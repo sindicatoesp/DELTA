@@ -1,0 +1,11 @@
+## disaster-event
+route("disaster-event/:id", "routes/disaster-event/$id.tsx");
+route("disaster-event", "routes/disaster-event/_index.tsx");
+route("disaster-event/csv-export", "routes/disaster-event/csv-export.ts");
+route("disaster-event/csv-import", "routes/disaster-event/csv-import.tsx");
+route("disaster-event/delete/:id", "routes/disaster-event/delete.$id.tsx");
+route("disaster-event/edit/:id", "routes/disaster-event/edit.$id.tsx");
+route("disaster-event/file-pre-upload", "routes/disaster-event/file-pre-upload.tsx");
+route("disaster-event/file-temp-viewer", "routes/disaster-event/file-temp-viewer.tsx");
+route("disaster-event/file-viewer", "routes/disaster-event/file-viewer.tsx");
+route("disaster-event/picker", "routes/disaster-event/picker.tsx");

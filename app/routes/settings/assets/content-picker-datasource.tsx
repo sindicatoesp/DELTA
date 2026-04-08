@@ -3,7 +3,7 @@ import {
 	fetchData,
 	getTotalRecords,
 } from "~/components/ContentPicker/DataSource";
-import { contentPickerConfigSector } from "~/routes/disaster-record+/content-picker-config";
+import { contentPickerConfigSector } from "~/routes/disaster-record/content-picker-config";
 
 
 export const loader = authLoaderPublicOrWithPerm(
@@ -30,4 +30,5 @@ export const loader = authLoaderPublicOrWithPerm(
 		}
 	},
 );
+
 

@@ -5,7 +5,7 @@ import { DataTable } from "primereact/datatable";
 
 import { MainContainer } from "~/frontend/container";
 import { FictitiousCountryService } from "~/services/fictitiousCountryService";
-import { NavSettings } from "../../settings/nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 import { authLoaderWithPerm } from "~/utils/auth";
 
 

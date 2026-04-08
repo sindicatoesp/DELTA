@@ -8,7 +8,7 @@ import {
 	TEST_BASE_URL,
 } from "../../../test-helpers";
 import { createTestLosses } from "./test-helpers";
-import { loader as indexLoader } from "~/routes/disaster-record+/edit-sub.$disRecId+/losses+/_index";
+import { loader as indexLoader } from "~/routes/disaster-record/edit-sub.$disRecId/losses/_index";
 
 const AGRICULTURE_SECTOR_ID = "8cf24ec3-3567-4c40-a5fd-bff9e9a27d87";
 
@@ -129,3 +129,4 @@ describe("_index.tsx loader", () => {
 		expect(data.sectorFullPath).toBe("Agriculture > Productive");
 	});
 });
+

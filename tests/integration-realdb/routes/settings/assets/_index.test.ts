@@ -12,7 +12,7 @@ import {
 	createOtherTenant,
 	cleanupTestAssets,
 } from "./test-helpers";
-import { loader as indexLoader } from "~/routes/settings+/assets+/_index";
+import { loader as indexLoader } from "~/routes/settings/assets/_index";
 import { dr } from "~/db.server";
 import { sectorTable } from "~/drizzle/schema/sectorTable";
 

@@ -13,7 +13,7 @@ import {
 	createOtherTenant,
 	cleanupTestAssets,
 } from "./test-helpers";
-import { loader as viewLoader } from "~/routes/settings+/assets+/$id";
+import { loader as viewLoader } from "~/routes/settings/assets/$id";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-view@");

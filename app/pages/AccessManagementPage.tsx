@@ -5,7 +5,7 @@ import { NavSettings } from "~/frontend/components/nav-settings";
 
 import { getCountryRole, getCountryRoles } from "~/frontend/user/roles";
 import { useLoaderData, useLocation, useNavigate } from "react-router";
-import type { loader } from "../routes/settings+/access-mgmnt+/_layout";
+import type { loader } from "../routes/settings/access-mgmnt/_layout";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";

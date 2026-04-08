@@ -1,7 +1,7 @@
 import { Outlet, redirect, useLoaderData } from "react-router";
 
 import { authLoader } from "~/utils/auth";
-import { NavSettings } from "./nav";
+import { NavSettings } from "~/frontend/components/nav-settings";
 
 
 

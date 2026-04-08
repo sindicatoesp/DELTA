@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { approvalStatusField2 } from "~/frontend/approval";
 
 import { ContentPicker } from "~/components/ContentPicker";
-import { contentPickerConfig } from "~/routes/disaster-record+/content-picker-config";
+import { contentPickerConfig } from "~/routes/disaster-record/content-picker-config";
 import AuditLogHistory from "~/components/AuditLogHistory";
 import { HazardPicker, Hip } from "~/frontend/hip/hazardpicker";
 
@@ -432,4 +432,5 @@ export function DisasterRecordsView(props: DisasterRecordsViewProps) {
 		</ViewComponent>
 	);
 }
+
 

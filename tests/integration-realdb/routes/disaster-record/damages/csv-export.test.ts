@@ -8,7 +8,7 @@ import {
 	TEST_BASE_URL,
 } from "../../../test-helpers";
 import { createTestDamage } from "./test-helpers";
-import { loader as csvExportLoader } from "~/routes/disaster-record+/edit-sub.$disRecId+/damages+/csv-export";
+import { loader as csvExportLoader } from "~/routes/disaster-record/edit-sub.$disRecId/damages/csv-export";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-csv-export@");
@@ -63,3 +63,4 @@ describe("csv-export.ts loader", () => {
 		expect(csvText).toContain(testDamageId);
 	});
 });
+

@@ -11,7 +11,7 @@ import {
 	cleanupOtherTenant,
 } from "../../../test-helpers";
 import { createTestDisruption } from "./test-helpers";
-import { loader as idLoader } from "~/routes/disaster-record+/edit-sub.$disRecId+/disruptions+/$id";
+import { loader as idLoader } from "~/routes/disaster-record/edit-sub.$disRecId/disruptions/$id";
 
 const testIds = createTestIds();
 testIds.userEmail = testIds.userEmail.replace("@", "-disruptions-id@");
@@ -95,3 +95,4 @@ describe("$id.tsx loader", () => {
 		expect(Array.isArray(data.fieldDef)).toBe(true);
 	});
 });
+

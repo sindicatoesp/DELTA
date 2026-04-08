@@ -35,7 +35,7 @@ import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
 import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
 
-import { HazardousEventPickerType } from "~/routes/hazardous-event+/picker";
+import { HazardousEventPickerType } from "~/routes/hazardous-event/picker";
 
 export const route = "/disaster-event";
 
