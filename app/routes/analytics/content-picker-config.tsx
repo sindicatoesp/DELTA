@@ -1,9 +1,26 @@
-import { hazardousEventLabel } from "~/frontend/events/hazardeventform";
 import { sql, and, eq } from "drizzle-orm";
 import { hipHazardTable } from "~/drizzle/schema/hipHazardTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
 import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
 import { formatDateDisplay } from "~/utils/date";
+
+function hazardousEventLabel(args: {
+	id?: string;
+	description?: string;
+	hazard?: { name?: string | null };
+}): string {
+	let parts: string[] = [];
+	if (args.hazard?.name) {
+		parts.push(args.hazard.name.slice(0, 50));
+	}
+	if (args.description) {
+		parts.push(args.description.slice(0, 50));
+	}
+	if (args.id) {
+		parts.push(args.id.slice(0, 5));
+	}
+	return parts.join(" ");
+}
 
 
 

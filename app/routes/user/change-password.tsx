@@ -54,7 +54,7 @@ export const action = authAction(
 			return { ok: false, data, errors: res.errors };
 		}
 
-		return redirectWithMessage(actionArgs, "/hazardous-event", {
+		return redirectWithMessage(actionArgs, "/disaster-event", {
 			type: "info",
 			text: "Password changed.",
 		});

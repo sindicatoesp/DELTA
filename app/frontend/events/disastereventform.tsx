@@ -8,8 +8,6 @@ import {
 	DisasterEventBasicInfoViewModel,
 } from "~/backend.server/models/event";
 
-import { hazardousEventLink } from "~/frontend/events/hazardeventform";
-
 import { LangLink } from "~/utils/link";
 
 import {
@@ -35,9 +33,19 @@ import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
 import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
 
-import { HazardousEventPickerType } from "~/routes/hazardous-event/picker";
+type HazardousEventPickerType = {
+	id: string;
+	description?: string | null;
+	hazard?: { name?: string | null } | null;
+	hipHazard?: { name?: string | null } | null;
+	hipCluster?: { name?: string | null } | null;
+	hipType?: { name?: string | null } | null;
+};
 
 export const route = "/disaster-event";
+
+const HAZARDOUS_PICKER_SELECTION_STORAGE_KEY =
+	"hazardous-event-picker-selection";
 
 const fallbackCtx: any = {
 	t: (message: { msg: string }) => message.msg,
@@ -45,6 +53,37 @@ const fallbackCtx: any = {
 	url: (path: string) => path,
 	user: undefined,
 };
+
+function hazardousEventLabel(args: {
+	id?: string;
+	description?: string;
+	hazard?: { name?: string | null };
+	hipHazard?: { name?: string | null };
+	hipCluster?: { name?: string | null };
+	hipType?: { name?: string | null };
+}): string {
+	let parts: string[] = [];
+	const hazardName =
+		args.hazard?.name ||
+		args.hipHazard?.name ||
+		args.hipCluster?.name ||
+		args.hipType?.name ||
+		"";
+	if (hazardName) {
+		parts.push(hazardName.slice(0, 50));
+	}
+	if (args.description) {
+		parts.push(args.description.slice(0, 50));
+	}
+	if (args.id) {
+		parts.push(args.id.slice(0, 5));
+	}
+	return parts.join(" ");
+}
+
+function hazardousEventLink(args: HazardousEventPickerType) {
+	return <span>{hazardousEventLabel(args)}</span>;
+}
 
 
 function repeatOtherIds(
@@ -535,6 +574,22 @@ export function DisasterEventForm(props: DisasterEventFormProps) {
 				}
 			}
 		};
+
+		const selectionPayload = sessionStorage.getItem(
+			HAZARDOUS_PICKER_SELECTION_STORAGE_KEY,
+		);
+		if (selectionPayload) {
+			try {
+				const parsedPayload = JSON.parse(selectionPayload);
+				if (parsedPayload?.type === "select_hazard" && parsedPayload?.selected) {
+					setSelectedHazardousEvent(parsedPayload.selected);
+				}
+			} catch {
+				// Ignore malformed data and continue.
+			}
+			sessionStorage.removeItem(HAZARDOUS_PICKER_SELECTION_STORAGE_KEY);
+		}
+
 		window.addEventListener("message", handleMessage);
 		return () => {
 			window.removeEventListener("message", handleMessage);
@@ -688,15 +743,7 @@ export function DisasterEventForm(props: DisasterEventFormProps) {
 							{selectedHazardousEvent
 								? hazardousEventLink(selectedHazardousEvent)
 								: "-"}
-							&nbsp;
-							<LangLink
-								lang="en"
-								target="_blank"
-								rel="opener"
-								to={"/hazardous-event/picker"}
-							>
-								{"Change"}
-							</LangLink>
+							<div className="text-xs text-gray-600">Hazardous event module removed</div>
 							<input
 								type="hidden"
 								name="hazardousEventId"

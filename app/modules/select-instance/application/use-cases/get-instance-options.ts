@@ -28,7 +28,7 @@ export class GetInstanceOptionsUseCase {
 		const url = new URL(request.url);
 		let cancelRedirectTo = url.searchParams.get("redirectTo") || "/";
 		if (cancelRedirectTo === "/") {
-			cancelRedirectTo = "/hazardous-event/";
+			cancelRedirectTo = "/disaster-event/";
 		}
 		cancelRedirectTo = getSafeRedirectTo(cancelRedirectTo);
 

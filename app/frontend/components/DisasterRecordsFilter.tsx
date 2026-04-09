@@ -1,9 +1,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
-import { getRecordStatusOptions } from "../events/hazardevent-filters";
 import { Form, useFetcher, useSubmit } from "react-router";
 import { Sector } from "~/db/queries/sector";
+
+function getRecordStatusOptions() {
+	return [
+		{ value: "draft", label: "Draft" },
+		{ value: "waiting-for-validation", label: "Waiting for validation" },
+		{ value: "needs-revision", label: "Needs revision" },
+		{ value: "validated", label: "Validated" },
+		{ value: "published", label: "Published" },
+	];
+}
 
 interface Props {
 	clearFiltersUrl: string;

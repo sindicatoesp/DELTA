@@ -49,7 +49,7 @@ export async function emailAssignedValidators({
 	let recordSubmitterName: string = "";
 
 	if (entityType === "hazardous_event") {
-		recordUrl += `/en/hazardous-event/${entityId}`;
+		recordUrl += `/en/disaster-event`;
 		recordType = "hazardous event";
 		// Get event name from HIPs associated with the hazardous event
 		if (eventFields.hipHazardId) {

@@ -241,7 +241,7 @@ export function getSafeRedirectTo(
 	if (redirectTo && redirectTo.startsWith("/")) {
 		return redirectTo;
 	}
-	return "/hazardous-event";
+	return "/disaster-event";
 }
 
 export const meta: MetaFunction = () => {

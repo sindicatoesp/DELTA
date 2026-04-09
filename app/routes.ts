@@ -246,21 +246,6 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		);
 	});
 
-	const hazardousEventRoutes = defineRoutes((route) => {
-		route("hazardous-event", "routes/hazardous-event/_index.tsx", () => {
-			route("new", "routes/hazardous-event/new.tsx");
-			route(":id", "routes/hazardous-event/$id.tsx");
-			route(":id/edit", "routes/hazardous-event/edit.tsx");
-			route(":id/delete", "routes/hazardous-event/delete.tsx");
-			route("picker", "routes/hazardous-event/picker.tsx");
-			route("csv-import", "routes/hazardous-event/csv-import.tsx");
-			route("csv-export", "routes/hazardous-event/csv-export.ts");
-			route("file-viewer", "routes/hazardous-event/file-viewer.tsx");
-			route("file-temp-viewer", "routes/hazardous-event/file-temp-viewer.tsx");
-			route("file-pre-upload", "routes/hazardous-event/file-pre-upload.tsx");
-		});
-	});
-
 	const disasterEventRoutes = defineRoutes((route) => {
 		route("disaster-event/:id", "routes/disaster-event/$id.tsx");
 		route("disaster-event", "routes/disaster-event/_index.tsx");
@@ -525,16 +510,6 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		route("api/division/list", "routes/api/division/list.ts");
 		route("api/division/upload", "routes/api/division/upload.ts");
 		route("api/geojson/:id", "routes/api/geojson.$id.ts");
-		route("api/hazardous-event", "routes/api/hazardous-event/_index.tsx");
-		route("api/hazardous-event/add", "routes/api/hazardous-event/add.ts");
-		route(
-			"api/hazardous-event/csv-import-example",
-			"routes/api/hazardous-event/csv-import-example.ts",
-		);
-		route("api/hazardous-event/fields", "routes/api/hazardous-event/fields.ts");
-		route("api/hazardous-event/list", "routes/api/hazardous-event/list.ts");
-		route("api/hazardous-event/update", "routes/api/hazardous-event/update.ts");
-		route("api/hazardous-event/upsert", "routes/api/hazardous-event/upsert.ts");
 		route("api/hips", "routes/api/hips/_index.tsx");
 		route("api/hips/cluster", "routes/api/hips/cluster/_index.tsx");
 		route("api/hips/cluster/list", "routes/api/hips/cluster/list.ts");
@@ -616,7 +591,6 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		...setupRoutes,
 		...infoRoutes,
 		...examplesRoutes,
-		...hazardousEventRoutes,
 		...disasterEventRoutes,
 		...disasterRecordRoutes,
 		...apiRoutes,

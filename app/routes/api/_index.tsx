@@ -18,9 +18,6 @@ export default function Screen() {
 						<a href={"/api/disaster-event"}>Disaster events</a>
 					</li>
 					<li>
-						<a href={"/api/hazardous-event"}>Hazardous events</a>
-					</li>
-					<li>
 						<a href={"/api/disaster-record"}>Disaster records</a>
 					</li>
 				</ul>

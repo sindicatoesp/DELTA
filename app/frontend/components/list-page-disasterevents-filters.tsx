@@ -2,8 +2,17 @@
 import { useRef } from "react";
 import { Toast } from "primereact/toast";
 import { SelectSector } from "~/drizzle/schema/sectorTable";
-import { getRecordStatusOptions } from "../events/hazardevent-filters";
 import { Form } from "react-router";
+
+function getRecordStatusOptions() {
+	return [
+		{ value: "draft", label: "Draft" },
+		{ value: "waiting-for-validation", label: "Waiting for validation" },
+		{ value: "needs-revision", label: "Needs revision" },
+		{ value: "validated", label: "Validated" },
+		{ value: "published", label: "Published" },
+	];
+}
 
 interface Props {
 	disasterEventName?: string;
