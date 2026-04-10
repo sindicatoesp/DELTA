@@ -7,7 +7,7 @@ import {
 } from "~/utils/session";
 
 import { htmlTitle } from "~/utils/htmlmeta";
-import AccessManagementPage from "~/pages/AccessManagementPage";
+import AccessManagementPage from "~/modules/access-management/presentation/access-management-page";
 
 export const meta: MetaFunction = () => {
 

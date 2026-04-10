@@ -1,11 +1,6 @@
-﻿import { format } from "date-fns";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { MainContainer } from "~/frontend/container";
-import { NavSettings } from "~/frontend/components/nav-settings";
-
-import { getCountryRole, getCountryRoles } from "~/frontend/user/roles";
-import { useLoaderData, useLocation, useNavigate } from "react-router";
-import type { loader } from "../routes/settings/access-mgmnt/_layout";
+import { Form, useLoaderData, useLocation, useNavigate } from "react-router";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -13,25 +8,26 @@ import { Paginator } from "primereact/paginator";
 import { InputText } from "primereact/inputtext";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 
+import { MainContainer } from "~/frontend/container";
+import { NavSettings } from "~/frontend/components/nav-settings";
+import { getCountryRole, getCountryRoles } from "~/frontend/user/roles";
+import type { loader } from "~/routes/settings/access-mgmnt/_layout";
+
 export default function AccessManagementPage() {
     const ld = useLoaderData<typeof loader>();
-
     const navigate = useNavigate();
     const location = useLocation();
     const { items } = ld;
 
     const [isClient, setIsClient] = useState(false);
-
-    // Ensure client-specific rendering only occurs after the component mounts
-    useEffect(() => {
-        setIsClient(true);
-        setFilteredItems(items); // Ensure data is consistent
-    }, [items]);
-
-    // State for search and filtered users
     const [filteredItems, setFilteredItems] = useState(items);
     const [organizationFilter, setOrganizationFilter] = useState("");
     const [roleFilter, setRoleFilter] = useState("");
+
+    useEffect(() => {
+        setIsClient(true);
+        setFilteredItems(items);
+    }, [items]);
 
     const pageSizeOptions = [10, 20, 30, 40, 50];
 
@@ -46,9 +42,7 @@ export default function AccessManagementPage() {
         const value = e.target.value.toLowerCase();
         setOrganizationFilter(value);
         setFilteredItems(
-            items.filter((item) =>
-                item.organization?.name.toLowerCase().includes(value),
-            ),
+            items.filter((item) => item.organization?.name.toLowerCase().includes(value)),
         );
     };
 
@@ -56,10 +50,9 @@ export default function AccessManagementPage() {
         const selectedRole = String(e.value || "all");
         setRoleFilter(selectedRole);
 
-        // Update the table data based on the selected role
         const filteredData =
             selectedRole === "all"
-                ? items // Show all roles
+                ? items
                 : items.filter((item) => item.role === selectedRole);
         setFilteredItems(filteredData);
     };
@@ -72,31 +65,23 @@ export default function AccessManagementPage() {
         })),
     ];
 
-    // Calculate user stats
     const totalUsers = items.length;
-
-    // Handle different formats for `emailVerified`
-    const activatedUsers = filteredItems.filter((item) => {
-        return item.user.emailVerified === true;
-    }).length;
-
-    const pendingUsers = filteredItems.filter(
-        (item) => !item.user.emailVerified,
+    const activatedUsers = filteredItems.filter(
+        (item) => item.user.emailVerified === true,
     ).length;
+    const pendingUsers = filteredItems.filter((item) => !item.user.emailVerified).length;
 
     const navSettings = <NavSettings userRole={ld.userRole} />;
 
     const statusBodyTemplate = (item: (typeof filteredItems)[number]) => (
         <span
             className={`dts-access-management__status-dot ${item.user.emailVerified
-                ? "dts-access-management__status-dot--activated"
-                : "dts-access-management__status-dot--pending"
+                    ? "dts-access-management__status-dot--activated"
+                    : "dts-access-management__status-dot--pending"
                 }`}
         >
             <span className="dts-access-management__tooltip-text">
-                {item.user.emailVerified
-                    ? "Activated"
-                    : "Pending"}
+                {item.user.emailVerified ? "Activated" : "Pending"}
             </span>
             <span className="dts-access-management__tooltip-pointer"></span>
         </span>
@@ -115,15 +100,13 @@ export default function AccessManagementPage() {
         const roleObj = getCountryRole(item.role);
         return (
             <span>
-                {roleObj ? roleObj.label : item.role}{" "}
-                {item.isPrimaryAdmin ? "(Primary Admin)" : ""}
+                {roleObj ? roleObj.label : item.role} {item.isPrimaryAdmin ? "(Primary Admin)" : ""}
             </span>
         );
     };
 
-    const addedAtBodyTemplate = (item: (typeof filteredItems)[number]) => (
-        item.addedAt ? format(item.addedAt, "dd-MM-yyyy") : ""
-    );
+    const addedAtBodyTemplate = (item: (typeof filteredItems)[number]) =>
+        item.addedAt ? format(item.addedAt, "dd-MM-yyyy") : "";
 
     const actionsBodyTemplate = (item: (typeof filteredItems)[number]) => (
         <div className="flex items-center gap-2">
@@ -162,10 +145,7 @@ export default function AccessManagementPage() {
     );
 
     return (
-        <MainContainer
-            title={"Access management"}
-            headerExtra={navSettings}
-        >
+        <MainContainer title={"Access management"} headerExtra={navSettings}>
             <div className="dts-page-intro">
                 <div className="dts-additional-actions">
                     <Button
@@ -185,12 +165,10 @@ export default function AccessManagementPage() {
                 </div>
             </section>
 
-            {/* Filter Form */}
-            <form method="get" className="dts-form">
+            <Form method="get" className="dts-form">
                 <div className="mg-grid mg-grid__col-3">
-                    {/* Organisation Filter */}
-                    <div className="dts-form-component">
-                        <label className="dts-form-component__label" htmlFor="organizationFilter">
+                    <div className="flex flex-col gap-2">
+                        <label className="font-medium" htmlFor="organizationFilter">
                             {"Organization"}
                         </label>
                         <InputText
@@ -204,9 +182,8 @@ export default function AccessManagementPage() {
                         />
                     </div>
 
-                    {/* Role Filter */}
-                    <div className="dts-form-component">
-                        <label className="dts-form-component__label" htmlFor="roleFilter">
+                    <div className="flex flex-col gap-2">
+                        <label className="font-medium" htmlFor="roleFilter">
                             {"Role"}
                         </label>
                         <Dropdown
@@ -222,7 +199,7 @@ export default function AccessManagementPage() {
                         />
                     </div>
                 </div>
-            </form>
+            </Form>
 
             <section className="dts-page-section">
                 <div>
@@ -231,11 +208,8 @@ export default function AccessManagementPage() {
                     </strong>
                 </div>
 
-                {/* Status Legend */}
                 <div className="dts-legend">
-                    <span className="dts-body-label">
-                        {"Status legend"}
-                    </span>
+                    <span className="dts-body-label">{"Status legend"}</span>
 
                     <div className="dts-legend__item">
                         <span
@@ -243,57 +217,32 @@ export default function AccessManagementPage() {
                             aria-labelledby="legend7"
                         ></span>
                         <span id="legend7">
-                            {"Account activated"}
-                            : {activatedUsers}
+                            {"Account activated"}: {activatedUsers}
                         </span>
                     </div>
 
                     <div className="dts-legend__item">
                         <span aria-labelledby="legend8"></span>
                         <span id="legend8">
-                            {"Account activation pending"}
-                            : {pendingUsers}
+                            {"Account activation pending"}: {pendingUsers}
                         </span>
                     </div>
                 </div>
             </section>
 
-            {/* Users Table */}
             {isClient && (
                 <section className="dts-page-section">
-                    <DataTable
-                        value={filteredItems}
-                        dataKey="id"
-                        emptyMessage={"No data found"}
-                    >
-                        <Column
-                            header={"Status"}
-                            body={statusBodyTemplate}
-                        />
-                        <Column
-                            header={"Name"}
-                            body={nameBodyTemplate}
-                        />
-                        <Column
-                            header={"Email"}
-                            body={(item) => item.user.email}
-                        />
+                    <DataTable value={filteredItems} dataKey="id" emptyMessage={"No data found"}>
+                        <Column header={"Status"} body={statusBodyTemplate} />
+                        <Column header={"Name"} body={nameBodyTemplate} />
+                        <Column header={"Email"} body={(item) => item.user.email} />
                         <Column
                             header={"Organization"}
                             body={(item) => item.organization?.name || ""}
                         />
-                        <Column
-                            header={"Role"}
-                            body={roleBodyTemplate}
-                        />
-                        <Column
-                            header={"Added At"}
-                            body={addedAtBodyTemplate}
-                        />
-                        <Column
-                            header={"Actions"}
-                            body={actionsBodyTemplate}
-                        />
+                        <Column header={"Role"} body={roleBodyTemplate} />
+                        <Column header={"Added At"} body={addedAtBodyTemplate} />
+                        <Column header={"Actions"} body={actionsBodyTemplate} />
                     </DataTable>
                 </section>
             )}
@@ -314,5 +263,3 @@ export default function AccessManagementPage() {
         </MainContainer>
     );
 }
-
-
