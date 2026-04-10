@@ -2,7 +2,7 @@ import { authLoaderWithPerm } from "~/utils/auth";
 import { MainContainer } from "~/frontend/container";
 import { Table } from "~/frontend/editabletable/view";
 import { validateTotalGroup } from "~/frontend/editabletable/data";
-import { useLoaderData } from "react-router";
+import { useLoaderData , Link } from "react-router";
 import {
 	getHumanEffectTableDefs,
 	HumanEffectsTableFromString,
@@ -20,7 +20,6 @@ import { getCountryAccountsIdFromSession } from "~/utils/session";
 
 
 
-import { LangLink } from "~/utils/link";
 import { disasterRecordsById } from "~/backend.server/models/disaster_record";
 
 
@@ -98,10 +97,10 @@ export default function Screen() {
 		<MainContainer
 			title={"Human effects"}
 		>
-			<LangLink lang="en" to={"/disaster-record/" + ld.recordId + "/edit"}
+			<Link to={"/disaster-record/" + ld.recordId + "/edit"}
 				className="text-[#00afae] hover:text-blue-800 underline mb-4 inline-block">
 				{"Back to disaster record"}
-			</LangLink>
+			</Link>
 			<div className="font-bold">{data.tbl.label}</div>
 			<Form>
 				<select

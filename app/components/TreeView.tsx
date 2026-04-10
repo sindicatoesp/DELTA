@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import {
 
 
@@ -8,8 +9,6 @@ import {
 	useImperativeHandle,
 } from "react";
 
-
-import { LangLink } from "~/utils/link";
 
 const injectStyles = (appendCss?: string) => {
 	const styleLayout = [
@@ -513,9 +512,9 @@ export const TreeView = forwardRef<HTMLDivElement, TreeViewProps>(
 			return (
 				<>
 					{link ? (
-						<LangLink lang="en" to={link}>
+						<Link to={link}>
 							<span>{node.name}</span>
-						</LangLink>
+						</Link>
 					) : (
 						<span>{node.name}</span>
 					)}

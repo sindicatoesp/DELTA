@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData , Link } from "react-router";
 
 import { damagesTable } from "~/drizzle/schema/damagesTable";
 
@@ -21,8 +21,6 @@ import {
 	getCountrySettingsFromSession,
 } from "~/utils/session";
 
-
-import { LangLink } from "~/utils/link";
 
 import { sectorTable } from "~/drizzle/schema/sectorTable";
 import { assetTable } from "~/drizzle/schema/assetTable";
@@ -121,9 +119,9 @@ export default function Data() {
 
 	return DataScreen({
 		headerElement: (
-			<LangLink lang="en" to={"/disaster-record/" + ld.recordId + "/edit"}>
+			<Link to={"/disaster-record/" + ld.recordId + "/edit"}>
 				{"Back to disaster record"}
-			</LangLink>
+			</Link>
 		),
 		title: "Damages: Sector effects: {path}",
 		addNewLabel: "Add new damage",
@@ -145,9 +143,9 @@ export default function Data() {
 		renderRow: (item, route) => (
 			<tr key={item.id}>
 				<td>
-					<LangLink lang="en" to={`${route}/${item.id}`}>
+					<Link to={`${route}/${item.id}`}>
 						{item.id.slice(0, 8)}
-					</LangLink>
+					</Link>
 				</td>
 				<td>{item.asset.name}</td>
 				<td>{item.sector.name}</td>

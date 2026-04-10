@@ -1,5 +1,5 @@
 
-import { useLoaderData } from "react-router";
+import { useLoaderData, Link } from "react-router";
 
 import { Pagination } from "~/frontend/pagination/view";
 
@@ -8,9 +8,6 @@ import { ActionLinks } from "~/frontend/form";
 import { route } from "~/frontend/disaster-record/form";
 
 import { disasterRecordLoader } from "~/backend.server/handlers/disaster_record";
-
-
-import { LangLink } from "~/utils/link";
 
 interface ListViewArgs {
 	isPublic: boolean;
@@ -46,13 +43,12 @@ export function ListView(args: ListViewArgs) {
 							{items.map((item, index) => (
 								<tr key={index}>
 									<td>
-										<LangLink
-											lang="en"
+										<Link
 											to={`/disaster-record/${item.id}`}
 											target={args.linksNewTab ? "_blank" : undefined}
 										>
 											{item.id.slice(0, 8)}
-										</LangLink>
+										</Link>
 									</td>
 									{!args.isPublic && (
 										<td className="dts-table__cell-centered">

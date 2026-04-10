@@ -1,9 +1,7 @@
-import { Outlet, useLoaderData, useNavigate } from "react-router";
+import { Outlet, useLoaderData, useNavigate , Link } from "react-router";
 import { LoaderFunctionArgs } from "react-router";
 
 
-
-import { LangLink } from "~/utils/link";
 
 export async function loader(args: LoaderFunctionArgs) {
 	let { params } = args;
@@ -45,18 +43,14 @@ export default function Parent() {
 
 			<div>
 				<h2>Using Link to</h2>
-				<LangLink
-					lang="en"
-					to="/examples/multiple-loaders/parent/parent1/child"
+				<Link to="/examples/multiple-loaders/parent/parent1/child"
 				>
 					Parent 1
-				</LangLink>
-				<LangLink
-					lang="en"
-					to="/examples/multiple-loaders/parent/parent2/child"
+				</Link>
+				<Link to="/examples/multiple-loaders/parent/parent2/child"
 				>
 					Parent 2
-				</LangLink>
+				</Link>
 			</div>
 			<p>{ld.parent}</p>
 			<hr />

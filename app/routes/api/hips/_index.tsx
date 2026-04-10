@@ -1,9 +1,8 @@
+import { Link } from 'react-router';
 import { authLoaderWithPerm } from "~/utils/auth";
 import { MainContainer } from "~/frontend/container";
 
 
-
-import { LangLink } from "~/utils/link";
 
 export const loader = authLoaderWithPerm("ViewApiDocs", async () => {
 	return {};
@@ -16,19 +15,19 @@ export default function Screen() {
 			<>
 				<ul>
 					<li>
-						<LangLink lang="en" to="/api/hips/type">
+						<Link to="/api/hips/type">
 							HIPS Type
-						</LangLink>
+						</Link>
 					</li>
 					<li>
-						<LangLink lang="en" to="/api/hips/cluster">
+						<Link to="/api/hips/cluster">
 							HIPS Cluster
-						</LangLink>
+						</Link>
 					</li>
 					<li>
-						<LangLink lang="en" to="/api/hips/hazard">
+						<Link to="/api/hips/hazard">
 							HIPS Hazard
-						</LangLink>
+						</Link>
 					</li>
 				</ul>
 			</>

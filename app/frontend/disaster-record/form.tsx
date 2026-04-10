@@ -27,11 +27,9 @@ import { HazardPicker, Hip } from "~/frontend/hip/hazardpicker";
 import { SpatialFootprintFormView } from "~/frontend/spatialFootprintFormView";
 import { SpatialFootprintView } from "~/frontend/spatialFootprintView";
 import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
+import { Link } from "react-router";
 import { AttachmentsView } from "~/frontend/attachmentsView";
-
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
-
-import { LangLink } from "~/utils/link";
 
 export const route = "/disaster-record";
 
@@ -216,9 +214,9 @@ export function disasterRecordsLink(args: {
 	disasterEventId: string;
 }) {
 	return (
-		<LangLink lang={"en"} to={`/disaster-record/${args.id}`}>
+		<Link to={`/disaster-record/${args.id}`}>
 			{disasterRecordsLabel(args)}
-		</LangLink>
+		</Link>
 	);
 }
 

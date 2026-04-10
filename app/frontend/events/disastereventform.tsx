@@ -1,4 +1,4 @@
-import { useMatches } from "react-router";
+import { useMatches , Link } from "react-router";
 
 import { useEffect, useState, ReactElement } from "react";
 
@@ -7,8 +7,6 @@ import {
 	DisasterEventViewModel,
 	DisasterEventBasicInfoViewModel,
 } from "~/backend.server/models/event";
-
-import { LangLink } from "~/utils/link";
 
 import {
 	UserFormProps,
@@ -535,9 +533,9 @@ export function disasterEventLink(
 	},
 ) {
 	return (
-		<LangLink lang="en" to={`/disaster-event/${args.id}`}>
+		<Link to={`/disaster-event/${args.id}`}>
 			{disasterEventLabel(args)}
-		</LangLink>
+		</Link>
 	);
 }
 
@@ -767,14 +765,12 @@ export function DisasterEventForm(props: DisasterEventFormProps) {
 								? disasterEventLink(selectedDisasterEvent)
 								: "-"}
 							&nbsp;
-							<LangLink
-								lang="en"
-								target="_blank"
+							<Link target="_blank"
 								rel="opener"
 								to={"/disaster-event/picker"}
 							>
 								{"Change"}
-							</LangLink>
+							</Link>
 							<input
 								type="hidden"
 								name="disasterEventId"

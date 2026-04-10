@@ -1,4 +1,4 @@
-import { Form as ReactForm, useNavigation } from "react-router";
+import { Form as ReactForm, useNavigation , Link } from "react-router";
 
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { useActionData } from "react-router";
@@ -29,7 +29,6 @@ import {
 	approvalStatusIds,
 	approvalStatusKeyToLabel,
 } from "~/frontend/approval";
-import { LangLink } from "~/utils/link";
 import { DeleteButton } from "./components/delete-dialog";
 import { canEditRecord } from "./user/roles";
 
@@ -1764,23 +1763,23 @@ export function ViewComponentMainDataCollection(
 					<form className="dts-form">
 						{!props.hideInnerHeader && (
 							<p>
-								<LangLink lang={'en'} to={props.listUrl || props.path}>
+								<Link to={props.listUrl || props.path}>
 									{props.title}
-								</LangLink>
+								</Link>
 							</p>
 						)}
 						{!props.isPublic && (
 							<>
 								<div style={{ textAlign: "right" }}>
-									<LangLink
-										visible={canEditRecord(ctx.user?.role ?? null)}
-										lang={'en'}
-										to={`${props.path}/edit/${String(props.id)}`}
-										className="mg-button mg-button-secondary"
-										style={{ margin: "5px" }}
-									>
-										{"Edit"}
-									</LangLink>
+									{canEditRecord(ctx.user?.role ?? null) && (
+										<Link
+											to={`${props.path}/edit/${String(props.id)}`}
+											className="mg-button mg-button-secondary"
+											style={{ margin: "5px" }}
+										>
+											{"Edit"}
+										</Link>
+									)}
 
 									{props.approvalStatus === "waiting-for-validation" && (
 										<>
@@ -1831,21 +1830,21 @@ export function ViewComponent(props: ViewComponentProps) {
 			<>
 				<form className="dts-form">
 					<p>
-						<LangLink lang={'en'} to={props.listUrl || props.path}>
+						<Link lang={'en'} to={props.listUrl || props.path}>
 							{props.title}
-						</LangLink>
+						</Link>
 					</p>
 					{!props.isPublic && (
 						<>
 							<div>
-								<LangLink
+								<Link
 									lang={'en'}
 									to={`${props.path}/edit/${String(props.id)}`}
 									className="mg-button mg-button-secondary"
 									style={{ margin: "5px" }}
 								>
 									{"Edit"}
-								</LangLink>
+								</Link>
 								<DeleteButton
 									useIcon={true}
 									action={('/' + String(`${props.path}/delete/${String(props.id)}`).replace(/^\/+/, ''))}
@@ -1940,18 +1939,18 @@ export function FormView(props: FormViewProps) {
 				{!props.hideInnerHeader && (
 					<section className="dts-page-section">
 						<p>
-							<LangLink lang={'en'} to={props.listUrl || props.path}>
+							<Link lang={'en'} to={props.listUrl || props.path}>
 								{title}
-							</LangLink>
+							</Link>
 						</p>
 						{props.edit && props.id && (
 							<p>
-								<LangLink
+								<Link
 									lang={'en'}
 									to={props.viewUrl || `${props.path}/${props.id}`}
 								>
 									{"View"}
-								</LangLink>
+								</Link>
 							</p>
 						)}
 						<h2>{props.edit ? props.editLabel : props.addLabel}</h2>
@@ -2032,7 +2031,7 @@ export function ActionLinks(props: ActionLinksProps) {
 	return (
 		<div style={{ display: "flex", justifyContent: "space-evenly" }}>
 			{!props.hideEditButton && (
-				<LangLink lang={'en'} to={`${props.route}/${props.id}/edit`}>
+				<Link lang={'en'} to={`${props.route}/${props.id}/edit`}>
 					<button
 						type="button"
 						className="mg-button mg-button-table"
@@ -2042,10 +2041,10 @@ export function ActionLinks(props: ActionLinksProps) {
 							<use href="/assets/icons/edit.svg#edit" />
 						</svg>
 					</button>
-				</LangLink>
+				</Link>
 			)}
 			{!props.hideViewButton && (
-				<LangLink lang={'en'} to={`${props.route}/${props.id}`}>
+				<Link lang={'en'} to={`${props.route}/${props.id}`}>
 					<button
 						type="button"
 						className="mg-button mg-button-table"
@@ -2055,7 +2054,7 @@ export function ActionLinks(props: ActionLinksProps) {
 							<use href="/assets/icons/eye-show-password.svg#eye-show" />
 						</svg>
 					</button>
-				</LangLink>
+				</Link>
 			)}
 			{!props.hideDeleteButton && canDelete(props.approvalStatus, ctx.user) && (
 				<DeleteButton

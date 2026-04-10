@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData , Link } from "react-router";
 
 import { createUserSession, sessionCookie } from "~/utils/session";
 
@@ -19,7 +19,6 @@ import { proxiedFetch } from "~/utils/proxied-fetch";
 
 
 
-import { LangLink } from "~/utils/link";
 import { LoaderFunctionArgs, redirect } from "react-router";
 
 type LoaderData = { ok: false; errors: string } | { ok: true };
@@ -205,9 +204,9 @@ export default function SsoAzureB2cCallback() {
 					<p>{loaderData.errors}</p>
 				</div>
 				<div>
-					<LangLink lang="en" to="/setup/admin-account-sso">
+					<Link to="/setup/admin-account-sso">
 						Setup using SSO
-					</LangLink>
+					</Link>
 				</div>
 			</>
 		);

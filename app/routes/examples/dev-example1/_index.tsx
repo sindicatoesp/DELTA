@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData , Link } from "react-router";
 
 import { devExample1Table } from "~/drizzle/schema/devExample1Table";
 
@@ -18,8 +18,6 @@ import {
 	getCountrySettingsFromSession,
 } from "~/utils/session";
 
-
-import { LangLink } from "~/utils/link";
 
 export const loader = async (args: LoaderFunctionArgs) => {
 	const { request } = args;
@@ -80,9 +78,9 @@ export default function Data() {
 		renderRow: (item, route) => (
 			<tr key={item.id}>
 				<td>
-					<LangLink lang="en" to={`${route}/${item.id}`}>
+					<Link to={`${route}/${item.id}`}>
 						{item.id}
-					</LangLink>
+					</Link>
 				</td>
 				<td>{item.field1}</td>
 				<td>

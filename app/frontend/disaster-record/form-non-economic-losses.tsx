@@ -17,7 +17,7 @@ import { useEffect } from "react";
 import { approvalStatusField } from "~/frontend/approval";
 
 
-import { LangLink } from "~/utils/link";
+import { Link } from "react-router";
 
 export const route = "/disaster-record";
 
@@ -73,9 +73,9 @@ export function disasterRecordsLink(
 	},
 ) {
 	return (
-		<LangLink lang="en" to={`/disaster-record/${args.id}`}>
+		<Link to={`/disaster-record/${args.id}`}>
 			{disasterRecordsLabel(args)}
-		</LangLink>
+		</Link>
 	);
 }
 

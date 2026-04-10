@@ -22,10 +22,9 @@ import * as totaloverrides from "~/frontend/components/totaloverrides";
 import { SpatialFootprintFormView } from "~/frontend/spatialFootprintFormView";
 import { SpatialFootprintView } from "~/frontend/spatialFootprintView";
 import { AttachmentsFormView } from "~/frontend/attachmentsFormView";
+import { Link } from "react-router";
 import { AttachmentsView } from "~/frontend/attachmentsView";
 import { TEMP_UPLOAD_PATH } from "~/utils/paths";
-
-import { LangLink } from "~/utils/link";
 import type { JSX } from "react";
 
 export const route = "/disaster-record/edit-sub/_/damages";
@@ -257,8 +256,7 @@ export function DamagesForm(props: DamagesFormProps) {
 											</option>
 										))}
 								</select>
-								<LangLink
-									lang="en"
+								<Link
 									target="_blank"
 									to={
 										"/settings/assets/new/edit?sectorId=" +
@@ -266,7 +264,7 @@ export function DamagesForm(props: DamagesFormProps) {
 									}
 								>
 									{"Add asset"}
-								</LangLink>
+								</Link>
 							</>
 						}
 						errors={assetIdErrors}

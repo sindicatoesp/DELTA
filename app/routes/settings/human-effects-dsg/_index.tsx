@@ -1,6 +1,6 @@
 import { authActionWithPerm, authLoaderWithPerm } from "~/utils/auth";
 
-import { useLoaderData, useActionData } from "react-router";
+import { useLoaderData, useActionData , Link } from "react-router";
 
 import { dr } from "~/db.server";
 
@@ -14,9 +14,6 @@ import { Form } from "react-router";
 import { HumanEffectsHidden } from "~/frontend/human_effects/defs";
 import { sharedDefsAll } from "~/backend.server/models/human_effects";
 import { etLocalizedStringForLang } from "~/frontend/editabletable/base";
-
-import { LangLink } from "~/utils/link";
-
 
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 import { eq } from "drizzle-orm";
@@ -102,9 +99,9 @@ export default function Screen() {
 		<MainContainer
 			title={"Human effects: Configure built-in disaggregations"}
 		>
-			<LangLink lang="en" to="/settings/human-effects-dsg/custom">
+			<Link to="/settings/human-effects-dsg/custom">
 				{"Configure custom disaggregations"}
-			</LangLink>
+			</Link>
 			{actionData && !actionData.ok && (
 				<Messages
 					header={"Errors"}

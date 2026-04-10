@@ -1,5 +1,4 @@
-import { LangLink } from "~/utils/link";
-
+import { Link } from 'react-router';
 interface FooterProps {
 	siteName: string;
 	urlPrivacyPolicy: string;
@@ -20,32 +19,32 @@ export function Footer({
 						<nav>
 							<ul>
 								<li>
-									<LangLink lang={'en'} to="/about/about-the-system">
+									<Link lang={'en'} to="/about/about-the-system">
 										{"General"}
-									</LangLink>
+									</Link>
 								</li>
 								<li>
-									<LangLink
+									<Link
 										lang={'en'}
 										to="/about/technical-specifications"
 									>
 										{"Technical specifications"}
-									</LangLink>
+									</Link>
 								</li>
 								<li>
-									<LangLink lang={'en'} to="/about/partners">
+									<Link lang={'en'} to="/about/partners">
 										{"Partners"}
-									</LangLink>
+									</Link>
 								</li>
 								<li>
-									<LangLink lang={'en'} to="/about/methodologies">
+									<Link lang={'en'} to="/about/methodologies">
 										{"Methodologies"}
-									</LangLink>
+									</Link>
 								</li>
 								<li>
-									<LangLink lang={'en'} to="/about/support">
+									<Link lang={'en'} to="/about/support">
 										{"Support"}
-									</LangLink>
+									</Link>
 								</li>
 							</ul>
 						</nav>

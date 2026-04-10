@@ -1,7 +1,6 @@
+import { Link } from "react-router";
 import { MainContainer } from "~/frontend/container";
-
 import { Res } from "~/backend.server/handlers/form/csv_import";
-import { LangLink } from "~/utils/link";
 
 
 interface CreateScreenArgs {
@@ -16,8 +15,6 @@ function normalizePath(path: string): string {
 }
 
 export function csvImportScreen(args: CreateScreenArgs) {
-	const lang = "en";
-
 	let error = "";
 	const actionData = args.actionData;
 	let submitted = false;
@@ -82,9 +79,9 @@ export function csvImportScreen(args: CreateScreenArgs) {
 
 					<br />
 					<div>
-						<LangLink lang={lang} to={args.listUrl}>
+						<Link to={args.listUrl}>
 							Back to List
-						</LangLink>
+						</Link>
 					</div>
 
 					<br />

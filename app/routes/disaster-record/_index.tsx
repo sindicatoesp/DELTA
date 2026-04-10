@@ -4,7 +4,7 @@ import { DataScreen } from "~/frontend/data_screen";
 import { ActionLinks } from "~/frontend/form";
 
 import { useRef, useEffect } from "react";
-import { useLoaderData, MetaFunction } from "react-router";
+import { useLoaderData, MetaFunction , Link } from "react-router";
 
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
 
@@ -12,7 +12,6 @@ import { route } from "~/frontend/disaster-record/form";
 import { format } from "date-fns";
 import { DisasterRecordsFilter } from "~/frontend/components/DisasterRecordsFilter";
 import { getUserFromSession, getUserRoleFromSession } from "~/utils/session";
-import { LangLink } from "~/utils/link";
 import { Tooltip } from "primereact/tooltip";
 import { approvalStatusKeyToLabel } from "~/frontend/approval";
 import { htmlTitle } from "~/utils/htmlmeta";
@@ -157,9 +156,9 @@ export default function Data() {
 					</td>
 				)}
 				<td>
-					<LangLink lang="en" to={`${route}/${item.id}`}>
+					<Link to={`${route}/${item.id}`}>
 						{item.id.slice(0, 5)}
-					</LangLink>
+					</Link>
 				</td>
 				<td>{format(new Date(item.createdAt), "dd-MM-yyyy")}</td>
 				<td>

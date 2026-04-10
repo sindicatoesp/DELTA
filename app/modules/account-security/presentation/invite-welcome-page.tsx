@@ -1,5 +1,5 @@
 
-import { LangLink } from "~/utils/link";
+import { Link } from "react-router";
 import { Button } from "primereact/button";
 
 interface InviteWelcomePageProps {
@@ -42,8 +42,7 @@ export function InviteWelcomePage({
                 {/* Actions */}
                 <div className="flex flex-col items-center gap-4">
                     {confAuthSupportedForm && (
-                        <LangLink
-                            lang="en"
+                        <Link
                             to={`/user/accept-invite?inviteCode=${inviteCode}`}
                             className="w-full max-w-sm"
                         >
@@ -53,13 +52,12 @@ export function InviteWelcomePage({
                                 icon="pi pi-user-plus"
                                 className="w-full"
                             />
-                        </LangLink>
+                        </Link>
                     )}
 
                     {confAuthSupportedAzureSSOB2C && (
                         <>
-                            <LangLink
-                                lang="en"
+                            <Link
                                 to={`/sso/azure-b2c/invite?inviteCode=${inviteCode}&action=sso_azure_b2c-register`}
                                 className="w-full max-w-sm"
                             >
@@ -70,7 +68,7 @@ export function InviteWelcomePage({
                                     outlined
                                     className="w-full"
                                 />
-                            </LangLink>
+                            </Link>
 
                             <p className="mt-2 max-w-md text-center text-sm text-gray-500">
                                 {"Note: For setup using SSO, please use the same email address where you received the invitation email."}

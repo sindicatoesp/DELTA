@@ -1,6 +1,6 @@
 import { dr } from "~/db.server";
 
-import { useActionData, useLoaderData } from "react-router";
+import { useActionData, useLoaderData , Link } from "react-router";
 
 import { authLoaderWithPerm, authActionWithPerm } from "~/utils/auth";
 import { parseFormData } from "@mjackson/form-data-parser";
@@ -22,9 +22,6 @@ import {
 } from "~/backend.server/models/human_effects";
 import { eqArr } from "~/utils/array";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
-
-
-import { LangLink } from "~/utils/link";
 
 
 export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
@@ -211,10 +208,10 @@ export default function Screen() {
 						value="Submit"
 					/>
 					<div>
-						<LangLink lang="en" to={baseUrl + "?tbl=" + ld.tbl}>
+						<Link to={baseUrl + "?tbl=" + ld.tbl}>
 							{" "}
 							Back to List{" "}
-						</LangLink>
+						</Link>
 					</div>
 				</form>
 			</>

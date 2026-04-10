@@ -1,4 +1,4 @@
-import { useLoaderData, useRouteLoaderData } from "react-router";
+import { useLoaderData, useRouteLoaderData , Link } from "react-router";
 import { disasterEventsLoader } from "~/backend.server/handlers/events/disasterevent";
 
 import { DataScreen } from "~/frontend/data_screen";
@@ -9,7 +9,6 @@ import { route } from "~/frontend/events/disastereventform";
 import { Tooltip } from "primereact/tooltip";
 import { DisasterEventsFilter } from "~/frontend/components/list-page-disasterevents-filters";
 import { formatDateDisplay } from "~/utils/date";
-import { LangLink } from "~/utils/link";
 import { approvalStatusKeyToLabel } from "../approval";
 
 interface ListViewProps {
@@ -118,23 +117,23 @@ export function ListView(props: ListViewProps) {
 					</td>
 				)}
 				<td>
-					<LangLink
+					<Link
 						lang={'en'}
 						to={`${route}/${item.id}`}
 						target={props.linksNewTab ? "_blank" : undefined}
 					>
 						{item.id.slice(0, 5)}
-					</LangLink>
+					</Link>
 				</td>
 
 				<td>
 					{item.recordCount > 0 ? (
-						<LangLink
+						<Link
 							lang={'en'}
 							to={`/disaster-record?disasterEventUUID=${item.id}`}
 						>
 							{item.recordCount}
-						</LangLink>
+						</Link>
 					) : (
 						item.recordCount
 					)}

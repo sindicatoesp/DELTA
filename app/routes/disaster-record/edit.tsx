@@ -13,7 +13,7 @@ import {
 	DisasterRecordsFields,
 } from "~/backend.server/models/disaster_record";
 
-import { useLoaderData } from "react-router";
+import { useLoaderData , Link } from "react-router";
 
 import {
 	fieldsDef,
@@ -45,9 +45,6 @@ import {
 } from "~/utils/session";
 import { buildTree } from "~/components/TreeView";
 import { DISASTER_RECORDS_UPLOAD_PATH, TEMP_UPLOAD_PATH } from "~/utils/paths";
-
-
-import { LangLink } from "~/utils/link";
 
 
 type NonecoLossRow = {
@@ -280,13 +277,11 @@ export default function Screen() {
 
 								<div className="border-0">
 									<div className="flex justify-end mb-3">
-										<LangLink
-											lang="en"
-											to={`/disaster-record/edit-sub/${ld.item.id}/human-effects`}
+										<Link to={`/disaster-record/edit-sub/${ld.item.id}/human-effects`}
 											className="text-blue-600 hover:text-blue-800 text-sm"
 										>
 											[ {"Add new record"} ]
-										</LangLink>
+										</Link>
 									</div>
 
 									<div className="overflow-x-auto">
@@ -335,13 +330,13 @@ export default function Screen() {
 														return (
 															<td key={key} className="border border-gray-300 px-3 py-2">
 																{typeof value === "number" ? (
-																	<LangLink lang="en" to={href} className="text-blue-600 hover:underline">
+																	<Link to={href} className="text-blue-600 hover:underline">
 																		{value}
-																	</LangLink>
+																	</Link>
 																) : value === true ? (
-																	<LangLink lang="en" to={href} className="text-blue-600 hover:underline">
+																	<Link to={href} className="text-blue-600 hover:underline">
 																		{"Yes"}
-																	</LangLink>
+																	</Link>
 																) : (
 																	<span className="text-gray-400">-</span>
 																)}
@@ -373,13 +368,11 @@ export default function Screen() {
 
 								<div className="border-0">
 									<div className="flex justify-end mb-3">
-										<LangLink
-											lang="en"
-											to={`/disaster-record/edit-sec/${ld.item.id}`}
+										<Link to={`/disaster-record/edit-sec/${ld.item.id}`}
 											className="text-blue-600 hover:text-blue-800 text-sm"
 										>
 											[ {"Add new record"} ]
-										</LangLink>
+										</Link>
 									</div>
 
 									<div className="overflow-x-auto">
@@ -430,13 +423,11 @@ export default function Screen() {
 															{/* Damage */}
 															<td className="border border-gray-300 px-3 py-2">
 																{item.disRecSectorsWithDamage && (
-																	<LangLink
-																		lang="en"
-																		to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/damages?sectorId=${item.disRecSectorsSectorId}`}
+																	<Link to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/damages?sectorId=${item.disRecSectorsSectorId}`}
 																		className="text-blue-600 hover:underline"
 																	>
 																		{"Yes"}
-																	</LangLink>
+																	</Link>
 																)}
 															</td>
 
@@ -457,13 +448,11 @@ export default function Screen() {
 															{/* Losses */}
 															<td className="border border-gray-300 px-3 py-2">
 																{item.disRecSectorsWithLosses && (
-																	<LangLink
-																		lang="en"
-																		to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/losses?sectorId=${item.disRecSectorsSectorId}`}
+																	<Link to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/losses?sectorId=${item.disRecSectorsSectorId}`}
 																		className="text-blue-600 hover:underline"
 																	>
 																		{"Yes"}
-																	</LangLink>
+																	</Link>
 																)}
 															</td>
 
@@ -477,13 +466,11 @@ export default function Screen() {
 															{/* Disruption */}
 															<td className="border border-gray-300 px-3 py-2">
 																{item.disRecSectorsWithDisruption && (
-																	<LangLink
-																		lang="en"
-																		to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/disruptions?sectorId=${item.disRecSectorsSectorId}`}
+																	<Link to={`/disaster-record/edit-sub/${item.disRecSectorsdisasterRecordId}/disruptions?sectorId=${item.disRecSectorsSectorId}`}
 																		className="text-blue-600 hover:underline"
 																	>
 																		{"Yes"}
-																	</LangLink>
+																	</Link>
 																)}
 															</td>
 
@@ -491,21 +478,17 @@ export default function Screen() {
 															<td className="border border-gray-300 px-3 py-2">
 																{ld.item?.id && (
 																	<div className="flex items-center gap-2">
-																		<LangLink
-																			lang="en"
-																			to={`/disaster-record/edit-sec/${ld.item.id}/delete/?id=${item.disRecSectorsId}`}
+																		<Link to={`/disaster-record/edit-sec/${ld.item.id}/delete/?id=${item.disRecSectorsId}`}
 																			className="text-red-600 hover:underline"
 																		>
 																			{"Delete"}
-																		</LangLink>
+																		</Link>
 																		<span className="text-gray-300">|</span>
-																		<LangLink
-																			lang="en"
-																			to={`/disaster-record/edit-sec/${ld.item.id}/?id=${item.disRecSectorsId}`}
+																		<Link to={`/disaster-record/edit-sec/${ld.item.id}/?id=${item.disRecSectorsId}`}
 																			className="text-blue-600 hover:underline"
 																		>
 																			{"Edit"}
-																		</LangLink>
+																		</Link>
 																	</div>
 																)}
 															</td>
@@ -529,13 +512,11 @@ export default function Screen() {
 
 								<div className="border-0">
 									<div className="flex justify-end mb-3">
-										<LangLink
-											lang="en"
-											to={`${route}/non-economic-losses/${ld.item.id}`}
+										<Link to={`${route}/non-economic-losses/${ld.item.id}`}
 											className="text-blue-600 hover:text-blue-800 text-sm"
 										>
 											[ {"Add new record"} ]
-										</LangLink>
+										</Link>
 									</div>
 
 									<div className="overflow-x-auto">
@@ -570,21 +551,17 @@ export default function Screen() {
 															<td className="border border-gray-300 px-3 py-2">
 																{ld.item?.id && (
 																	<div className="flex items-center gap-2">
-																		<LangLink
-																			lang="en"
-																			to={`${route}/non-economic-losses/${ld.item.id}/delete/?id=${item.noneccoId}`}
+																		<Link to={`${route}/non-economic-losses/${ld.item.id}/delete/?id=${item.noneccoId}`}
 																			className="text-red-600 hover:underline"
 																		>
 																			{"Delete"}
-																		</LangLink>
+																		</Link>
 																		<span className="text-gray-300">|</span>
-																		<LangLink
-																			lang="en"
-																			to={`${route}/non-economic-losses/${ld.item.id}/?id=${item.noneccoId}`}
+																		<Link to={`${route}/non-economic-losses/${ld.item.id}/?id=${item.noneccoId}`}
 																			className="text-blue-600 hover:underline"
 																		>
 																			{"Edit"}
-																		</LangLink>
+																		</Link>
 																	</div>
 																)}
 															</td>

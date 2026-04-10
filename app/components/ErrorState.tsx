@@ -1,8 +1,6 @@
+import { Link } from "react-router";
 import { Card } from "primereact/card";
-
-
 import { Button } from "primereact/button";
-import { LangLink } from "~/utils/link";
 
 
 type ErrorStateProps = {
@@ -32,14 +30,14 @@ export function ErrorState({ title, message, actionLabel = "Go to home", actionT
 					{/* Message */}
 					<p className="m-0 text-color-secondary">{message}</p>
 
-					<LangLink lang="en" to={actionTo}>
+					<Link to={actionTo}>
 						<Button
 							label={actionLabel}
 							icon="pi pi-home"
 							className="mt-3"
 							outlined
 						/>
-					</LangLink>
+					</Link>
 				</div>
 			</Card>
 		</div>

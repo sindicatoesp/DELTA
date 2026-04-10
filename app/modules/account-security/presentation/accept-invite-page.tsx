@@ -1,11 +1,9 @@
-import { useNavigation } from "react-router";
-import { Form } from "react-router";
+import { useNavigation, Form, Link } from "react-router";
 import { Card } from "primereact/card";
 import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import { LangLink } from "~/utils/link";
 import { ErrorState } from "~/components/ErrorState";
 import type { CompleteInviteSignupErrors } from "~/modules/account-security/domain/entities/account-security";
 
@@ -212,13 +210,12 @@ export function AcceptInvitePage({
 
                         {/* Footer */}
                         <div className="space-y-4 text-center">
-                            <LangLink
-                                lang="en"
+                            <Link
                                 to="/"
                                 className="text-sm text-blue-600 underline hover:text-blue-800"
                             >
                                 {"Home"}
-                            </LangLink>
+                            </Link>
 
                             {isSetupComplete && (
                                 <>
@@ -228,13 +225,12 @@ export function AcceptInvitePage({
                                         text={"Your account has been set up successfully. Click sign in below"}
                                     />
 
-                                    <LangLink
-                                        lang="en"
+                                    <Link
                                         to="/user/login"
                                         className="block text-sm text-blue-600 underline hover:text-blue-800"
                                     >
                                         {"Sign in"}
-                                    </LangLink>
+                                    </Link>
                                 </>
                             )}
                         </div>

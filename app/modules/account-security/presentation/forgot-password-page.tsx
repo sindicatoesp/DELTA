@@ -1,7 +1,5 @@
-import { useNavigation } from "react-router";
+import { useNavigation, Link } from "react-router";
 import { Form, Errors as FormErrors, errorToString } from "~/frontend/form";
-
-import { LangLink } from "~/utils/link";
 import { Card } from "primereact/card";
 import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
@@ -97,13 +95,12 @@ export function ForgotPasswordPage({
 
                         {/* Back Link */}
                         <div>
-                            <LangLink
-                                lang={"en"}
+                            <Link
                                 to="/user/login"
                                 className="text-sm text-blue-600 underline hover:text-blue-800"
                             >
                                 {"Back"}
-                            </LangLink>
+                            </Link>
                         </div>
 
                         {/* Success */}

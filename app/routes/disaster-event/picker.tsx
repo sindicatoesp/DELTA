@@ -1,11 +1,10 @@
+import { Link } from 'react-router';
 import { disasterEventsLoader } from "~/backend.server/handlers/events/disasterevent";
 
 import { ListView } from "~/frontend/events/disastereventlist";
 
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
 
-
-import { LangLink } from "~/utils/link";
 
 export const loader = authLoaderPublicOrWithPerm(
 	"ViewData",
@@ -22,9 +21,7 @@ export default function Data() {
 		hideMainLinks: true,
 		linksNewTab: true,
 		actions: (item) => (
-			<LangLink
-				lang="en"
-				to="#"
+			<Link to="#"
 				onClick={() => {
 					if (window.opener) {
 						window.opener.postMessage(
@@ -40,7 +37,7 @@ export default function Data() {
 				}}
 			>
 				{"Select"}
-			</LangLink>
+			</Link>
 		),
 	});
 }

@@ -1,8 +1,7 @@
+import { Link } from 'react-router';
 import { Form, Field, SubmitButton, FieldErrors } from "~/frontend/form";
 import { InsertDivision } from "~/drizzle/schema/divisionTable";
 import { DivisionBreadcrumbRow } from "~/backend.server/models/division";
-import { LangLink } from "~/utils/link";
-
 interface DivisionFormProps {
 	edit: boolean;
 	fields: InsertDivision;
@@ -54,12 +53,12 @@ export function DivisionForm({
 				</div>
 			</Form>
 
-			<LangLink
+			<Link
 				lang={"en"}
 				to={`/settings/geography${fields.parentId ? "?parent=" + fields.parentId : ""}`}
 			>
 				{"Back to list"}
-			</LangLink>
+			</Link>
 		</>
 	);
 }
@@ -77,16 +76,16 @@ export function Breadcrumb({ rows, linkLast }: BreadcrumbProps) {
 		<nav aria-label="breadcrumb">
 			<ol>
 				<li key="root">
-					<LangLink lang={"en"} to={`/settings/geography`}>
+					<Link lang={"en"} to={`/settings/geography`}>
 						Root
-					</LangLink>
+					</Link>
 				</li>
 				{rows.map((row, index) => (
 					<li key={row.id}>
 						{index < rows.length - 1 || linkLast ? (
-							<LangLink lang={"en"} to={`/settings/geography?parent=${row.id}`}>
+							<Link lang={"en"} to={`/settings/geography?parent=${row.id}`}>
 								{row.name}
-							</LangLink>
+							</Link>
 						) : (
 							<span>{row.name}</span>
 						)}

@@ -22,11 +22,9 @@ import { HumanEffectsTable } from "~/frontend/human_effects/defs";
 import React from "react";
 import { toStandardDate } from "~/utils/date";
 import { eqArr } from "~/utils/array";
-import { useFetcher } from "react-router";
+import { useFetcher , Link } from "react-router";
 import { notifyError, notifyInfo } from "../utils/notifications";
 import { validate } from "./validate";
-import { LangLink } from "~/utils/link";
-
 interface TableProps {
 	recordId: string;
 	table: HumanEffectsTable;
@@ -391,10 +389,10 @@ function TableClient(props: TableProps) {
 						reSort={reSort}
 					/>
 					<TableLegend />
-					<LangLink lang="en" to="/settings/human-effects-dsg"
+					<Link to="/settings/human-effects-dsg"
 						className="text-[#00afae] hover:text-blue-800 underline mb-4 inline-block">
 						{"Configure disaggregations"}
-					</LangLink>
+					</Link>
 				</>
 			)}
 		</div>

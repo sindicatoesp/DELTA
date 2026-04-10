@@ -1,6 +1,6 @@
 ﻿import React, { useState, useRef, useEffect } from "react";
 import type { MetaFunction } from "react-router";
-import { useLoaderData, Outlet } from "react-router";
+import { useLoaderData, Outlet , Link } from "react-router";
 
 import { authLoaderPublicOrWithPerm } from "~/utils/auth";
 import { NavSettings } from "~/frontend/components/nav-settings";
@@ -42,8 +42,6 @@ import {
 import { CommonData } from "~/backend.server/handlers/commondata";
 
 
-
-import { LangLink } from "~/utils/link";
 
 import { getSectorImpactTotal } from "~/backend.server/handlers/analytics/ImpactonSectors";
 import { getCurrencySymbol } from "~/utils/currency";
@@ -654,12 +652,10 @@ function DisasterEventsAnalysisContent() {
 									{ld.countRelatedDisasterRecords}{" "}
 									{ld.countRelatedDisasterRecords &&
 										ld.countRelatedDisasterRecords > 0 && (
-											<LangLink
-												lang="en"
-												to={`/disaster-record?disasterEventUUID=${ld.qsDisEventId}`}
+											<Link to={`/disaster-record?disasterEventUUID=${ld.qsDisEventId}`}
 											>
 												{"View records"}
-											</LangLink>
+											</Link>
 										)}
 								</p>
 
@@ -1345,23 +1341,19 @@ function DisasterEventsAnalysisContent() {
 													</div>
 												</div>
 												<div className="dts-form__actions">
-													<LangLink
-														lang="en"
-														id="sector-apply-filter"
+													<Link id="sector-apply-filter"
 														style={{ pointerEvents: "none", opacity: 0.5 }}
 														to={`/analytics/disaster-events/sector/?disasterEventId=${ld.record.id}&sectorid=${selectedSector}&subsectorid=${selectedSubSector}`}
 														className="mg-button mg-button--small mg-button-primary"
 													>
 														{"Apply filters"}
-													</LangLink>
-													<LangLink
-														lang="en"
-														id="sector-clear-filter"
+													</Link>
+													<Link id="sector-clear-filter"
 														to={`/analytics/disaster-events/?disasterEventId=${ld.record.id}`}
 														className="mg-button mg-button--small mg-button-outline"
 													>
 														{"Clear"}
-													</LangLink>
+													</Link>
 												</div>
 											</div>
 										</form>
