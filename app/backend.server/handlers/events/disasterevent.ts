@@ -1,6 +1,6 @@
 import { disasterRecordsTable } from "~/drizzle/schema/disasterRecordsTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 
 import { authLoaderIsPublic } from "~/utils/auth";
 

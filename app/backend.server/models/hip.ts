@@ -5,10 +5,13 @@ import { hipClusterTable } from "~/drizzle/schema/hipClusterTable";
 import { hipTypeTable } from "~/drizzle/schema/hipTypeTable";
 import { eq, sql } from "drizzle-orm";
 
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
+const ctx: any = {
+	t: (message: any, _v?: any) => message?.msg ?? "",
+	lang: "en",
+	url: (p: string) => p,
+	fullUrl: (p: string) => p,
+	rootUrl: () => "/",
+};
 
 export interface Hip {
 	//type: string
@@ -34,7 +37,7 @@ export async function getHazardById(id: string) {
 			clusterId: hipClusterTable.id,
 			typeId: hipTypeTable.id,
 			code: hipHazardTable.code,
-			name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, ${ctx.lang})`,
+			name: hipHazardTable.name_en,
 			description: sql<string>`dts_jsonb_localized(${hipHazardTable.description}, ${ctx.lang})`,
 		})
 		.from(hipHazardTable)
@@ -57,7 +60,7 @@ export async function getClusterById(id: string) {
 		.select({
 			id: hipClusterTable.id,
 			typeId: hipClusterTable.typeId,
-			name: sql<string>`dts_jsonb_localized(${hipClusterTable.name}, ${ctx.lang})`,
+			name: hipClusterTable.name_en,
 		})
 		.from(hipClusterTable)
 		.innerJoin(hipTypeTable, eq(hipTypeTable.id, hipClusterTable.typeId))
@@ -74,7 +77,7 @@ export async function getTypeById(id: string) {
 	const rows = await dr
 		.select({
 			id: hipTypeTable.id,
-			name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`,
+			name: hipTypeTable.name_en,
 		})
 		.from(hipTypeTable)
 		.where(eq(hipTypeTable.id, id));

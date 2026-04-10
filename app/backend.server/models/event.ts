@@ -18,7 +18,7 @@ import {
 	hazardousEventTable,
 	InsertHazardousEvent,
 	hazardousEventTableConstraits,
-} from "~/drizzle/schema/hazardousEventTable";
+} from "~/modules/hazardous-event/infrastructure/db/schema";
 import { eventRelationshipTable } from "~/drizzle/schema/eventRelationshipTable";
 import { eventTable, EventInsert } from "~/drizzle/schema/eventTable";
 import { checkConstraintError } from "./common";
@@ -1569,9 +1569,7 @@ export async function disasterEventById(id: any) {
 							id: true,
 						},
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, 'en')`.as(
-								"name",
-							),
+							name: sql<string>`${hipHazardTable.name_en}`.as("name"),
 						},
 						where: eq(hipHazardTable.id, disasterEvent.hipHazardId),
 					})
@@ -1582,9 +1580,7 @@ export async function disasterEventById(id: any) {
 							id: true,
 						},
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipClusterTable.name}, 'en')`.as(
-								"name",
-							),
+							name: sql<string>`${hipClusterTable.name_en}`.as("name"),
 						},
 						where: eq(hipClusterTable.id, disasterEvent.hipClusterId),
 					})
@@ -1595,9 +1591,7 @@ export async function disasterEventById(id: any) {
 							id: true,
 						},
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, 'en')`.as(
-								"name",
-							),
+							name: sql<string>`${hipTypeTable.name_en}`.as("name"),
 						},
 						where: eq(hipTypeTable.id, disasterEvent.hipTypeId),
 					})

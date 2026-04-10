@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, AnyPgColumn } from "drizzle-orm/pg-core";
-import { zeroStrMap } from "../../utils/drizzleUtil";
 import { hipTypeTable } from "./hipTypeTable";
 
 // examples:
@@ -12,7 +11,7 @@ export const hipClusterTable = pgTable("hip_cluster", {
 	typeId: text("type_id")
 		.references((): AnyPgColumn => hipTypeTable.id)
 		.notNull(),
-	name: zeroStrMap("name"),
+	name_en: text("name_en").notNull().default(""),
 });
 
 export const hipClusterRel = relations(hipClusterTable, ({ one }) => ({

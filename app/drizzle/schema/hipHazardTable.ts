@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, AnyPgColumn } from "drizzle-orm/pg-core";
-import { zeroText, zeroStrMap } from "../../utils/drizzleUtil";
+import { pgTable, text, AnyPgColumn, jsonb } from "drizzle-orm/pg-core";
 import { hipClusterTable } from "./hipClusterTable";
 import { disasterRecordsTable } from "./disasterRecordsTable";
 
@@ -10,12 +9,15 @@ import { disasterRecordsTable } from "./disasterRecordsTable";
 
 export const hipHazardTable = pgTable("hip_hazard", {
 	id: text("id").primaryKey(),
-	code: zeroText("code"),
+	code: text("code").notNull().default(""),
 	clusterId: text("cluster_id")
 		.references((): AnyPgColumn => hipClusterTable.id)
 		.notNull(),
-	name: zeroStrMap("name"),
-	description: zeroStrMap("description"),
+	name_en: text("name_en").notNull().default(""),
+	description: jsonb("description")
+		.$type<Record<string, string>>()
+		.default({})
+		.notNull(),
 });
 
 export const hipHazardRel = relations(hipHazardTable, ({ one }) => ({

@@ -1,14 +1,15 @@
-import { relations } from "drizzle-orm";
-import { pgTable } from "drizzle-orm/pg-core";
-import { ourRandomUUID, zeroText } from "../../utils/drizzleUtil";
+import { relations, sql } from "drizzle-orm";
+import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { disasterEventTable } from "./disasterEventTable";
-import { hazardousEventTable } from "./hazardousEventTable";
+import { hazardousEventTable } from "../../modules/hazardous-event/infrastructure/db/schema";
 import { eventRelationshipTable } from "./eventRelationshipTable";
 
 export const eventTable = pgTable("event", {
-	id: ourRandomUUID(),
-	name: zeroText("name").notNull(),
-	description: zeroText("description").notNull(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
+	name: text("name").notNull().default("").notNull(),
+	description: text("description").notNull().default("").notNull(),
 });
 
 export type Event = typeof eventTable.$inferSelect;

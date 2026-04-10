@@ -1,11 +1,12 @@
-import { relations } from "drizzle-orm";
-import { pgTable, uuid, AnyPgColumn } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
 import {
-	ourRandomUUID,
-	zeroStrMap,
-	ourBigint,
-	createdUpdatedTimestamps,
-} from "../../utils/drizzleUtil";
+	pgTable,
+	uuid,
+	AnyPgColumn,
+	jsonb,
+	bigint,
+	timestamp,
+} from "drizzle-orm/pg-core";
 import { sectorDisasterRecordsRelationTable } from "./sectorDisasterRecordsRelationTable";
 
 /**
@@ -20,12 +21,20 @@ import { sectorDisasterRecordsRelationTable } from "./sectorDisasterRecordsRelat
 // description: The cultivation and harvesting of plants for food, fiber, and other products.
 
 export const sectorTable = pgTable("sector", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	parentId: uuid("parent_id").references((): AnyPgColumn => sectorTable.id),
-	name: zeroStrMap("name"),
-	description: zeroStrMap("description"), // Optional description for the sector | Additional details about the sector
-	level: ourBigint("level").notNull().default(1), // value is parent level + 1 otherwise 1
-	...createdUpdatedTimestamps,
+	name: jsonb("name").$type<Record<string, string>>().default({}).notNull(),
+	description: jsonb("description")
+		.$type<Record<string, string>>()
+		.default({})
+		.notNull(), // Optional description for the sector | Additional details about the sector
+	level: bigint("level", { mode: "number" }).notNull().default(1), // value is parent level + 1 otherwise 1
+	updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+	createdAt: timestamp("created_at")
+		.notNull()
+		.default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const sectoryParent_Rel = relations(sectorTable, ({ one }) => ({

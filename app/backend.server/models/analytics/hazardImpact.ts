@@ -7,13 +7,8 @@ import { hipTypeTable } from "~/drizzle/schema/hipTypeTable";
 import { lossesTable } from "~/drizzle/schema/lossesTable";
 import { damagesTable } from "~/drizzle/schema/damagesTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import createLogger from "~/utils/logger.server";
-
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
 
 // Initialize logger for this module
 const logger = createLogger("backend.server/models/analytics/hazardImpact");
@@ -265,8 +260,7 @@ export async function fetchHazardImpactData(
 	const eventsCount = await dr
 		.select({
 			hazardId: sql<string>`${hazardousEventTable.hipTypeId}`,
-			hazardName: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`,
-
+			hazardName: hipTypeTable.name_en,
 			value: sql<number>`COUNT(DISTINCT ${disasterEventTable.id})`,
 		})
 		.from(disasterRecordsTable)
@@ -298,7 +292,7 @@ export async function fetchHazardImpactData(
 	const damages = await dr
 		.select({
 			hazardId: sql<string>`${hazardousEventTable.hipTypeId}`,
-			hazardName: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`,
+			hazardName: hipTypeTable.name_en,
 			value: sql<string>`
                 SUM(
                     CASE 
@@ -372,7 +366,7 @@ export async function fetchHazardImpactData(
 	const losses = await dr
 		.select({
 			hazardId: sql<string>`${hazardousEventTable.hipTypeId}`,
-			hazardName: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`,
+			hazardName: hipTypeTable.name_en,
 			value: sql<string>`
                 SUM(
                     CASE 

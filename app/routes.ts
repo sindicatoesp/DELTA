@@ -268,6 +268,14 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		route("disaster-event/picker", "routes/disaster-event/picker.tsx");
 	});
 
+	const hazardousEventRoutes = defineRoutes((route) => {
+		route("hazardous-event/:id", "routes/hazardous-event/$id.tsx");
+		route("hazardous-event", "routes/hazardous-event/_index.tsx");
+		route("hazardous-event/new", "routes/hazardous-event/new.tsx");
+		route("hazardous-event/:id/delete", "routes/hazardous-event/delete.tsx");
+		route("hazardous-event/:id/edit", "routes/hazardous-event/edit.tsx");
+	});
+
 	const disasterRecordRoutes = defineRoutes((route) => {
 		route("disaster-record/:id", "routes/disaster-record/$id.tsx");
 		route("disaster-record", "routes/disaster-record/_index.tsx");
@@ -592,6 +600,7 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		...infoRoutes,
 		...examplesRoutes,
 		...disasterEventRoutes,
+		...hazardousEventRoutes,
 		...disasterRecordRoutes,
 		...apiRoutes,
 	};

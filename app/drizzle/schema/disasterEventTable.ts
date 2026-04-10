@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	pgTable,
 	uuid,
@@ -7,19 +7,12 @@ import {
 	timestamp,
 	jsonb,
 	unique,
+	bigint,
+	boolean,
+	numeric,
 } from "drizzle-orm/pg-core";
-import {
-	createdUpdatedTimestamps,
-	approvalFields,
-	apiImportIdField,
-	hipRelationColumnsOptional,
-	zeroText,
-	ourBigint,
-	zeroBool,
-	ourMoney,
-} from "../../utils/drizzleUtil";
 import { eventTable } from "./eventTable";
-import { hazardousEventTable } from "./hazardousEventTable";
+import { hazardousEventTable } from "../../modules/hazardous-event/infrastructure/db/schema";
 import { countryAccountsTable } from "./countryAccountsTable";
 import { hipHazardTable } from "./hipHazardTable";
 import { hipClusterTable } from "./hipClusterTable";
@@ -28,10 +21,31 @@ import { hipTypeTable } from "./hipTypeTable";
 export const disasterEventTable = pgTable(
 	"disaster_event",
 	{
-		...createdUpdatedTimestamps,
-		...approvalFields,
-		...apiImportIdField(),
-		...hipRelationColumnsOptional(),
+		updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+		createdAt: timestamp("created_at")
+			.notNull()
+			.default(sql`CURRENT_TIMESTAMP`),
+		approvalStatus: text({
+			enum: [
+				"draft",
+				"waiting-for-validation",
+				"needs-revision",
+				"validated",
+				"published",
+			],
+		})
+			.notNull()
+			.default("draft"),
+		apiImportId: text("api_import_id"),
+		hipHazardId: text("hip_hazard_id").references(
+			(): AnyPgColumn => hipHazardTable.id,
+		),
+		hipClusterId: text("hip_cluster_id").references(
+			(): AnyPgColumn => hipClusterTable.id,
+		),
+		hipTypeId: text("hip_type_id").references(
+			(): AnyPgColumn => hipTypeTable.id,
+		),
 		countryAccountsId: uuid("country_accounts_id").references(
 			() => countryAccountsTable.id,
 			{
@@ -47,62 +61,86 @@ export const disasterEventTable = pgTable(
 		disasterEventId: uuid("disaster_event_id").references(
 			(): AnyPgColumn => disasterEventTable.id,
 		),
-		nationalDisasterId: zeroText("national_disaster_id"),
+		nationalDisasterId: text("national_disaster_id").notNull().default(""),
 		// multiple other ids
-		otherId1: zeroText("other_id1"),
-		otherId2: zeroText("other_id2"),
-		otherId3: zeroText("other_id3"),
-		nameNational: zeroText("name_national"),
-		glide: zeroText("glide"),
-		nameGlobalOrRegional: zeroText("name_global_or_regional"),
+		otherId1: text("other_id1").notNull().default(""),
+		otherId2: text("other_id2").notNull().default(""),
+		otherId3: text("other_id3").notNull().default(""),
+		nameNational: text("name_national").notNull().default(""),
+		glide: text("glide").notNull().default(""),
+		nameGlobalOrRegional: text("name_global_or_regional").notNull().default(""),
 		// yyyy or yyyy-mm or yyyy-mm-dd
-		startDate: zeroText("start_date"),
-		endDate: zeroText("end_date"),
+		startDate: text("start_date").notNull().default(""),
+		endDate: text("end_date").notNull().default(""),
 		startDateLocal: text("start_date_local"),
 		endDateLocal: text("end_date_local"),
-		durationDays: ourBigint("duration_days"),
+		durationDays: bigint("duration_days", { mode: "number" }),
 		disasterDeclaration: text("disaster_declaration", {
 			enum: ["yes", "no", "unknown"],
 		})
 			.notNull()
 			.default("unknown"),
 		// multiple disaster declartions
-		disasterDeclarationTypeAndEffect1: zeroText(
+		disasterDeclarationTypeAndEffect1: text(
 			"disaster_declaration_type_and_effect1",
-		),
+		)
+			.notNull()
+			.default(""),
 		disasterDeclarationDate1: timestamp("disaster_declaration_date1"),
-		disasterDeclarationTypeAndEffect2: zeroText(
+		disasterDeclarationTypeAndEffect2: text(
 			"disaster_declaration_type_and_effect2",
-		),
+		)
+			.notNull()
+			.default(""),
 		disasterDeclarationDate2: timestamp("disaster_declaration_date2"),
-		disasterDeclarationTypeAndEffect3: zeroText(
+		disasterDeclarationTypeAndEffect3: text(
 			"disaster_declaration_type_and_effect3",
-		),
+		)
+			.notNull()
+			.default(""),
 		disasterDeclarationDate3: timestamp("disaster_declaration_date3"),
-		disasterDeclarationTypeAndEffect4: zeroText(
+		disasterDeclarationTypeAndEffect4: text(
 			"disaster_declaration_type_and_effect4",
-		),
+		)
+			.notNull()
+			.default(""),
 		disasterDeclarationDate4: timestamp("disaster_declaration_date4"),
-		disasterDeclarationTypeAndEffect5: zeroText(
+		disasterDeclarationTypeAndEffect5: text(
 			"disaster_declaration_type_and_effect5",
-		),
+		)
+			.notNull()
+			.default(""),
 		disasterDeclarationDate5: timestamp("disaster_declaration_date5"),
 
-		hadOfficialWarningOrWeatherAdvisory: zeroBool(
+		hadOfficialWarningOrWeatherAdvisory: boolean(
 			"had_official_warning_or_weather_advisory",
-		),
-		officialWarningAffectedAreas: zeroText("official_warning_affected_areas"),
+		)
+			.notNull()
+			.default(false),
+		officialWarningAffectedAreas: text("official_warning_affected_areas")
+			.notNull()
+			.default(""),
 
 		// multiple early actions fields
-		earlyActionDescription1: zeroText("early_action_description1"),
+		earlyActionDescription1: text("early_action_description1")
+			.notNull()
+			.default(""),
 		earlyActionDate1: timestamp("early_action_date1"),
-		earlyActionDescription2: zeroText("early_action_description2"),
+		earlyActionDescription2: text("early_action_description2")
+			.notNull()
+			.default(""),
 		earlyActionDate2: timestamp("early_action_date2"),
-		earlyActionDescription3: zeroText("early_action_description3"),
+		earlyActionDescription3: text("early_action_description3")
+			.notNull()
+			.default(""),
 		earlyActionDate3: timestamp("early_action_date3"),
-		earlyActionDescription4: zeroText("early_action_description4"),
+		earlyActionDescription4: text("early_action_description4")
+			.notNull()
+			.default(""),
 		earlyActionDate4: timestamp("early_action_date4"),
-		earlyActionDescription5: zeroText("early_action_description5"),
+		earlyActionDescription5: text("early_action_description5")
+			.notNull()
+			.default(""),
 		earlyActionDate5: timestamp("early_action_date5"),
 
 		// multiple rapid or preliminary assessments
@@ -137,7 +175,7 @@ export const disasterEventTable = pgTable(
 			"rapid_or_preliminary_assessment_date5",
 		),
 
-		responseOperations: zeroText("response_oprations"),
+		responseOperations: text("response_oprations").notNull().default(""),
 
 		// multiple post disaster assessments
 		postDisasterAssessmentDescription1: text(
@@ -173,52 +211,56 @@ export const disasterEventTable = pgTable(
 		otherAssessmentDescription5: text("other_assessment_description5"),
 		otherAssessmentDate5: timestamp("other_assessment_date5"),
 
-		dataSource: zeroText("data_source"),
-		recordingInstitution: zeroText("recording_institution"),
-		effectsTotalUsd: ourMoney("effects_total_usd"),
-		nonEconomicLosses: zeroText("non_economic_losses"),
-		damagesSubtotalLocalCurrency: ourMoney("damages_subtotal_local_currency"),
-		lossesSubtotalUSD: ourMoney("losses_subtotal_usd"),
-		responseOperationsDescription: zeroText("response_operations_description"),
-		responseOperationsCostsLocalCurrency: ourMoney(
+		dataSource: text("data_source").notNull().default(""),
+		recordingInstitution: text("recording_institution").notNull().default(""),
+		effectsTotalUsd: numeric("effects_total_usd"),
+		nonEconomicLosses: text("non_economic_losses").notNull().default(""),
+		damagesSubtotalLocalCurrency: numeric("damages_subtotal_local_currency"),
+		lossesSubtotalUSD: numeric("losses_subtotal_usd"),
+		responseOperationsDescription: text("response_operations_description")
+			.notNull()
+			.default(""),
+		responseOperationsCostsLocalCurrency: numeric(
 			"response_operations_costs_local_currency",
 		),
-		responseCostTotalLocalCurrency: ourMoney(
+		responseCostTotalLocalCurrency: numeric(
 			"response_cost_total_local_currency",
 		),
-		responseCostTotalUSD: ourMoney("response_cost_total_usd"),
-		humanitarianNeedsDescription: zeroText("humanitarian_needs_description"),
-		humanitarianNeedsLocalCurrency: ourMoney(
+		responseCostTotalUSD: numeric("response_cost_total_usd"),
+		humanitarianNeedsDescription: text("humanitarian_needs_description")
+			.notNull()
+			.default(""),
+		humanitarianNeedsLocalCurrency: numeric(
 			"humanitarian_needs_local_currency",
 		),
-		humanitarianNeedsUSD: ourMoney("humanitarian_needs_usd"),
+		humanitarianNeedsUSD: numeric("humanitarian_needs_usd"),
 
-		rehabilitationCostsLocalCurrencyCalc: ourMoney(
+		rehabilitationCostsLocalCurrencyCalc: numeric(
 			"rehabilitation_costs_local_currency_calc",
 		),
-		rehabilitationCostsLocalCurrencyOverride: ourMoney(
+		rehabilitationCostsLocalCurrencyOverride: numeric(
 			"rehabilitation_costs_local_currency_override",
 		),
-		//rehabilitationCostsUSD: ourMoney("rehabilitation_costs_usd"),
-		repairCostsLocalCurrencyCalc: ourMoney("repair_costs_local_currency_calc"),
-		repairCostsLocalCurrencyOverride: ourMoney(
+		//rehabilitationCostsUSD: numeric("rehabilitation_costs_usd"),
+		repairCostsLocalCurrencyCalc: numeric("repair_costs_local_currency_calc"),
+		repairCostsLocalCurrencyOverride: numeric(
 			"repair_costs_local_currency_override",
 		),
-		//repairCostsUSD: ourMoney("repair_costs_usd"),
-		replacementCostsLocalCurrencyCalc: ourMoney(
+		//repairCostsUSD: numeric("repair_costs_usd"),
+		replacementCostsLocalCurrencyCalc: numeric(
 			"replacement_costs_local_currency_calc",
 		),
-		replacementCostsLocalCurrencyOverride: ourMoney(
+		replacementCostsLocalCurrencyOverride: numeric(
 			"replacement_costs_local_currency_override",
 		),
-		//replacementCostsUSD: ourMoney("replacement_costs_usd"),
-		recoveryNeedsLocalCurrencyCalc: ourMoney(
+		//replacementCostsUSD: numeric("replacement_costs_usd"),
+		recoveryNeedsLocalCurrencyCalc: numeric(
 			"recovery_needs_local_currency_calc",
 		),
-		recoveryNeedsLocalCurrencyOverride: ourMoney(
+		recoveryNeedsLocalCurrencyOverride: numeric(
 			"recovery_needs_local_currency_override",
 		),
-		//recoveryNeedsUSD: ourMoney("recovery_needs_usd"),
+		//recoveryNeedsUSD: numeric("recovery_needs_usd"),
 		attachments: jsonb("attachments"),
 		spatialFootprint: jsonb("spatial_footprint"),
 

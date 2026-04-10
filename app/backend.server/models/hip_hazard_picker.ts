@@ -6,11 +6,6 @@ import { hipTypeTable } from "~/drizzle/schema/hipTypeTable";
 
 import { sql } from "drizzle-orm";
 
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
-
 export interface Type {
 	id: string;
 	name: string;
@@ -38,9 +33,7 @@ export async function dataForHazardPicker(): Promise<HipDataForHazardPicker> {
 	const types: Type[] = await dr
 		.select({
 			id: hipTypeTable.id,
-			name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`.as(
-				"name",
-			),
+			name: hipTypeTable.name_en,
 		})
 		.from(hipTypeTable)
 		.orderBy(sql`name`);
@@ -49,9 +42,7 @@ export async function dataForHazardPicker(): Promise<HipDataForHazardPicker> {
 		.select({
 			id: hipClusterTable.id,
 			typeId: hipClusterTable.typeId,
-			name: sql<string>`dts_jsonb_localized(${hipClusterTable.name}, ${ctx.lang})`.as(
-				"name",
-			),
+			name: hipClusterTable.name_en,
 		})
 		.from(hipClusterTable)
 		.orderBy(sql`name`);
@@ -60,7 +51,7 @@ export async function dataForHazardPicker(): Promise<HipDataForHazardPicker> {
 		.select({
 			id: hipHazardTable.id,
 			clusterId: hipHazardTable.clusterId,
-			name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, ${ctx.lang})`,
+			name: hipHazardTable.name_en,
 		})
 		.from(hipHazardTable)
 		.orderBy(sql`name`);

@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
 	pgTable,
 	uuid,
@@ -5,13 +6,14 @@ import {
 	timestamp,
 	foreignKey,
 } from "drizzle-orm/pg-core";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
 import { userTable } from "./userTable";
 
 export const entityValidationRejectionTable = pgTable(
 	"entity_validation_rejection",
 	{
-		id: ourRandomUUID(),
+		id: uuid("id")
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
 		entityId: uuid("entity_id"),
 		entityType: text("entity_type").notNull(),
 		rejectedByUserId: uuid("rejected_by_user_id").notNull(),

@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
 	pgTable,
 	text,
@@ -6,33 +7,30 @@ import {
 	jsonb,
 	uuid,
 	unique,
+	bigint,
 } from "drizzle-orm/pg-core";
-import {
-	apiImportIdField,
-	ourRandomUUID,
-	ourBigint,
-	zeroText,
-} from "../../utils/drizzleUtil";
 import { countryAccountsTable } from "./countryAccountsTable";
 
 export const devExample1Table = pgTable(
 	"dev_example1",
 	{
-		...apiImportIdField(),
-		id: ourRandomUUID(),
+		apiImportId: text("api_import_id"),
+		id: uuid("id")
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
 		// for both required and optional text fields setting it to "" makes sense, it's different for numbers where 0 could be a valid entry
 		field1: text("field1").notNull(),
 		field2: text("field2").notNull(),
 		// required
-		field3: ourBigint("field3").notNull(),
+		field3: bigint("field3", { mode: "number" }).notNull(),
 		// optional
-		field4: ourBigint("field4"),
+		field4: bigint("field4", { mode: "number" }),
 		field6: text({ enum: ["one", "two", "three"] })
 			.notNull()
 			.default("one"),
 		field7: timestamp("field7"),
 		// yyyy or yyyy-mm or yyyy-mm-dd
-		field8: zeroText("field8"),
+		field8: text("field8").notNull().default(""),
 		repeatableNum1: integer("repeatable_num1"),
 		repeatableText1: text("repeatable_text1"),
 		repeatableNum2: integer("repeatable_num2"),

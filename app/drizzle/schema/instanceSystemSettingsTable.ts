@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
 	pgTable,
 	boolean,
@@ -5,7 +6,6 @@ import {
 	uuid,
 	customType,
 } from "drizzle-orm/pg-core";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
 import { countryAccountsTable } from "./countryAccountsTable";
 
 const url = customType<{
@@ -26,7 +26,9 @@ const url = customType<{
 });
 
 export const instanceSystemSettingsTable = pgTable("instance_system_settings", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	footerUrlPrivacyPolicy: url("footer_url_privacy_policy"),
 	footerUrlTermsConditions: url("footer_url_terms_conditions"),
 	websiteLogo: varchar("website_logo")

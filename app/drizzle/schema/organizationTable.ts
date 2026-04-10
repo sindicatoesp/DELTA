@@ -1,19 +1,19 @@
-import { pgTable, uuid, unique } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, uuid, unique, text, timestamp } from "drizzle-orm/pg-core";
 import { countryAccountsTable } from "./countryAccountsTable";
-import {
-	ourRandomUUID,
-	zeroText,
-	createdUpdatedTimestamps,
-	apiImportIdField,
-} from "../../utils/drizzleUtil";
 
 export const organizationTable = pgTable(
 	"organization",
 	{
-		id: ourRandomUUID(),
-		name: zeroText("name"),
-		...createdUpdatedTimestamps,
-		...apiImportIdField(),
+		id: uuid("id")
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
+		name: text("name").notNull().default(""),
+		updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+		createdAt: timestamp("created_at")
+			.notNull()
+			.default(sql`CURRENT_TIMESTAMP`),
+		apiImportId: text("api_import_id"),
 		countryAccountsId: uuid("country_accounts_id").references(
 			() => countryAccountsTable.id,
 			{

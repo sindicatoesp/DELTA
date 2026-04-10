@@ -6,8 +6,7 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 import { countriesTable } from "./countriesTable";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { userCountryAccountsTable } from "./userCountryAccountsTable";
 
 export type CountryAccountType = "Official" | "Training";
@@ -23,7 +22,9 @@ export const countryAccountStatuses = {
 } as const;
 
 export const countryAccountsTable = pgTable("country_accounts", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	shortDescription: varchar("short_description", { length: 20 }).notNull(),
 	countryId: uuid("country_id")
 		.notNull()

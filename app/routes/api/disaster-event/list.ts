@@ -12,11 +12,6 @@ import { hipTypeTable } from "~/drizzle/schema/hipTypeTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
 import { apiAuth } from "~/backend.server/models/api_key";
 
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
-
 export const loader = authLoaderApi(async (args) => {
 	const { request } = args;
 	const apiKey = await apiAuth(request);
@@ -43,9 +38,7 @@ export const loader = authLoaderApi(async (args) => {
 							code: true,
 						},
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, ${ctx.lang})`.as(
-								"name",
-							),
+							name: sql<string>`${hipHazardTable.name_en}`.as("name"),
 						},
 					},
 					hipCluster: {
@@ -53,9 +46,7 @@ export const loader = authLoaderApi(async (args) => {
 							id: true,
 						},
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipClusterTable.name}, ${ctx.lang})`.as(
-								"name",
-							),
+							name: sql<string>`${hipClusterTable.name_en}`.as("name"),
 						},
 					},
 					hipType: {
@@ -63,9 +54,7 @@ export const loader = authLoaderApi(async (args) => {
 							id: true,
 						},
 						extras: {
-							name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`.as(
-								"name",
-							),
+							name: sql<string>`${hipTypeTable.name_en}`.as("name"),
 						},
 					},
 				},

@@ -1,20 +1,24 @@
-import { relations } from "drizzle-orm";
-import { pgTable, uuid, AnyPgColumn, text, unique } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import {
+	pgTable,
+	uuid,
+	AnyPgColumn,
+	text,
+	unique,
+	timestamp,
+} from "drizzle-orm/pg-core";
 import { categoriesTable } from "./categoriesTable";
 import { disasterRecordsTable } from "./disasterRecordsTable";
-import {
-	apiImportIdField,
-	ourRandomUUID,
-	createdUpdatedTimestamps,
-} from "../../utils/drizzleUtil";
 
 // Table for Non-economic losses
 
 export const nonecoLossesTable = pgTable(
 	"noneco_losses",
 	{
-		...apiImportIdField(),
-		id: ourRandomUUID(),
+		apiImportId: text("api_import_id"),
+		id: uuid("id")
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
 		disasterRecordId: uuid("disaster_record_id")
 			.references((): AnyPgColumn => disasterRecordsTable.id)
 			.notNull(),
@@ -22,7 +26,10 @@ export const nonecoLossesTable = pgTable(
 			.references((): AnyPgColumn => categoriesTable.id)
 			.notNull(),
 		description: text("description").notNull(),
-		...createdUpdatedTimestamps,
+		updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+		createdAt: timestamp("created_at")
+			.notNull()
+			.default(sql`CURRENT_TIMESTAMP`),
 	},
 	(table) => {
 		return [

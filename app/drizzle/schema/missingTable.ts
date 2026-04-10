@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
 	pgTable,
 	uuid,
@@ -5,11 +6,12 @@ import {
 	timestamp,
 	integer,
 } from "drizzle-orm/pg-core";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
 import { humanDsgTable } from "./humanDsgTable";
 
 export const missingTable = pgTable("missing", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	dsgId: uuid("dsg_id")
 		.references((): AnyPgColumn => humanDsgTable.id)
 		.notNull(),

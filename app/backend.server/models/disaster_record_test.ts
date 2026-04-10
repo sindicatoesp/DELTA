@@ -7,7 +7,7 @@ import { countryAccountsTable } from "~/drizzle/schema/countryAccountsTable";
 import { countriesTable } from "~/drizzle/schema/countriesTable";
 import { disasterRecordsTable } from "~/drizzle/schema/disasterRecordsTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import { eventTable } from "~/drizzle/schema/eventTable";
 
 import { createTestData, createTestUser } from "./hip_test";

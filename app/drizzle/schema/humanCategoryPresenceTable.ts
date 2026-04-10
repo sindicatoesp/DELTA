@@ -1,16 +1,19 @@
+import { sql } from "drizzle-orm";
 import {
 	pgTable,
 	uuid,
 	AnyPgColumn,
 	boolean,
 	jsonb,
+	bigint,
 } from "drizzle-orm/pg-core";
-import { ourRandomUUID, ourBigint } from "../../utils/drizzleUtil";
 import { humanDsgConfigTable } from "./humanDsgConfigTable";
 import { disasterRecordsTable } from "./disasterRecordsTable";
 
 export const humanCategoryPresenceTable = pgTable("human_category_presence", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	recordId: uuid("record_id")
 		.references((): AnyPgColumn => disasterRecordsTable.id)
 		.notNull(),
@@ -21,12 +24,12 @@ export const humanCategoryPresenceTable = pgTable("human_category_presence", {
 	affectedIndirect: boolean("affected_indirect"),
 	displaced: boolean("displaced"),
 
-	deathsTotal: ourBigint("deaths_total"),
-	injuredTotal: ourBigint("injured_total"),
-	missingTotal: ourBigint("missing_total"),
-	affectedDirectTotal: ourBigint("affected_direct_total"),
-	affectedIndirectTotal: ourBigint("affected_indirect_total"),
-	displacedTotal: ourBigint("displaced_total"),
+	deathsTotal: bigint("deaths_total", { mode: "number" }),
+	injuredTotal: bigint("injured_total", { mode: "number" }),
+	missingTotal: bigint("missing_total", { mode: "number" }),
+	affectedDirectTotal: bigint("affected_direct_total", { mode: "number" }),
+	affectedIndirectTotal: bigint("affected_indirect_total", { mode: "number" }),
+	displacedTotal: bigint("displaced_total", { mode: "number" }),
 
 	deathsTotalGroupColumnNames: jsonb("deaths_total_group_column_names"),
 	injuredTotalGroupColumnNames: jsonb("injured_total_group_column_names"),

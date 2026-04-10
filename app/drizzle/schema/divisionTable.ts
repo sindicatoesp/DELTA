@@ -5,27 +5,29 @@ import {
 	uuid,
 	AnyPgColumn,
 	jsonb,
+	bigint,
 	customType,
 	index,
 	uniqueIndex,
 	check,
 } from "drizzle-orm/pg-core";
-import { ourRandomUUID, zeroStrMap, ourBigint } from "../../utils/drizzleUtil";
 import { countryAccountsTable } from "./countryAccountsTable";
 
 export const divisionTable = pgTable(
 	"division",
 	{
-		id: ourRandomUUID(),
+		id: uuid("id")
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
 		importId: text("import_id"),
 		nationalId: text("national_id"),
 		parentId: uuid("parent_id").references((): AnyPgColumn => divisionTable.id),
 		countryAccountsId: uuid("country_accounts_id").references(
 			() => countryAccountsTable.id,
 		),
-		name: zeroStrMap("name"),
+		name: jsonb("name").$type<Record<string, string>>().default({}).notNull(),
 		geojson: jsonb("geojson"),
-		level: ourBigint("level"), // value is parent level + 1 otherwise 1
+		level: bigint("level", { mode: "number" }), // value is parent level + 1 otherwise 1
 
 		geom: customType<{ data: unknown }>({
 			dataType: () => "geometry(Geometry,4326)",

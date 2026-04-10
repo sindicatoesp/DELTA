@@ -9,7 +9,7 @@ import {
 	hazardousEventUpdate,
 	hazardousEventDelete,
 } from "./event";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import { eventTable } from "~/drizzle/schema/eventTable";
 import {
 	createTestData,

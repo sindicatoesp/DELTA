@@ -1,30 +1,34 @@
-import { relations } from "drizzle-orm";
-import { pgTable, uuid, AnyPgColumn, text, jsonb } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
 import {
-	apiImportIdField,
-	ourRandomUUID,
-	ourBigint,
-	ourMoney,
-} from "../../utils/drizzleUtil";
+	pgTable,
+	uuid,
+	AnyPgColumn,
+	text,
+	jsonb,
+	bigint,
+	numeric,
+} from "drizzle-orm/pg-core";
 import { sectorTable } from "./sectorTable";
 import { disasterRecordsTable } from "./disasterRecordsTable";
 
 export const disruptionTable = pgTable("disruption", {
-	...apiImportIdField(),
-	id: ourRandomUUID(),
+	apiImportId: text("api_import_id"),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	recordId: uuid("record_id")
 		.references((): AnyPgColumn => disasterRecordsTable.id)
 		.notNull(),
 	sectorId: uuid("sector_id")
 		.references((): AnyPgColumn => sectorTable.id)
 		.notNull(),
-	durationDays: ourBigint("duration_days"),
-	durationHours: ourBigint("duration_hours"),
-	usersAffected: ourBigint("users_affected"),
-	peopleAffected: ourBigint("people_affected"),
+	durationDays: bigint("duration_days", { mode: "number" }),
+	durationHours: bigint("duration_hours", { mode: "number" }),
+	usersAffected: bigint("users_affected", { mode: "number" }),
+	peopleAffected: bigint("people_affected", { mode: "number" }),
 	comment: text("comment"),
 	responseOperation: text("response_operation"),
-	responseCost: ourMoney("response_cost"),
+	responseCost: numeric("response_cost"),
 	responseCurrency: text("response_currency"),
 	spatialFootprint: jsonb("spatial_footprint"),
 	attachments: jsonb("attachments"),

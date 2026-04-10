@@ -41,7 +41,7 @@ import {
 	countryAccountStatuses,
 	countryAccountTypesTable,
 } from "~/drizzle/schema/countryAccountsTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import { CountryAccountValidationError } from "~/modules/country-account/application/errors/country-account-error";
 import type { CountryAccountRepositoryPort } from "~/modules/country-account/domain/repositories/country-account-repository";
 import type { CountryAccountDb } from "~/modules/country-account/infrastructure/db/client.server";

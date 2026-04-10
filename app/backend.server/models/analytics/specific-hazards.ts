@@ -1,13 +1,7 @@
 import { sql } from "drizzle-orm";
 
-
 import { dr } from "~/db.server";
 import { hipHazardTable } from "~/drizzle/schema/hipHazardTable";
-
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
 
 /**
  * Fetch specific hazards from the database based on clusterId and searchQuery.
@@ -20,9 +14,7 @@ export async function fetchSpecificHazards(
 	const rows = await dr
 		.select({
 			id: hipHazardTable.id,
-			name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, ${ctx.lang})`.as(
-				"name",
-			),
+			name: hipHazardTable.name_en,
 			clusterId: hipHazardTable.clusterId,
 		})
 		.from(hipHazardTable);
@@ -60,9 +52,7 @@ export async function fetchAllSpecificHazards(): Promise<SpecificHazard[]> {
 	const rows = await dr
 		.select({
 			id: hipHazardTable.id,
-			name: sql<string>`dts_jsonb_localized(${hipHazardTable.name}, ${ctx.lang})`.as(
-				"name",
-			),
+			name: hipHazardTable.name_en,
 			clusterId: hipHazardTable.clusterId,
 		})
 		.from(hipHazardTable)

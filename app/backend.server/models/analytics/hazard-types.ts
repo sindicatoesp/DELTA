@@ -1,13 +1,7 @@
 import { sql, eq } from "drizzle-orm";
 
-
 import { dr } from "~/db.server";
 import { hipTypeTable } from "~/drizzle/schema/hipTypeTable";
-
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
 
 export interface HazardType {
 	id: string;
@@ -23,9 +17,7 @@ export const fetchHazardTypes = async (): Promise<HazardType[]> => {
 		const hazardTypes = await dr
 			.select({
 				id: hipTypeTable.id,
-				name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`.as(
-					"name",
-				),
+				name: hipTypeTable.name_en,
 			})
 			.from(hipTypeTable)
 			.orderBy(sql`name`);
@@ -41,9 +33,7 @@ export async function getHazardTypeById(hazardTypeId: string) {
 	const result = await dr
 		.select({
 			id: hipTypeTable.id,
-			name: sql<string>`dts_jsonb_localized(${hipTypeTable.name}, ${ctx.lang})`.as(
-				"name",
-			),
+			name: hipTypeTable.name_en,
 		})
 		.from(hipTypeTable)
 		.where(eq(hipTypeTable.id, hazardTypeId));

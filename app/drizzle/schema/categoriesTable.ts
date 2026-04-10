@@ -1,21 +1,27 @@
-import { relations } from "drizzle-orm";
-import { pgTable, uuid, AnyPgColumn } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
 import {
-	ourRandomUUID,
-	zeroStrMap,
-	ourBigint,
-	createdUpdatedTimestamps,
-} from "../../utils/drizzleUtil";
+	pgTable,
+	uuid,
+	AnyPgColumn,
+	jsonb,
+	bigint,
+	timestamp,
+} from "drizzle-orm/pg-core";
 
 /////////////////////////////////////////////////////////
 // Table for generic classification categories
 
 export const categoriesTable = pgTable("categories", {
-	id: ourRandomUUID(),
-	name: zeroStrMap("name"),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
+	name: jsonb("name").$type<Record<string, string>>().default({}).notNull(),
 	parentId: uuid("parent_id").references((): AnyPgColumn => categoriesTable.id),
-	level: ourBigint("level").notNull().default(1),
-	...createdUpdatedTimestamps,
+	level: bigint("level", { mode: "number" }).notNull().default(1),
+	updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+	createdAt: timestamp("created_at")
+		.notNull()
+		.default(sql`CURRENT_TIMESTAMP`),
 });
 export type SelectCategories = typeof categoriesTable.$inferSelect;
 

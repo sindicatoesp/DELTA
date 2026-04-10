@@ -1,6 +1,5 @@
-import { relations } from "drizzle-orm";
-import { pgTable, varchar } from "drizzle-orm/pg-core";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
+import { relations, sql } from "drizzle-orm";
+import { pgTable, varchar, uuid } from "drizzle-orm/pg-core";
 import { countryAccountsTable } from "./countryAccountsTable";
 
 ////////////////////////////////////////////////////////////////
@@ -11,7 +10,9 @@ export const COUNTRY_TYPE = {
 export type CountryType = (typeof COUNTRY_TYPE)[keyof typeof COUNTRY_TYPE];
 
 export const countriesTable = pgTable("countries", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	name: varchar("name", { length: 100 }).notNull().unique(),
 	iso3: varchar("iso3", { length: 3 }).unique(),
 	flagUrl: varchar("flag_url", { length: 255 })

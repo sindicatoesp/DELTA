@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { categoriesTable } from "~/drizzle/schema/categoriesTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import { hipHazardTable } from "~/drizzle/schema/hipHazardTable";
 import { sectorTable } from "~/drizzle/schema/sectorTable";
 import { formatDateDisplay } from "~/utils/date";
@@ -86,10 +86,7 @@ export function contentPickerConfig() {
 				startDateUTC: disasterEventTable.startDate,
 				endDateUTC: disasterEventTable.endDate,
 				hazardousEventId: hazardousEventTable.id,
-				hazardousEventName:
-					sql<string>`dts_jsonb_localized(${hipHazardTable.name}, ${'en'})`.as(
-						"name",
-					),
+				hazardousEventName: hipHazardTable.name_en,
 			},
 			joins: [
 				// Define joins
@@ -127,7 +124,7 @@ export function contentPickerConfig() {
 				},
 				{
 					sql: (query: string) =>
-						sql`dts_jsonb_localized(${hipHazardTable.name}, ${'en'}) ILIKE ${query}`,
+						sql`${hipHazardTable.name_en} ILIKE ${query}`,
 				},
 				{
 					column: disasterEventTable.startDate,

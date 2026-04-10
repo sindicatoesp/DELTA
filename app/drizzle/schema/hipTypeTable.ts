@@ -1,5 +1,4 @@
 import { pgTable, text } from "drizzle-orm/pg-core";
-import { zeroStrMap } from "../../utils/drizzleUtil";
 
 // Hazard Information Profiles (HIPs)
 // https://www.preventionweb.net/publication/hazard-information-profiles-hips
@@ -10,5 +9,5 @@ import { zeroStrMap } from "../../utils/drizzleUtil";
 
 export const hipTypeTable = pgTable("hip_class", {
 	id: text("id").primaryKey(),
-	name: zeroStrMap("name"),
+	name_en: text("name_en").notNull().default(""),
 });

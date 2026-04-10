@@ -1,18 +1,18 @@
-import { relations } from "drizzle-orm";
-import { pgTable, text, uuid } from "drizzle-orm/pg-core";
-import {
-	createdUpdatedTimestamps,
-	ourRandomUUID,
-	zeroText,
-} from "../../utils/drizzleUtil";
+import { relations, sql } from "drizzle-orm";
+import { pgTable, text, uuid, timestamp } from "drizzle-orm/pg-core";
 import { countryAccountsTable } from "./countryAccountsTable";
 import { userTable } from "./userTable";
 
 export const apiKeyTable = pgTable("api_key", {
-	...createdUpdatedTimestamps,
-	id: ourRandomUUID(),
+	updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+	createdAt: timestamp("created_at")
+		.notNull()
+		.default(sql`CURRENT_TIMESTAMP`),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	secret: text("secret").notNull().unique(),
-	name: zeroText("name"),
+	name: text("name").notNull().default(""),
 	managedByUserId: uuid("user_id")
 		.notNull()
 		.references(() => userTable.id, { onDelete: "cascade" }),

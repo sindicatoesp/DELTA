@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	pgTable,
 	uuid,
@@ -9,13 +9,6 @@ import {
 	unique,
 } from "drizzle-orm/pg-core";
 import { disasterEventTable } from "./disasterEventTable";
-import {
-	apiImportIdField,
-	hipRelationColumnsOptional,
-	ourRandomUUID,
-	approvalFields,
-	createdUpdatedTimestamps,
-} from "../../utils/drizzleUtil";
 import { hipClusterTable } from "./hipClusterTable";
 import { hipHazardTable } from "./hipHazardTable";
 import { hipTypeTable } from "./hipTypeTable";
@@ -25,9 +18,19 @@ import { sectorDisasterRecordsRelationTable } from "./sectorDisasterRecordsRelat
 export const disasterRecordsTable = pgTable(
 	"disaster_records",
 	{
-		...apiImportIdField(),
-		...hipRelationColumnsOptional(),
-		id: ourRandomUUID(),
+		apiImportId: text("api_import_id"),
+		hipHazardId: text("hip_hazard_id").references(
+			(): AnyPgColumn => hipHazardTable.id,
+		),
+		hipClusterId: text("hip_cluster_id").references(
+			(): AnyPgColumn => hipClusterTable.id,
+		),
+		hipTypeId: text("hip_type_id").references(
+			(): AnyPgColumn => hipTypeTable.id,
+		),
+		id: uuid("id")
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
 		countryAccountsId: uuid("country_accounts_id").references(
 			() => countryAccountsTable.id,
 			{
@@ -55,8 +58,21 @@ export const disasterRecordsTable = pgTable(
 		legacyData: jsonb("legacy_data"),
 		spatialFootprint: jsonb("spatial_footprint"),
 		attachments: jsonb("attachments"),
-		...approvalFields,
-		...createdUpdatedTimestamps,
+		approvalStatus: text({
+			enum: [
+				"draft",
+				"waiting-for-validation",
+				"needs-revision",
+				"validated",
+				"published",
+			],
+		})
+			.notNull()
+			.default("draft"),
+		updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+		createdAt: timestamp("created_at")
+			.notNull()
+			.default(sql`CURRENT_TIMESTAMP`),
 	},
 	(table) => ({
 		// Composite unique constraint for tenant-scoped api_import_id

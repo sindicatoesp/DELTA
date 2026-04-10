@@ -5,7 +5,7 @@ import { disasterRecordsTable } from "~/drizzle/schema/disasterRecordsTable";
 import { lossesTable } from "~/drizzle/schema/lossesTable";
 import { damagesTable } from "~/drizzle/schema/damagesTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import { and, eq, inArray, SQL, exists } from "drizzle-orm";
 import { getSectorsByParentId } from "./sectors";
 import {

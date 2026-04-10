@@ -56,11 +56,11 @@ const fallbackCtx: any = {
 
 function hazardousEventLabel(args: {
 	id?: string;
-	description?: string;
-	hazard?: { name?: string | null };
-	hipHazard?: { name?: string | null };
-	hipCluster?: { name?: string | null };
-	hipType?: { name?: string | null };
+	description?: string | null;
+	hazard?: { name?: string | null } | null;
+	hipHazard?: { name?: string | null } | null;
+	hipCluster?: { name?: string | null } | null;
+	hipType?: { name?: string | null } | null;
 }): string {
 	let parts: string[] = [];
 	const hazardName =

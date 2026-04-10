@@ -27,7 +27,7 @@ import { injuredTable } from "~/drizzle/schema/injuredTable";
 import { humanCategoryPresenceTable } from "~/drizzle/schema/humanCategoryPresenceTable";
 import { humanDsgTable } from "~/drizzle/schema/humanDsgTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 
 import { Def } from "~/frontend/editabletable/base";
 

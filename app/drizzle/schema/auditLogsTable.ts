@@ -1,5 +1,5 @@
+import { sql } from "drizzle-orm";
 import { pgTable, text, uuid, jsonb, timestamp } from "drizzle-orm/pg-core";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
 import { countryAccountsTable } from "./countryAccountsTable";
 import { userTable } from "./userTable";
 
@@ -7,7 +7,9 @@ import { userTable } from "./userTable";
 // Table to log all audit actions across the system
 
 export const auditLogsTable = pgTable("audit_logs", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	tableName: text("table_name").notNull(),
 	recordId: text("record_id").notNull(),
 	userId: uuid("user_id")

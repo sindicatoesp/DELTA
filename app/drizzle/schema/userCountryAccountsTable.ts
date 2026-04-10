@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	pgTable,
 	uuid,
@@ -10,12 +10,13 @@ import {
 	countryAccountsTable,
 	SelectCountryAccounts,
 } from "./countryAccountsTable";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
 import { userTable, SelectUser } from "./userTable";
 import { organizationTable } from "./organizationTable";
 
 export const userCountryAccountsTable = pgTable("user_country_accounts", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	userId: uuid("user_id")
 		.notNull()
 		.references(() => userTable.id, {

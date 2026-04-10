@@ -1,19 +1,18 @@
-import { relations } from "drizzle-orm";
-import { pgTable, uuid } from "drizzle-orm/pg-core";
-import {
-	ourRandomUUID,
-	zeroTimestamp,
-	zeroBool,
-} from "../../utils/drizzleUtil";
+import { relations, sql } from "drizzle-orm";
+import { pgTable, uuid, timestamp, boolean } from "drizzle-orm/pg-core";
 import { userTable } from "./userTable";
 
 export const sessionTable = pgTable("session", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	userId: uuid("user_id")
 		.notNull()
 		.references(() => userTable.id, { onDelete: "cascade" }),
-	lastActiveAt: zeroTimestamp("last_active_at"),
-	totpAuthed: zeroBool("totp_authed"),
+	lastActiveAt: timestamp("last_active_at")
+		.notNull()
+		.default(sql`'2000-01-01T00:00:00.000Z'`),
+	totpAuthed: boolean("totp_authed").notNull().default(false),
 });
 
 export type SelectSession = typeof sessionTable.$inferSelect;

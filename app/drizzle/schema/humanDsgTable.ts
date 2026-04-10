@@ -1,11 +1,13 @@
+import { sql } from "drizzle-orm";
 import { pgTable, uuid, AnyPgColumn, text, jsonb } from "drizzle-orm/pg-core";
-import { ourRandomUUID } from "../../utils/drizzleUtil";
 import { disasterRecordsTable } from "./disasterRecordsTable";
 
 // Common disaggregation data (dsg) for human effects on disaster records
 
 export const humanDsgTable = pgTable("human_dsg", {
-	id: ourRandomUUID(),
+	id: uuid("id")
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
 	recordId: uuid("record_id")
 		.references((): AnyPgColumn => disasterRecordsTable.id)
 		.notNull(),

@@ -228,6 +228,13 @@ export default function RegularMenuBar({
                             command: () => navigate("/disaster-event"),
                         },
                         {
+                            label: "Hazardous events",
+                            icon: "pi pi-database",
+                            description: "View all hazardous events",
+                            template: itemRenderer,
+                            command: () => navigate("/hazardous-event"),
+                        },
+                        {
                             label: "Disaster records",
                             icon: "pi pi-database",
                             description: "Complete disaster documenations",

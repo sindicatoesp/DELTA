@@ -1,9 +1,12 @@
-import { pgTable, text, boolean, uuid, unique } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import {
-	apiImportIdField,
-	ourRandomUUID,
-	zeroStrMap,
-} from "../../utils/drizzleUtil";
+	pgTable,
+	text,
+	boolean,
+	uuid,
+	unique,
+	jsonb,
+} from "drizzle-orm/pg-core";
 import { countryAccountsTable } from "./countryAccountsTable";
 
 ///////////////////////////////////////////////
@@ -11,20 +14,31 @@ import { countryAccountsTable } from "./countryAccountsTable";
 export const assetTable = pgTable(
 	"asset",
 	{
-		...apiImportIdField(),
-		id: ourRandomUUID(),
+		apiImportId: text("api_import_id"),
+		id: uuid("id")
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
 		sectorIds: text("sector_ids").notNull(),
 		isBuiltIn: boolean("is_built_in").notNull(),
 
-		builtInName: zeroStrMap("built_in_name"),
+		builtInName: jsonb("built_in_name")
+			.$type<Record<string, string>>()
+			.default({})
+			.notNull(),
 		customName: text("custom_name"),
 
-		builtInCategory: zeroStrMap("built_in_category"),
+		builtInCategory: jsonb("built_in_category")
+			.$type<Record<string, string>>()
+			.default({})
+			.notNull(),
 		customCategory: text("custom_category"),
 
 		nationalId: text("national_id"),
 
-		builtInNotes: zeroStrMap("built_in_notes"),
+		builtInNotes: jsonb("built_in_notes")
+			.$type<Record<string, string>>()
+			.default({})
+			.notNull(),
 		customNotes: text("custom_notes"),
 
 		countryAccountsId: uuid("country_accounts_id").references(

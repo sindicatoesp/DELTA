@@ -3,10 +3,13 @@ import { and, eq, sql, inArray, exists, SQL } from "drizzle-orm";
 import { dr } from "~/db.server";
 import createLogger from "~/utils/logger.server";
 
-const ctx: any = { t: (message: any, _v?: any) => message?.msg ?? "", lang: "en", url: (p: string) => p, fullUrl: (p: string) => p, rootUrl: () => "/" };
-
-
-
+const ctx: any = {
+	t: (message: any, _v?: any) => message?.msg ?? "",
+	lang: "en",
+	url: (p: string) => p,
+	fullUrl: (p: string) => p,
+	rootUrl: () => "/",
+};
 
 // Initialize logger for this module
 const logger = createLogger("backend.server/models/analytics/effectDetails");
@@ -17,7 +20,7 @@ import { assetTable } from "~/drizzle/schema/assetTable";
 import { damagesTable } from "~/drizzle/schema/damagesTable";
 import { disruptionTable } from "~/drizzle/schema/disruptionTable";
 import { disasterEventTable } from "~/drizzle/schema/disasterEventTable";
-import { hazardousEventTable } from "~/drizzle/schema/hazardousEventTable";
+import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import { getSectorsByParentId } from "./sectors";
 import {
 	applyGeographicFilters,
