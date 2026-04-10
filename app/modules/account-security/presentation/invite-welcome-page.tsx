@@ -1,0 +1,84 @@
+
+import { LangLink } from "~/utils/link";
+import { Button } from "primereact/button";
+
+interface InviteWelcomePageProps {
+    inviteCode: string;
+    isValid: boolean;
+    validationError?: string;
+    confAuthSupportedForm: boolean;
+    confAuthSupportedAzureSSOB2C: boolean;
+}
+
+export function InviteWelcomePage({
+    inviteCode,
+    isValid,
+    validationError,
+    confAuthSupportedForm,
+    confAuthSupportedAzureSSOB2C,
+}: InviteWelcomePageProps) {
+    if (!isValid) {
+        return (
+            <>
+                <p>{validationError}</p>
+            </>
+        );
+    }
+
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+            <form className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
+                {/* Intro */}
+                <div className="mb-8 text-center">
+                    <h1 className="mb-4 text-3xl font-bold text-gray-900">
+                        {"Welcome to the DELTA Resilience system."}
+                    </h1>
+
+                    <p className="text-gray-600 leading-relaxed">
+                        {"Track disaster impacts, including damages, losses, and human effects, to support better recovery and resilience."}
+                    </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col items-center gap-4">
+                    {confAuthSupportedForm && (
+                        <LangLink
+                            lang="en"
+                            to={`/user/accept-invite?inviteCode=${inviteCode}`}
+                            className="w-full max-w-sm"
+                        >
+                            <Button
+                                type="button"
+                                label={"Set up account"}
+                                icon="pi pi-user-plus"
+                                className="w-full"
+                            />
+                        </LangLink>
+                    )}
+
+                    {confAuthSupportedAzureSSOB2C && (
+                        <>
+                            <LangLink
+                                lang="en"
+                                to={`/sso/azure-b2c/invite?inviteCode=${inviteCode}&action=sso_azure_b2c-register`}
+                                className="w-full max-w-sm"
+                            >
+                                <Button
+                                    type="button"
+                                    label={"Set up using SSO"}
+                                    icon="pi pi-sign-in"
+                                    outlined
+                                    className="w-full"
+                                />
+                            </LangLink>
+
+                            <p className="mt-2 max-w-md text-center text-sm text-gray-500">
+                                {"Note: For setup using SSO, please use the same email address where you received the invitation email."}
+                            </p>
+                        </>
+                    )}
+                </div>
+            </form>
+        </div>
+    );
+}

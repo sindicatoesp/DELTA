@@ -3,33 +3,29 @@ import {
 	LoaderFunctionArgs,
 	MetaFunction,
 	redirect,
-	useNavigation,
 } from "react-router";
 import { useLoaderData, useActionData } from "react-router";
 import { configAuthSupportedForm } from "~/utils/config";
-import { Form, Errors as FormErrors, errorToString } from "~/frontend/form";
+import { Errors as FormErrors } from "~/frontend/form";
 import { formStringData } from "~/utils/httputil";
-import { resetPasswordSilentIfNotFound } from "~/backend.server/models/user/password";
-import { sendForgotPasswordEmail } from "~/utils/emailUtil";
-
-import { randomBytes } from "crypto";
 import { sessionCookie } from "~/utils/session";
 import { createCSRFToken } from "~/utils/csrf";
-
-
-
-import { LangLink } from "~/utils/link";
+import { makeRequestPasswordResetUseCase } from "~/modules/account-security/account-security-module.server";
+import { ForgotPasswordPage } from "~/modules/account-security/presentation/forgot-password-page";
 import { htmlTitle } from "~/utils/htmlmeta";
-import { Card } from "primereact/card";
-import { Message } from "primereact/message";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 
 interface FormFields {
 	email: string;
 }
+
 type LoaderData = {
 	csrfToken: string;
+};
+
+type ActionData = {
+	data?: FormFields;
+	errors?: FormErrors<FormFields>;
+	success?: string;
 };
 // Add loader to check if form auth is supported
 export const loader = async (
@@ -58,16 +54,9 @@ export const loader = async (
 	);
 };
 
-type ActionData = {
-	data?: FormFields;
-	errors?: FormErrors<FormFields>;
-	success?: string;
-};
 export const action = async (actionArgs: ActionFunctionArgs) => {
 	const { request } = actionArgs;
 
-
-	// Check if form authentication is supported
 	if (!configAuthSupportedForm()) {
 		return redirect("/user/login");
 	}
@@ -105,26 +94,20 @@ export const action = async (actionArgs: ActionFunctionArgs) => {
 		return { data, errors };
 	}
 
-	// do not show an error message if the email is not found in the database
-	const resetToken = randomBytes(32).toString("hex");
-	const userExists = await resetPasswordSilentIfNotFound(data.email, resetToken);
-
-	if (userExists) {
-		try {
-			await sendForgotPasswordEmail(data.email, resetToken);
-		} catch (error) {
-			return Response.json(
-				{
-					data,
-					errors: {
-						general: [
-							"Unable to send email due to a system configuration issue. Please contact your system administrator to report this problem.",
-						],
-					},
+	try {
+		await makeRequestPasswordResetUseCase().execute(data.email);
+	} catch (_error) {
+		return Response.json(
+			{
+				data,
+				errors: {
+					general: [
+						"Unable to send email due to a system configuration issue. Please contact your system administrator to report this problem.",
+					],
 				},
-				{ status: 500 },
-			);
-		}
+			},
+			{ status: 500 },
+		);
 	}
 
 	return Response.json({
@@ -150,113 +133,13 @@ export const meta: MetaFunction = () => {
 
 export default function Screen() {
 	const loaderData = useLoaderData<LoaderData>();
-
 	const actionData = useActionData() as ActionData | undefined;
-	const errors = actionData?.errors || {};
-	const successMessage = actionData?.success;
-
-	const navigation = useNavigation();
-	const isSubmitting =
-		navigation.state === "submitting" &&
-		navigation.formData?.get("email") != null;
 
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
-			<Card className="w-full max-w-md rounded-2xl shadow-xl p-6">
-
-				{/* Header */}
-				<div className="mb-6 text-center">
-					<h2 className="mb-3 text-2xl font-semibold text-gray-800">
-						{"Forgot your password?"}
-					</h2>
-
-				</div>
-
-				<div className="mb-2 text-red-500">
-					{`* ${"Required information"}`}
-				</div>
-				{/* General Error */}
-				{errors.general && (
-					<div className="mb-4">
-						<Message
-							severity="error"
-							text={errors.general}
-						/>
-					</div>
-				)}
-
-				<Form id="reset-password-form" errors={errors}>
-					<div className="flex flex-col gap-6">
-
-						<input
-							type="hidden"
-							name="csrfToken"
-							value={loaderData.csrfToken}
-						/>
-
-						{/* Email */}
-						<div className="flex flex-col gap-2">
-							<label htmlFor="email" className="font-semibold text-gray-800">
-								{"Email address"}
-								<span className="text-red-500"> *</span>
-							</label>
-
-							<div className="p-inputgroup login-inputgroup">
-								<span className="p-inputgroup-addon">
-									<i className="pi pi-envelope"></i>
-								</span>
-								<InputText
-									id="email"
-									type="email"
-									name="email"
-									className="w-full"
-									placeholder={"Enter your email"}
-									disabled={!!successMessage}
-									required
-								/>
-							</div>
-
-							{errors?.fields?.email && (
-								<div className="text-sm text-red-500">
-									{errorToString(errors.fields.email[0])}
-								</div>
-							)}
-						</div>
-
-						{/* Submit */}
-						<Button
-							type="submit"
-							label={"Reset Password"}
-							icon="pi pi-envelope"
-							loading={isSubmitting}
-							disabled={!!successMessage}
-							className="w-full"
-						/>
-
-						{/* Back Link */}
-						<div>
-							<LangLink
-								lang={"en"}
-								to="/user/login"
-								className="text-sm text-blue-600 underline hover:text-blue-800"
-							>
-								{"Back"}
-							</LangLink>
-						</div>
-
-						{/* Success */}
-						{successMessage && (
-							<div>
-								<Message
-									severity="success"
-									className="w-full"
-									text={successMessage}
-								/>
-							</div>
-						)}
-					</div>
-				</Form>
-			</Card>
-		</div>
+		<ForgotPasswordPage
+			csrfToken={loaderData.csrfToken}
+			errors={actionData?.errors}
+			successMessage={actionData?.success}
+		/>
 	);
 }
