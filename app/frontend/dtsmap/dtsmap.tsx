@@ -63,7 +63,6 @@ export default function DTSMap({ geoData }: DTSMapProps) {
 
 	return (
 		<div
-			className="dts-ol-map"
 			ref={mapRef}
 			style={{ width: "100%", height: "400px" }}
 		/>

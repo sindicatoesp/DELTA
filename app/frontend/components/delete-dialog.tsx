@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import { notifyError } from "../utils/notifications";
-import { ConfirmDialog } from "./ConfirmDialog";
 
 interface DeleteButtonProps {
 	action: string;
@@ -21,7 +21,7 @@ interface DeleteButtonProps {
  */
 export function DeleteButton(props: DeleteButtonProps) {
 	let fetcher = useFetcher();
-	let dialogRef = useRef<HTMLDialogElement>(null);
+	const [showConfirm, setShowConfirm] = useState(false);
 
 	useEffect(() => {
 		let data = fetcher.data as any;
@@ -33,12 +33,12 @@ export function DeleteButton(props: DeleteButtonProps) {
 
 	function showDialog(e: React.MouseEvent) {
 		e.preventDefault();
-		dialogRef.current?.showModal();
+		setShowConfirm(true);
 	}
 
 	function confirmDelete() {
 		console.log("Submitting to:", props.action);
-		dialogRef.current?.close();
+		setShowConfirm(false);
 		fetcher.submit(null, { method: "post", action: props.action });
 	}
 
@@ -71,22 +71,55 @@ export function DeleteButton(props: DeleteButtonProps) {
 			)}
 
 			<ConfirmDialog
-				dialogRef={dialogRef}
-				confirmMessage={
-					props.confirmMessage ||
-					"Please confirm deletion."
+				visible={showConfirm}
+				onHide={() => setShowConfirm(false)}
+				header={props.title || "Record Deletion"}
+				message={props.confirmMessage || "Please confirm deletion."}
+				footer={
+					props.confirmButtonFirst ?? true ? (
+						<>
+							<button
+								type="button"
+								onClick={confirmDelete}
+								className="mg-button mg-button-primary"
+								style={{ display: "flex", alignItems: "center", gap: "8px" }}
+							>
+								{props.confirmLabel ?? "Yes"}
+								{props.confirmIcon && <span>{props.confirmIcon}</span>}
+							</button>
+							<button
+								type="button"
+								onClick={() => setShowConfirm(false)}
+								className="mg-button mg-button-outline"
+								style={{ display: "flex", alignItems: "center", gap: "8px" }}
+							>
+								{props.cancelLabel ?? "No"}
+								{props.cancelIcon && <span>{props.cancelIcon}</span>}
+							</button>
+						</>
+					) : (
+						<>
+							<button
+								type="button"
+								onClick={() => setShowConfirm(false)}
+								className="mg-button mg-button-primary"
+								style={{ display: "flex", alignItems: "center", gap: "8px" }}
+							>
+								{props.cancelLabel ?? "No"}
+								{props.cancelIcon && <span>{props.cancelIcon}</span>}
+							</button>
+							<button
+								type="button"
+								onClick={confirmDelete}
+								className="mg-button mg-button-outline"
+								style={{ display: "flex", alignItems: "center", gap: "8px" }}
+							>
+								{props.confirmLabel ?? "Yes"}
+								{props.confirmIcon && <span>{props.confirmIcon}</span>}
+							</button>
+						</>
+					)
 				}
-				title={
-					props.title ||
-					"Record Deletion"
-				}
-				confirmLabel={props.confirmLabel}
-				cancelLabel={props.cancelLabel}
-				confirmButtonFirst={props.confirmButtonFirst}
-				confirmIcon={props.confirmIcon}
-				cancelIcon={props.cancelIcon}
-				onConfirm={confirmDelete}
-				onCancel={() => dialogRef.current?.close()}
 			/>
 		</>
 	);

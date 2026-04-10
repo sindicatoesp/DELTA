@@ -1,11 +1,15 @@
-import { useActionData, useLoaderData, useNavigate, useNavigation } from "react-router";
+import {
+	redirect,
+	useActionData,
+	useLoaderData,
+	useNavigate,
+	useNavigation,
+} from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 
 import { type UserCentricApiKeyFields } from "~/backend.server/models/api_key";
-import { fieldsDef, route } from "~/frontend/api_key";
 import { firstError, type Errors } from "~/frontend/form";
-import { formSave } from "~/backend.server/handlers/form/form";
 import { PERMISSIONS } from "~/frontend/user/roles";
 import {
 	authActionGetAuth,
@@ -21,6 +25,8 @@ import {
 	makeSaveApiKeyUseCase,
 } from "~/modules/api-keys/api-keys-module.server";
 import ApiKeyDialog from "~/modules/api-keys/presentation/api-key-dialog";
+
+const API_KEY_SETTINGS_ROUTE = "/settings/api-key";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const userSession = await requirePermission(
@@ -38,28 +44,35 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	});
 }
 
-	export const action = authActionWithPerm(PERMISSIONS.API_KEYS_CREATE, async (actionArgs) => {
+export const action = authActionWithPerm(PERMISSIONS.API_KEYS_CREATE, async (actionArgs) => {
 	const auth = authActionGetAuth(actionArgs);
 	const { request } = actionArgs;
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
+	const formData = await request.formData();
+	const name = String(formData.get("name") ?? "").trim();
+	const assignedToUserId = String(formData.get("assignedToUserId") ?? "").trim();
 
-	return formSave<UserCentricApiKeyFields>({
-		actionArgs,
-		fieldsDef: fieldsDef(),
-		isCreate: true,
-		save: async (_tx, id, fields) => {
-			const result = await makeSaveApiKeyUseCase().execute({
-				id,
-				countryAccountsId,
-				managedByUserId: auth.user?.id || "",
-				name: fields.name,
-				assignedToUserId: fields.assignedToUserId || undefined,
-			});
+	const errors: Errors<UserCentricApiKeyFields> = { fields: {} };
+	if (!name) {
+		errors.fields!.name = ["Name is required"];
+	}
 
-			return { ok: true, id: result.id };
-		},
-		redirectTo: () => route,
+	if (errors.fields && Object.keys(errors.fields).length > 0) {
+		return {
+			ok: false as const,
+			errors,
+		};
+	}
+
+	await makeSaveApiKeyUseCase().execute({
+		id: "",
+		countryAccountsId,
+		managedByUserId: auth.user?.id || "",
+		name,
+		assignedToUserId: assignedToUserId || undefined,
 	});
+
+	return redirect(API_KEY_SETTINGS_ROUTE);
 });
 
 export default function ApiKeysNewPage() {
@@ -92,7 +105,7 @@ export default function ApiKeysNewPage() {
 			isSubmitting={isSubmitting}
 			onNameChange={setName}
 			onAssignedUserChange={setAssignedUserId}
-			onCancel={() => navigate(route)}
+			onCancel={() => navigate(API_KEY_SETTINGS_ROUTE)}
 		/>
 	);
 }

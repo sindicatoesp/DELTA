@@ -2,7 +2,6 @@ import type { LoaderFunctionArgs } from "react-router";
 import { useActionData, useLoaderData, useNavigate, useNavigation } from "react-router";
 
 import { PERMISSIONS } from "~/frontend/user/roles";
-import { route } from "~/frontend/api_key";
 import DeleteApiKeyDialog from "~/modules/api-keys/presentation/delete-api-key-dialog";
 import {
     makeDeleteApiKeyUseCase,
@@ -10,6 +9,8 @@ import {
 } from "~/modules/api-keys/api-keys-module.server";
 import { authActionWithPerm, requirePermission } from "~/utils/auth";
 import { getCountryAccountsIdFromSession, redirectWithMessage } from "~/utils/session";
+
+const API_KEY_SETTINGS_ROUTE = "/settings/api-key";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
     const userSession = await requirePermission(
@@ -45,7 +46,7 @@ export const action = authActionWithPerm(PERMISSIONS.API_KEYS_DELETE, async (arg
         throw new Response("Not Found", { status: 404 });
     }
 
-    return redirectWithMessage(args, route, {
+    return redirectWithMessage(args, API_KEY_SETTINGS_ROUTE, {
         type: "success",
         text: "Record deleted",
     });
@@ -64,7 +65,7 @@ export default function ApiKeysDeletePage() {
             name={ld.item.cleanName || ld.item.name}
             error={actionError}
             isSubmitting={isSubmitting}
-            onCancel={() => navigate(route)}
+            onCancel={() => navigate(API_KEY_SETTINGS_ROUTE)}
         />
     );
 }
