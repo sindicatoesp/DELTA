@@ -1,4 +1,5 @@
 import { Button } from "primereact/button";
+import { Calendar } from "primereact/calendar";
 import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
@@ -24,6 +25,119 @@ interface HipHazardOption extends HipTypeOption {
     clusterId: string;
 }
 
+type StartDatePrecision = "fullDate" | "monthYear" | "yearOnly";
+
+const startDatePrecisionOptions = [
+    { label: "Full Date (DD/MM/YYYY)", value: "fullDate" as const },
+    { label: "Month and Year (MM/YYYY)", value: "monthYear" as const },
+    { label: "Year only (YYYY)", value: "yearOnly" as const },
+];
+
+function inferStartDatePrecision(value: string): StartDatePrecision {
+    if (/^\d{4}$/.test(value)) {
+        return "yearOnly";
+    }
+    if (/^\d{4}-\d{2}$/.test(value)) {
+        return "monthYear";
+    }
+    return "fullDate";
+}
+
+function normalizeStartDateForPrecision(
+    value: string,
+    precision: StartDatePrecision,
+): string {
+    if (!value) {
+        return "";
+    }
+
+    if (precision === "yearOnly") {
+        if (/^\d{4}$/.test(value)) {
+            return value;
+        }
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value) || /^\d{4}-\d{2}$/.test(value)) {
+            return value.slice(0, 4);
+        }
+        const year = value.match(/(\d{4})/);
+        return year ? year[1] : "";
+    }
+
+    if (precision === "monthYear") {
+        if (/^\d{4}-\d{2}$/.test(value)) {
+            return value;
+        }
+        if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+            return value.slice(0, 7);
+        }
+        if (/^\d{4}$/.test(value)) {
+            return `${value}-01`;
+        }
+        return "";
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return value;
+    }
+    if (/^\d{4}-\d{2}$/.test(value)) {
+        return `${value}-01`;
+    }
+    if (/^\d{4}$/.test(value)) {
+        return `${value}-01-01`;
+    }
+    return "";
+}
+
+function parseStartDateToDate(
+    value: string,
+    precision: StartDatePrecision,
+): Date | null {
+    if (!value) {
+        return null;
+    }
+
+    if (precision === "yearOnly") {
+        if (!/^\d{4}$/.test(value)) {
+            return null;
+        }
+        return new Date(Number(value), 0, 1);
+    }
+
+    if (precision === "monthYear") {
+        if (!/^\d{4}-\d{2}$/.test(value)) {
+            return null;
+        }
+        const [year, month] = value.split("-").map(Number);
+        return new Date(year, month - 1, 1);
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return null;
+    }
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+}
+
+function formatDateForPrecision(
+    date: Date | null,
+    precision: StartDatePrecision,
+): string {
+    if (!date) {
+        return "";
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    if (precision === "yearOnly") {
+        return String(year);
+    }
+    if (precision === "monthYear") {
+        return `${year}-${month}`;
+    }
+    return `${year}-${month}-${day}`;
+}
+
 interface HazardousEventFormProps {
     title: string;
     submitLabel: string;
@@ -44,6 +158,16 @@ export default function HazardousEventForm({
     hipTypes = [],
 }: HazardousEventFormProps) {
     const totalSteps = 3;
+    const initialStartDate = initialValues?.startDate || "";
+    const initialEndDate = initialValues?.endDate || "";
+    const [startDatePrecision, setStartDatePrecision] = useState<StartDatePrecision>(
+        inferStartDatePrecision(initialStartDate),
+    );
+    const [startDateValue, setStartDateValue] = useState(initialStartDate);
+    const [endDatePrecision, setEndDatePrecision] = useState<StartDatePrecision>(
+        inferStartDatePrecision(initialEndDate),
+    );
+    const [endDateValue, setEndDateValue] = useState(initialEndDate);
     const [activeStep, setActiveStep] = useState(0);
     const [selectedHipTypeId, setSelectedHipTypeId] = useState(initialValues?.hipTypeId || "");
     const [selectedHipClusterId, setSelectedHipClusterId] = useState(initialValues?.hipClusterId || "");
@@ -87,6 +211,8 @@ export default function HazardousEventForm({
                     <input type="hidden" name="hipTypeId" value={selectedHipTypeId} />
                     <input type="hidden" name="hipClusterId" value={selectedHipClusterId} />
                     <input type="hidden" name="hipHazardId" value={selectedHipHazardId} />
+                    <input type="hidden" name="startDate" value={startDateValue} />
+                    <input type="hidden" name="endDate" value={endDateValue} />
 
                     <Stepper
                         linear={false}
@@ -135,16 +261,78 @@ export default function HazardousEventForm({
 
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="grid gap-1">
+                                        <label htmlFor="startDatePrecision" className="text-sm font-medium text-slate-700">
+                                            Start Date Format
+                                        </label>
+                                        <Dropdown
+                                            id="startDatePrecision"
+                                            options={startDatePrecisionOptions}
+                                            optionLabel="label"
+                                            optionValue="value"
+                                            value={startDatePrecision}
+                                            className="w-full"
+                                            onChange={(e) => {
+                                                const nextPrecision = e.value as StartDatePrecision;
+                                                setStartDatePrecision(nextPrecision);
+                                                setStartDateValue(
+                                                    normalizeStartDateForPrecision(startDateValue, nextPrecision),
+                                                );
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="grid gap-1">
+                                        <label htmlFor="endDatePrecision" className="text-sm font-medium text-slate-700">
+                                            End Date Format
+                                        </label>
+                                        <Dropdown
+                                            id="endDatePrecision"
+                                            options={startDatePrecisionOptions}
+                                            optionLabel="label"
+                                            optionValue="value"
+                                            value={endDatePrecision}
+                                            className="w-full"
+                                            onChange={(e) => {
+                                                const nextPrecision = e.value as StartDatePrecision;
+                                                setEndDatePrecision(nextPrecision);
+                                                setEndDateValue(
+                                                    normalizeStartDateForPrecision(endDateValue, nextPrecision),
+                                                );
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div className="grid gap-1">
                                         <label htmlFor="startDate" className="text-sm font-medium text-slate-700">
                                             Start Date
                                         </label>
-                                        <InputText
-                                            id="startDate"
-                                            name="startDate"
-                                            type="date"
+                                        <Calendar
+                                            inputId="startDate"
+                                            value={parseStartDateToDate(startDateValue, startDatePrecision)}
+                                            view={
+                                                startDatePrecision === "yearOnly"
+                                                    ? "year"
+                                                    : startDatePrecision === "monthYear"
+                                                        ? "month"
+                                                        : "date"
+                                            }
+                                            dateFormat={
+                                                startDatePrecision === "fullDate"
+                                                    ? "dd/mm/yy"
+                                                    : startDatePrecision === "monthYear"
+                                                        ? "mm/yy"
+                                                        : "yy"
+                                            }
                                             className="w-full"
-                                            defaultValue={initialValues?.startDate || ""}
-                                            required
+                                            onChange={(e) => {
+                                                setStartDateValue(
+                                                    formatDateForPrecision(
+                                                        (e.value as Date | null) ?? null,
+                                                        startDatePrecision,
+                                                    ),
+                                                );
+                                            }}
                                         />
                                     </div>
                                     <div className="grid gap-1">
@@ -153,10 +341,27 @@ export default function HazardousEventForm({
                                         </label>
                                         <InputText
                                             id="endDate"
-                                            name="endDate"
-                                            type="date"
+                                            type={
+                                                endDatePrecision === "fullDate"
+                                                    ? "date"
+                                                    : endDatePrecision === "monthYear"
+                                                        ? "month"
+                                                        : "text"
+                                            }
                                             className="w-full"
-                                            defaultValue={initialValues?.endDate || ""}
+                                            value={endDateValue}
+                                            inputMode={endDatePrecision === "yearOnly" ? "numeric" : undefined}
+                                            placeholder={endDatePrecision === "yearOnly" ? "YYYY" : undefined}
+                                            maxLength={endDatePrecision === "yearOnly" ? 4 : undefined}
+                                            pattern={endDatePrecision === "yearOnly" ? "\\d{4}" : undefined}
+                                            onChange={(e) => {
+                                                const nextValue = e.target.value;
+                                                if (endDatePrecision === "yearOnly") {
+                                                    setEndDateValue(nextValue.replace(/\D/g, "").slice(0, 4));
+                                                    return;
+                                                }
+                                                setEndDateValue(nextValue);
+                                            }}
                                             required
                                         />
                                     </div>
