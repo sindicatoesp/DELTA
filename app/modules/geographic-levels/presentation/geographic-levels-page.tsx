@@ -1,17 +1,18 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
+import { InputText } from "primereact/inputtext";
 import { Paginator } from "primereact/paginator";
 import { TabPanel, TabView } from "primereact/tabview";
 import { Tag } from "primereact/tag";
 import { Message } from "primereact/message";
+import { VirtualScroller } from "primereact/virtualscroller";
 
 import { MainContainer } from "~/frontend/container";
 import { NavSettings } from "~/frontend/components/nav-settings";
-import { TreeView } from "~/components/TreeView";
 import type { DivisionBreadcrumbRow } from "~/backend.server/models/division";
 import type { GeographicLevelListItem } from "~/modules/geographic-levels/domain/entities/geographic-level";
 import GeographicLevelBreadcrumbs from "~/modules/geographic-levels/presentation/geographic-level-breadcrumbs";
@@ -32,6 +33,45 @@ interface GeographicLevelsPageProps {
     userRole?: string | null;
 }
 
+type PrimeTreeNode = {
+    key: string;
+    label: string;
+    rawId: string;
+    children: PrimeTreeNode[];
+};
+
+type FlattenedTreeItem = {
+    node: PrimeTreeNode;
+    depth: number;
+};
+
+function pickNodeLabel(name: unknown, fallback: string): string {
+    if (typeof name === "string" && name.trim()) {
+        return name;
+    }
+    if (name && typeof name === "object") {
+        const bag = name as Record<string, string>;
+        if (bag.en && String(bag.en).trim()) {
+            return String(bag.en);
+        }
+        const first = Object.values(bag).find((v) => String(v).trim());
+        if (first) {
+            return String(first);
+        }
+    }
+    return fallback;
+}
+
+function normalizeTreeNodes(nodes: unknown[]): PrimeTreeNode[] {
+    const arr = Array.isArray(nodes) ? nodes : [];
+    return arr.map((item: any) => ({
+        key: String(item.id),
+        rawId: String(item.id),
+        label: pickNodeLabel(item.name, String(item.id)),
+        children: normalizeTreeNodes(item.children || []),
+    }));
+}
+
 export default function GeographicLevelsPage({
     langs,
     selectedLangs,
@@ -44,7 +84,10 @@ export default function GeographicLevelsPage({
     const location = useLocation();
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(0);
+    const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
+    const [filterValue, setFilterValue] = useState("");
     const navSettings = <NavSettings userRole={userRole ?? undefined} />;
+    const treeNodes = useMemo(() => normalizeTreeNodes(treeData), [treeData]);
 
     const sortedLangs = useMemo(
         () => Object.entries(langs).sort(([a], [b]) => a.localeCompare(b)),
@@ -58,6 +101,102 @@ export default function GeographicLevelsPage({
         }
         navigate(`${location.pathname}?${params.toString()}`);
     };
+
+    const flattenedNodes = useMemo(() => {
+        const result: FlattenedTreeItem[] = [];
+        const stack: FlattenedTreeItem[] = treeNodes
+            .map((n) => ({ node: n, depth: 0 }))
+            .reverse();
+
+        while (stack.length > 0) {
+            const current = stack.pop();
+            if (!current) continue;
+            result.push(current);
+
+            if (expandedKeys[current.node.key] && current.node.children?.length) {
+                for (let i = current.node.children.length - 1; i >= 0; i--) {
+                    stack.push({ node: current.node.children[i], depth: current.depth + 1 });
+                }
+            }
+        }
+
+        return result;
+    }, [treeNodes, expandedKeys]);
+
+    const filteredNodes = useMemo(() => {
+        if (!filterValue.trim()) return flattenedNodes;
+
+        const lowerFilter = filterValue.toLowerCase();
+        const nodesToInclude = new Set<string>();
+        const matchingIndices: number[] = [];
+
+        for (let i = 0; i < flattenedNodes.length; i++) {
+            if (flattenedNodes[i].node.label.toLowerCase().includes(lowerFilter)) {
+                matchingIndices.push(i);
+                nodesToInclude.add(flattenedNodes[i].node.key);
+            }
+        }
+
+        for (const matchIndex of matchingIndices) {
+            let currentDepth = flattenedNodes[matchIndex].depth;
+            for (let i = matchIndex - 1; i >= 0; i--) {
+                const item = flattenedNodes[i];
+                if (item.depth < currentDepth) {
+                    nodesToInclude.add(item.node.key);
+                    currentDepth = item.depth;
+                    if (currentDepth === 0) break;
+                }
+            }
+        }
+
+        return flattenedNodes.filter((item) => nodesToInclude.has(item.node.key));
+    }, [flattenedNodes, filterValue]);
+
+    useEffect(() => {
+        if (!filterValue.trim()) return;
+
+        const lowerFilter = filterValue.toLowerCase();
+        const nextExpanded: Record<string, boolean> = {};
+        const parentMap = new Map<string, PrimeTreeNode>();
+
+        const stack = [...treeNodes];
+        while (stack.length > 0) {
+            const node = stack.pop();
+            if (!node) continue;
+
+            if (node.label.toLowerCase().includes(lowerFilter)) {
+                nextExpanded[node.key] = true;
+                let parent = parentMap.get(node.key);
+                while (parent) {
+                    nextExpanded[parent.key] = true;
+                    parent = parentMap.get(parent.key);
+                }
+            }
+
+            for (const child of node.children || []) {
+                parentMap.set(child.key, node);
+                stack.push(child);
+            }
+        }
+
+        setExpandedKeys(nextExpanded);
+    }, [filterValue, treeNodes]);
+
+    const expandAll = () => {
+        const nextExpanded: Record<string, boolean> = {};
+        const stack = [...treeNodes];
+        while (stack.length > 0) {
+            const node = stack.pop();
+            if (!node) continue;
+            if (node.children?.length) {
+                nextExpanded[node.key] = true;
+                stack.push(...node.children);
+            }
+        }
+        setExpandedKeys(nextExpanded);
+    };
+
+    const collapseAll = () => setExpandedKeys({});
 
     const linkToChildren = (item: GeographicLevelListItem) =>
         item.hasChildren ? `?parent=${item.id}` : "";
@@ -129,16 +268,88 @@ export default function GeographicLevelsPage({
                 <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                     <TabPanel header="Tree view">
                         <Card className="shadow-sm">
-                            <TreeView
-                                treeData={treeData as any}
-                                rootCaption={"Geographic levels"}
-                                dialogMode={false}
-                                disableButtonSelect={true}
-                                noSelect={true}
-                                search={true}
-                                expanded={true}
-                                itemLink="/settings/geography/[id]/edit?view=tree"
-                                expandByDefault={true}
+                            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+                                <Button
+                                    type="button"
+                                    outlined
+                                    size="small"
+                                    icon="pi pi-plus"
+                                    className="w-full sm:w-auto"
+                                    label="Expand All"
+                                    onClick={expandAll}
+                                />
+                                <Button
+                                    type="button"
+                                    outlined
+                                    size="small"
+                                    icon="pi pi-minus"
+                                    className="w-full sm:w-auto"
+                                    label="Collapse All"
+                                    onClick={collapseAll}
+                                />
+                                <div className="relative w-full sm:w-72">
+                                    <InputText
+                                        placeholder="Search..."
+                                        value={filterValue}
+                                        onChange={(e) => setFilterValue(e.target.value)}
+                                        className="w-full pr-10"
+                                    />
+                                    {filterValue ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setFilterValue("")}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                        >
+                                            <i className="pi pi-times" />
+                                        </button>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <VirtualScroller
+                                items={filteredNodes}
+                                itemSize={36}
+                                scrollHeight="420px"
+                                className="w-full rounded-md border border-slate-200 bg-white"
+                                itemTemplate={(item: FlattenedTreeItem) => {
+                                    const { node, depth } = item;
+                                    const isExpanded = !!expandedKeys[node.key];
+                                    const hasChildren = node.children?.length > 0;
+
+                                    return (
+                                        <div
+                                            key={node.key}
+                                            className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 text-sm last:border-b-0 hover:bg-sky-50"
+                                            style={{ paddingLeft: `${depth * 20 + 12}px` }}
+                                        >
+                                            {hasChildren ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const next = { ...expandedKeys };
+                                                        if (isExpanded) {
+                                                            delete next[node.key];
+                                                        } else {
+                                                            next[node.key] = true;
+                                                        }
+                                                        setExpandedKeys(next);
+                                                    }}
+                                                    className="flex h-5 w-5 items-center justify-center rounded text-slate-500 hover:bg-slate-200"
+                                                >
+                                                    <i className={`pi ${isExpanded ? "pi-chevron-down" : "pi-chevron-right"} text-xs`} />
+                                                </button>
+                                            ) : (
+                                                <span className="inline-block h-5 w-5" />
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={() => navigate(`/settings/geography/${node.rawId}/edit?view=tree`)}
+                                                className="text-left text-slate-800 hover:text-sky-700 hover:underline"
+                                            >
+                                                {node.label}
+                                            </button>
+                                        </div>
+                                    );
+                                }}
                             />
                         </Card>
                     </TabPanel>

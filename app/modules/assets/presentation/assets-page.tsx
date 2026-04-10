@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { FormEvent, useMemo, useState } from "react";
+import { Form, useLocation, useNavigate } from "react-router";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
@@ -41,6 +41,10 @@ export default function AssetsPage({
     const { items, pagination } = result;
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchValue, setSearchValue] = useState(filters.search || "");
+    const [builtInValue, setBuiltInValue] = useState(
+        filters.builtIn === undefined ? "" : String(filters.builtIn),
+    );
     const navSettings = <NavSettings userRole={userRole ?? undefined} />;
 
     const basePath = useMemo(() => {
@@ -63,6 +67,21 @@ export default function AssetsPage({
             params.set(k, String(v));
         }
         navigate(`${basePath}?${params.toString()}`);
+    };
+
+    const submitFilters = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const params = new URLSearchParams();
+
+        const trimmedSearch = searchValue.trim();
+        if (trimmedSearch) {
+            params.set("search", trimmedSearch);
+        }
+        if (builtInValue !== "") {
+            params.set("builtIn", builtInValue);
+        }
+
+        navigate(`${basePath}${params.toString() ? `?${params.toString()}` : ""}`);
     };
 
     const actionsBodyTemplate = (item: AssetListItem) => (
@@ -108,16 +127,18 @@ export default function AssetsPage({
             <>
                 {/* Filters */}
                 <div className="mb-4 flex flex-wrap items-end gap-3">
-                    <form
+                    <Form
                         method="get"
                         action={basePath}
+                        onSubmit={submitFilters}
                         className="flex flex-wrap items-end gap-3 flex-1"
                     >
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-medium">{"Search"}</label>
                             <InputText
                                 name="search"
-                                defaultValue={filters.search}
+                                value={searchValue}
+                                onChange={(e) => setSearchValue(e.target.value)}
                                 placeholder={"Search..."}
                                 className="h-9"
                             />
@@ -126,15 +147,12 @@ export default function AssetsPage({
                             <label className="text-sm font-medium">{"Is custom?"}</label>
                             <Dropdown
                                 name="builtIn"
-                                defaultValue={
-                                    filters.builtIn === undefined
-                                        ? ""
-                                        : String(filters.builtIn)
-                                }
+                                value={builtInValue}
+                                onChange={(e) => setBuiltInValue(e.value)}
                                 options={builtInOptions}
                                 optionLabel="label"
                                 optionValue="value"
-                                className="h-9"
+                                className="h-9 w-44"
                             />
                         </div>
                         <Button
@@ -148,10 +166,15 @@ export default function AssetsPage({
                             label={"Clear"}
                             icon="pi pi-times"
                             severity="secondary"
+                            outlined
                             className="h-9"
-                            onClick={() => navigate(basePath)}
+                            onClick={() => {
+                                setSearchValue("");
+                                setBuiltInValue("");
+                                navigate(basePath);
+                            }}
                         />
-                    </form>
+                    </Form>
 
                     {canCreate && (
                         <Button

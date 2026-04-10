@@ -65,15 +65,13 @@ export default function SettingsSystemPage() {
 		<>
 			<MainContainer title={"System settings"} headerExtra={navSettings}>
 				<div className="mg-container">
-					<div className="dts-page-intro">
-						<div className="dts-additional-actions">
-							<Button
-								type="button"
-								icon="pi pi-pencil"
-								label={"Edit Settings"}
-								onClick={() => navigate("/settings/system/edit")}
-							></Button>
-						</div>
+					<div className="mb-4 flex w-full justify-end">
+						<Button
+							type="button"
+							icon="pi pi-pencil"
+							label={"Edit Settings"}
+							onClick={() => navigate("/settings/system/edit")}
+						></Button>
 					</div>
 
 					<div className="flex flex-col gap-6">
