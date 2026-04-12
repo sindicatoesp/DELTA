@@ -37,6 +37,7 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 			});
 
 			route("assets", "routes/settings/assets/_index.tsx");
+			route("assets/new", "routes/settings/assets/new.tsx");
 			route("assets/:id", "routes/settings/assets/$id.tsx");
 			route("assets/:id/edit", "routes/settings/assets/edit.tsx");
 			route("assets/:id/delete", "routes/settings/assets/delete.tsx");

@@ -259,7 +259,7 @@ export function DamagesForm(props: DamagesFormProps) {
 								<Link
 									target="_blank"
 									to={
-										"/settings/assets/new/edit?sectorId=" +
+										"/settings/assets/new?sectorId=" +
 										props.fields.sectorId
 									}
 								>
