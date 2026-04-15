@@ -246,6 +246,7 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 	});
 
 	const disasterEventRoutes = defineRoutes((route) => {
+		route("disaster-event/new", "routes/disaster-event/new.tsx");
 		route("disaster-event/:id", "routes/disaster-event/$id.tsx");
 		route("disaster-event", "routes/disaster-event/_index.tsx");
 		route("disaster-event/csv-export", "routes/disaster-event/csv-export.ts");

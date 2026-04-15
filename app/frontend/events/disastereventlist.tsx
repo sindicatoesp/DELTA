@@ -52,6 +52,8 @@ export function ListView(props: ListViewProps) {
 	return DataScreen({
 		hideMainLinks: props.hideMainLinks,
 		isPublic: ld.isPublic,
+		userRole: user.role,
+		relLinkToNew: "/new",
 		title:
 			props.titleOverride ??
 			"Disaster events",

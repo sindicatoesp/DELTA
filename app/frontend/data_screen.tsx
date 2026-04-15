@@ -7,7 +7,9 @@ import { canAddNewRecord } from "~/frontend/user/roles";
 interface DataScreenProps<T> {
 	title: string;
 	isPublic?: boolean;
+	userRole?: string | null;
 	baseRoute: string;
+	relLinkToNew?: string;
 	searchParams?: URLSearchParams;
 	columns: string[];
 	items: T[];
@@ -48,7 +50,9 @@ export function DataScreen<T>(props: DataScreenProps<T>) {
 					<DataMainLinks
 						searchParams={props.searchParams}
 						isPublic={props.isPublic}
+						userRole={props.userRole}
 						baseRoute={props.baseRoute}
+						relLinkToNew={props.relLinkToNew}
 						csvExportLinks={props.csvExportLinks}
 						addNewLabel={props.addNewLabel}
 					/>
