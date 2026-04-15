@@ -129,7 +129,7 @@ jobs:
       - name: Analyse issue and post triage comment
         env:
           MODELS_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-          MODEL:         ${{ vars.BUG_TRIAGE_MODEL || 'anthropic/claude-3-7-sonnet' }}
+          MODEL:         ${{ vars.BUG_TRIAGE_MODEL || 'openai/gpt-5' }}
           ISSUE_NUMBER:  ${{ github.event.issue.number }}
           ISSUE_TITLE:   ${{ github.event.issue.title }}
           ISSUE_BODY:    ${{ github.event.issue.body }}
