@@ -38,13 +38,27 @@ Run or read the output of:
 Compile all findings into a raw list: file, line, pattern matched, brief description.
 
 ### Pass 2 — Root Cause Analysis
-For each finding from Pass 1, read the surrounding code (at minimum 20 lines before and after). Construct:
-- What the code currently does
-- What it should do instead
-- What the failure mode is (silent failure, data corruption, security breach, etc.)
-- What a minimal fix looks like (describe only — do not write the code)
 
-This pass is LLM reasoning over code. Be precise. Do not pad explanations.
+Process every item in the audit list individually and in order. Do not batch similar
+items, do not skip any item, do not infer intent where explicit notes are provided.
+For every item where you cannot locate evidence in the source files or static analysis,
+state that explicitly rather than guessing.
+
+For each item, one at a time:
+1. Check whether the item list contains an "Item Notes" entry for this ID. If it does,
+   treat those notes as the authoritative description of intended behavior. Do not infer
+   a different fix approach from the code alone.
+2. Read the relevant source file (at minimum 20 lines before and after the finding).
+3. Construct:
+   - What the code currently does
+   - What it should do instead (use Item Notes if present; derive from code if not)
+   - What the failure mode is (silent failure, data corruption, security breach, etc.)
+   - What a minimal fix looks like (describe only — do not write the code)
+4. If no source evidence is available (file not found, or item is a creation task with
+   no existing code), state that explicitly and base your analysis on the item title
+   and notes alone.
+
+Be precise. Do not pad explanations.
 
 ### Pass 3 — Fix Complexity Scoring
 Rate each finding:
