@@ -70,18 +70,32 @@ Your task: produce a complete TRIAGE.md for all P0 items.
 
 --- INSTRUCTIONS ---
 
-Run the three-pass analysis:
+Run the three-pass analysis. Process every item in the P0 item list individually
+and completely — do not batch similar items, do not skip any item, do not infer
+intent when the item list provides explicit notes. For every item where you cannot
+locate evidence in the provided source files or static analysis, state that
+explicitly rather than guessing.
 
 Pass 1 — Cross-reference the static analysis outputs with the P0 item list.
-Identify which P0 items are confirmed by static analysis and which require code reading.
+For each item, record whether it is confirmed by static analysis (tsc/lint/grep)
+or requires direct code reading. Do not skip items that lack a static analysis hit —
+absence of a hit means Pass 2 carries the full burden for that item.
 
-Pass 2 — For each P0 item, read the provided source file excerpt and construct:
-  - What the code currently does
-  - What it should do instead
-  - What the failure mode is (silent failure, data corruption, security breach, etc.)
-  - What a minimal fix looks like (describe only — no code)
+Pass 2 — For each item, one at a time in list order:
+  1. Check whether the P0 item list contains an "Item Notes" entry for this ID.
+     If it does, treat those notes as the authoritative description of intended
+     behavior. Do not infer a different fix approach from the code alone.
+  2. Read the relevant source file excerpt.
+  3. Construct:
+     - What the code currently does
+     - What it should do instead (use Item Notes if present; derive from code if not)
+     - What the failure mode is (silent failure, data corruption, security breach, etc.)
+     - What a minimal fix looks like (describe only — no code)
+  4. If no source evidence is available for an item (file not found, item is a
+     creation task), state that explicitly and base your analysis solely on the
+     item title and notes.
 
-Pass 3 — Rate each P0 item:
+Pass 3 — Rate each item:
   - Trivial: one-line fix, no tests needed
   - Simple: under 20 lines, one new test
   - Complex: multiple files, schema or transaction implications, full TDD cycle required
