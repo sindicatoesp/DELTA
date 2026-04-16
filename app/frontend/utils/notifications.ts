@@ -26,7 +26,11 @@ function toMessage(msg: unknown): string {
 	return String(msg);
 }
 
-function emitToast(severity: ToastSeverity, msg: unknown, options?: NotifyOptions) {
+function emitToast(
+	severity: ToastSeverity,
+	msg: unknown,
+	options?: NotifyOptions,
+) {
 	if (typeof window === "undefined") {
 		return;
 	}
