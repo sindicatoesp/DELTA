@@ -31,8 +31,7 @@ function specificHazardTemplate(row: HazardousEventListItem) {
 
 function shortUuid(value: string) {
     if (!value) return "-";
-    const half = Math.max(1, Math.floor(value.length / 2));
-    return value.slice(0, half);
+    return value.slice(0, 5);
 }
 
 async function copyUuidToClipboard(value: string) {
