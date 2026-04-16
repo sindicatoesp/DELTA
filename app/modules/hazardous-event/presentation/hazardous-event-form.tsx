@@ -453,6 +453,20 @@ export default function HazardousEventForm({
                                     />
                                 </div>
 
+                                <div className="grid gap-1">
+                                    <label htmlFor="chainsExplanation" className="text-sm font-medium text-slate-700">
+                                        Composite event - chains explanation
+                                    </label>
+                                    <InputTextarea
+                                        id="chainsExplanation"
+                                        name="chainsExplanation"
+                                        className="w-full"
+                                        autoResize
+                                        rows={4}
+                                        defaultValue={initialValues?.chainsExplanation || ""}
+                                    />
+                                </div>
+
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="grid gap-1">
                                         <label htmlFor="dataSource" className="text-sm font-medium text-slate-700">
