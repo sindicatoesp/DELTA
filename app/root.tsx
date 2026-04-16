@@ -9,8 +9,6 @@ import {
 	useLocation,
 } from "react-router";
 
-import { ToastContainer } from "react-toastify/unstyled";
-
 import {
 	getCountryAccountsIdFromSession,
 	getCountrySettingsFromSession,
@@ -36,6 +34,10 @@ import InactivityWarning from "./components/InactivityWarning";
 import RegularMenuBar from "./components/RegularMenuBar";
 import SuperAdminMenuBar from "./components/SuperAdminMenuBar";
 import { Footer } from "./frontend/footer/footer";
+import {
+	APP_TOAST_EVENT,
+	type AppToastEventDetail,
+} from "./frontend/utils/notifications";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
 
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
@@ -184,6 +186,21 @@ export default function Screen() {
 		}
 	}, [flashMessage]);
 
+	useEffect(() => {
+		const handler = (event: Event) => {
+			const customEvent = event as CustomEvent<AppToastEventDetail>;
+			if (!customEvent.detail) {
+				return;
+			}
+			toast.current?.show(customEvent.detail);
+		};
+
+		window.addEventListener(APP_TOAST_EVENT, handler as EventListener);
+		return () => {
+			window.removeEventListener(APP_TOAST_EVENT, handler as EventListener);
+		};
+	}, []);
+
 	return (
 		<html
 			lang="en"
@@ -197,16 +214,6 @@ export default function Screen() {
 				<Links />
 			</head>
 			<body>
-				<ToastContainer
-					position="top-center"
-					autoClose={5000}
-					hideProgressBar={false}
-					newestOnTop={true}
-					closeOnClick={true}
-					pauseOnHover={true}
-					draggable={false}
-					toastClassName="custom-toast"
-				/>
 				<Toast ref={toast} />
 				<PrimeReactProvider
 					value={{
