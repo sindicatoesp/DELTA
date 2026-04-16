@@ -16,7 +16,6 @@ import React from "react";
 import * as repeatablefields from "~/frontend/components/repeatablefields";
 
 import { UserForFrontend } from "~/utils/auth";
-import { notifyError } from "./utils/notifications";
 
 import { JsonView, allExpanded, defaultStyles } from "react-json-view-lite";
 
@@ -31,6 +30,24 @@ import {
 } from "~/frontend/approval";
 import { DeleteButton } from "./components/delete-dialog";
 import { canEditRecord } from "./user/roles";
+
+const APP_TOAST_EVENT = "app:toast";
+
+function showErrorToast(msg: string) {
+	if (typeof window === "undefined") {
+		return;
+	}
+
+	window.dispatchEvent(
+		new CustomEvent(APP_TOAST_EVENT, {
+			detail: {
+				severity: "error",
+				detail: msg,
+				life: 5000,
+			},
+		}),
+	);
+}
 
 export type FormResponse<T> =
 	| { ok: true; data: T }
@@ -872,7 +889,7 @@ export function Input(props: InputProps) {
 				} else {
 					if (!notifiedDateFormatErrorOnce) {
 						notifiedDateFormatErrorOnce = true;
-						notifyError(
+						showErrorToast(
 							`Invalid date format in database. Removing value for field ${props.def.label}. Got date: ${vsInit}`,
 						);
 					}
@@ -982,7 +999,7 @@ export function Input(props: InputProps) {
 									onBlur={(e: any) => {
 										let vStr = e.target.value;
 										if (!/^\d{4}$/.test(vStr)) {
-											notifyError(
+											showErrorToast(
 												"Invalid year format, must be YYYY.",
 											);
 											return;
@@ -1038,7 +1055,7 @@ export function Input(props: InputProps) {
 									onBlur={(e: any) => {
 										let vStr = e.target.value;
 										if (!/^\d{4}$/.test(vStr)) {
-											notifyError(
+											showErrorToast(
 												"Invalid year format, must be YYYY.",
 											);
 											return;

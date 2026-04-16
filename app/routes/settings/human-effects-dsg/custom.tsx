@@ -17,8 +17,8 @@ import {
 	withoutIds,
 } from "~/frontend/human_effects/custom_editor";
 
-import { useEffect, useState } from "react";
-import { notifyError, notifyInfo } from "~/frontend/utils/notifications";
+import { useEffect, useRef, useState } from "react";
+import { Toast } from "primereact/toast";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 import { eq } from "drizzle-orm";
 
@@ -147,6 +147,7 @@ export interface HumanEffectsCustomConfigWithIds {
 export default function Screen() {
 	const ld = useLoaderData<typeof loader>();
 	const ad = useActionData<typeof action>();
+	const toastRef = useRef<Toast>(null);
 
 
 	const [config, setConfig] = useState<HumanEffectsCustomConfigWithIds>(() =>
@@ -156,11 +157,17 @@ export default function Screen() {
 	useEffect(() => {
 		if (ad)
 			if (!ad.ok) {
-				notifyError(ad.error || "Server error");
+				toastRef.current?.show({
+					severity: "error",
+					detail: ad.error || "Server error",
+					life: 5000,
+				});
 			} else {
-				notifyInfo(
-					"Your changes have been saved",
-				);
+				toastRef.current?.show({
+					severity: "info",
+					detail: "Your changes have been saved",
+					life: 5000,
+				});
 			}
 	}, [ad]);
 
@@ -168,6 +175,7 @@ export default function Screen() {
 		<MainContainer
 			title={"Human effects: Custom Disaggregations"}
 		>
+			<Toast ref={toastRef} position="top-center" />
 			<Form method="post">
 				<h2>
 					{"Your configuration"}

@@ -2,7 +2,7 @@ import { authLoaderWithPerm } from "~/utils/auth";
 import { MainContainer } from "~/frontend/container";
 import { Table } from "~/frontend/editabletable/view";
 import { validateTotalGroup } from "~/frontend/editabletable/data";
-import { useLoaderData , Link } from "react-router";
+import { useLoaderData, Link } from "react-router";
 import {
 	getHumanEffectTableDefs,
 	HumanEffectsTableFromString,
@@ -14,7 +14,6 @@ import {
 	defsForTable,
 } from "~/backend.server/models/human_effects";
 import { dr } from "~/db.server";
-import { notifyError } from "~/frontend/utils/notifications";
 import { useEffect } from "react";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 
@@ -84,10 +83,26 @@ export default function Screen() {
 	const fetcher = useFetcher<typeof loader>();
 	const data = fetcher.data || ld;
 
+	const showErrorToast = (message: string) => {
+		if (typeof window === "undefined") {
+			return;
+		}
+
+		window.dispatchEvent(
+			new CustomEvent("app:toast", {
+				detail: {
+					severity: "error",
+					detail: message,
+					life: 5000,
+				},
+			}),
+		);
+	};
+
 	useEffect(() => {
 		const vtg = validateTotalGroup(data.totalGroupFlags, data.defs);
 		if (vtg.error) {
-			notifyError(vtg.error.message);
+			showErrorToast(vtg.error.message);
 		}
 	}, [data.totalGroupFlags, data.defs]);
 

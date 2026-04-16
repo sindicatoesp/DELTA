@@ -34,14 +34,22 @@ import InactivityWarning from "./components/InactivityWarning";
 import RegularMenuBar from "./components/RegularMenuBar";
 import SuperAdminMenuBar from "./components/SuperAdminMenuBar";
 import { Footer } from "./frontend/footer/footer";
-import {
-	APP_TOAST_EVENT,
-	type AppToastEventDetail,
-} from "./frontend/utils/notifications";
 import { authLoaderGetOptionalUserForFrontend } from "./utils/auth";
 
 import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { getUserRoleFromSession } from "~/utils/session";
+
+const APP_TOAST_EVENT = "app:toast";
+
+type ToastSeverity = "success" | "info" | "warn" | "error";
+
+interface AppToastEventDetail {
+	severity: ToastSeverity;
+	detail: string;
+	summary?: string;
+	life?: number;
+	sticky?: boolean;
+}
 
 function isAdminRoute(request: Request): boolean {
 	const url = new URL(request.url);

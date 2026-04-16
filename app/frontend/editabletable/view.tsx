@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	ColWidth,
 	Def,
@@ -20,10 +20,10 @@ import {
 import { cloneInstance } from "~/utils/object";
 import { HumanEffectsTable } from "~/frontend/human_effects/defs";
 import React from "react";
+import { Toast } from "primereact/toast";
 import { toStandardDate } from "~/utils/date";
 import { eqArr } from "~/utils/array";
-import { useFetcher , Link } from "react-router";
-import { notifyError, notifyInfo } from "../utils/notifications";
+import { useFetcher, Link } from "react-router";
 import { validate } from "./validate";
 interface TableProps {
 	recordId: string;
@@ -66,6 +66,23 @@ interface tableError {
 const storageVersion = "v3";
 
 function TableClient(props: TableProps) {
+	const toastRef = useRef<Toast>(null);
+
+	const showErrorToast = (message: unknown) => {
+		toastRef.current?.show({
+			severity: "error",
+			detail: message instanceof Error ? message.message : String(message),
+			life: 5000,
+		});
+	};
+
+	const showInfoToast = (message: string) => {
+		toastRef.current?.show({
+			severity: "info",
+			detail: message,
+			life: 5000,
+		});
+	};
 
 	let [revertToIds, setRevertToIds] = useState(props.initialIds);
 	let [revertToData, setRevertToData] = useState(props.initialData);
@@ -208,7 +225,7 @@ function TableClient(props: TableProps) {
 
 	const setTotalGroup = (totalGroup: TotalGroupString) => {
 		if (totalGroup && groupKeyOnlyZeroes(totalGroup)) {
-			notifyError(
+			showErrorToast(
 				"Group does not have disaggregations set",
 			);
 			return;
@@ -221,14 +238,14 @@ function TableClient(props: TableProps) {
 		console.log("Validating data in the browser");
 		reSort();
 		if (data.getTotalGroupString() == "invalid") {
-			notifyError(
+			showErrorToast(
 				"Please select a group to use as source for total",
 			);
 			return;
 		}
 		let e = data.validate();
 		if (e) {
-			notifyError(e);
+			showErrorToast(e);
 			return;
 		}
 		console.log("Saving data to server");
@@ -250,17 +267,15 @@ function TableClient(props: TableProps) {
 			if (res.errors) {
 				setTableErrors(res.errors);
 			} else if (res.error) {
-				notifyError(res.error.message + " (server)");
+				showErrorToast(res.error.message + " (server)");
 			} else {
-				notifyError(
+				showErrorToast(
 					"Unknown server error",
 				);
 			}
 			return;
 		}
-		notifyInfo(
-			"Your changes have been saved on the server",
-		);
+		showInfoToast("Your changes have been saved on the server");
 
 		await reloadData();
 	};
@@ -347,6 +362,7 @@ function TableClient(props: TableProps) {
 
 	return (
 		<div className="table-container">
+			<Toast ref={toastRef} position="top-center" />
 			<TableCategoryPresence
 				tblId={props.table}
 				defs={childProps.defs}
