@@ -8,7 +8,6 @@ import {
 	getUserFromSession,
 	redirectWithMessage,
 } from "~/utils/session";
-import "react-toastify/dist/ReactToastify.css";
 import { htmlTitle } from "~/utils/htmlmeta";
 import { makeOrganizationRepository } from "~/modules/organizations/organization-module.server";
 import { Dropdown } from "primereact/dropdown";
