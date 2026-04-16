@@ -339,30 +339,33 @@ export default function HazardousEventForm({
                                         <label htmlFor="endDate" className="text-sm font-medium text-slate-700">
                                             End Date
                                         </label>
-                                        <InputText
-                                            id="endDate"
-                                            type={
-                                                endDatePrecision === "fullDate"
-                                                    ? "date"
+                                        <Calendar
+                                            inputId="endDate"
+                                            value={parseStartDateToDate(endDateValue, endDatePrecision)}
+                                            view={
+                                                endDatePrecision === "yearOnly"
+                                                    ? "year"
                                                     : endDatePrecision === "monthYear"
                                                         ? "month"
-                                                        : "text"
+                                                        : "date"
+                                            }
+                                            dateFormat={
+                                                endDatePrecision === "fullDate"
+                                                    ? "dd/mm/yy"
+                                                    : endDatePrecision === "monthYear"
+                                                        ? "mm/yy"
+                                                        : "yy"
                                             }
                                             className="w-full"
-                                            value={endDateValue}
-                                            inputMode={endDatePrecision === "yearOnly" ? "numeric" : undefined}
-                                            placeholder={endDatePrecision === "yearOnly" ? "YYYY" : undefined}
-                                            maxLength={endDatePrecision === "yearOnly" ? 4 : undefined}
-                                            pattern={endDatePrecision === "yearOnly" ? "\\d{4}" : undefined}
-                                            onChange={(e) => {
-                                                const nextValue = e.target.value;
-                                                if (endDatePrecision === "yearOnly") {
-                                                    setEndDateValue(nextValue.replace(/\D/g, "").slice(0, 4));
-                                                    return;
-                                                }
-                                                setEndDateValue(nextValue);
-                                            }}
                                             required
+                                            onChange={(e) => {
+                                                setEndDateValue(
+                                                    formatDateForPrecision(
+                                                        (e.value as Date | null) ?? null,
+                                                        endDatePrecision,
+                                                    ),
+                                                );
+                                            }}
                                         />
                                     </div>
                                 </div>
