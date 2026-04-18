@@ -10,8 +10,6 @@ import {
 	useLocation,
 } from "react-router";
 
-import { ToastContainer } from "react-toastify/unstyled";
-
 import {
 	sessionCookie,
 	getFlashMessage,
@@ -179,11 +177,15 @@ export default function Screen() {
 	} = loaderData;
 	const firstName = loaderData.common?.user?.firstName || "";
 	const lastName = loaderData.common?.user?.lastName || "";
-	// Display toast for flash messages
 	const toast = useRef<Toast>(null);
+
 	useEffect(() => {
 		if (flashMessage) {
-			toast?.current?.show({ severity: flashMessage.type, detail: flashMessage.text });
+			toast?.current?.show({
+				severity: flashMessage.type,
+				detail: flashMessage.text,
+				life: 3000,
+			});
 		}
 	}, [flashMessage]);
 
@@ -205,17 +207,7 @@ export default function Screen() {
 				/>
 			</head>
 			<body>
-				<ToastContainer
-					position="top-center"
-					autoClose={5000}
-					hideProgressBar={false}
-					newestOnTop={true}
-					closeOnClick={true}
-					pauseOnHover={true}
-					draggable={false}
-					toastClassName="custom-toast"
-				/>
-				<Toast ref={toast} />
+				<Toast ref={toast} position="top-center" />
 				<PrimeReactProvider
 					value={{
 						ripple: true,

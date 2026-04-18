@@ -16,7 +16,6 @@ import React from "react";
 import * as repeatablefields from "~/frontend/components/repeatablefields";
 
 import { UserForFrontend } from "~/utils/auth";
-import { notifyError } from "./utils/notifications";
 
 import { JsonView, allExpanded, defaultStyles } from "react-json-view-lite";
 
@@ -27,6 +26,7 @@ import { LangLink } from "~/utils/link";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Checkbox } from "primereact/checkbox";
+import { Toast } from "primereact/toast";
 import { useFetcher } from "react-router";
 import {
 	approvalStatusIds,
@@ -673,6 +673,15 @@ let notifiedDateFormatErrorOnce = false;
 
 export function Input(props: InputProps) {
 	let ctx = props.ctx;
+	const toast = useRef<Toast>(null);
+
+	const showErrorToast = (detail: string) => {
+		toast.current?.show({
+			severity: "error",
+			detail,
+			life: 5000,
+		});
+	};
 
 	let wrapInput = function (child: React.ReactNode, label?: string) {
 		let def = { ...props.def };
@@ -890,7 +899,7 @@ export function Input(props: InputProps) {
 				} else {
 					if (!notifiedDateFormatErrorOnce) {
 						notifiedDateFormatErrorOnce = true;
-						notifyError(
+						showErrorToast(
 							`Invalid date format in database. Removing value for field ${props.def.label}. Got date: ${vsInit}`,
 						);
 					}
@@ -926,6 +935,7 @@ export function Input(props: InputProps) {
 
 			return (
 				<div>
+					<Toast ref={toast} position="top-center" />
 					<WrapInputBasic
 						label={
 							props.def.label +
@@ -1009,7 +1019,7 @@ export function Input(props: InputProps) {
 									onBlur={(e: any) => {
 										let vStr = e.target.value;
 										if (!/^\d{4}$/.test(vStr)) {
-											notifyError(
+											showErrorToast(
 												ctx.t({
 													code: "common.invalid_year_format",
 													msg: "Invalid year format, must be YYYY.",
@@ -1068,7 +1078,7 @@ export function Input(props: InputProps) {
 									onBlur={(e: any) => {
 										let vStr = e.target.value;
 										if (!/^\d{4}$/.test(vStr)) {
-											notifyError(
+											showErrorToast(
 												ctx.t({
 													code: "common.invalid_year_format",
 													msg: "Invalid year format, must be YYYY.",

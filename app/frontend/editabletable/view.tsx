@@ -1,6 +1,6 @@
 // React component for editable table UI. Used exclusively for human effects data entry.
 // See _docs/human-direct-effects.md for overview.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	ColWidth,
 	Def,
@@ -24,10 +24,10 @@ import React from "react";
 import { toStandardDate } from "~/utils/date";
 import { eqArr } from "~/utils/array";
 import { useFetcher } from "react-router";
-import { notifyError, notifyInfo } from "../utils/notifications";
 import { validate } from "./validate";
 import { LangLink } from "~/utils/link";
 import { ViewContext } from "../context";
+import { Toast } from "primereact/toast";
 
 interface TableProps {
 	ctx: ViewContext;
@@ -72,6 +72,15 @@ const storageVersion = "v3";
 
 function TableClient(props: TableProps) {
 	let ctx = props.ctx;
+	const toast = useRef<Toast>(null);
+
+	const showErrorToast = (detail: string) => {
+		toast.current?.show({
+			severity: "error",
+			detail,
+			life: 5000,
+		});
+	};
 
 	let [revertToIds, setRevertToIds] = useState(props.initialIds);
 	let [revertToData, setRevertToData] = useState(props.initialData);
@@ -214,7 +223,7 @@ function TableClient(props: TableProps) {
 
 	const setTotalGroup = (totalGroup: TotalGroupString) => {
 		if (totalGroup && groupKeyOnlyZeroes(totalGroup)) {
-			notifyError(
+			showErrorToast(
 				ctx.t({
 					code: "human_effects.group_doesnt_have_disaggregations_set",
 					msg: "Group does not have disaggregations set",
@@ -230,7 +239,7 @@ function TableClient(props: TableProps) {
 		console.log("Validating data in the browser");
 		reSort();
 		if (data.getTotalGroupString() == "invalid") {
-			notifyError(
+			showErrorToast(
 				ctx.t({
 					code: "human_effects.select_group_to_use_as_source_for_total",
 					msg: "Please select a group to use as source for total",
@@ -240,7 +249,7 @@ function TableClient(props: TableProps) {
 		}
 		let e = data.validate(ctx);
 		if (e) {
-			notifyError(e);
+			showErrorToast(String(e));
 			return;
 		}
 		console.log("Saving data to server");
@@ -262,9 +271,9 @@ function TableClient(props: TableProps) {
 			if (res.errors) {
 				setTableErrors(res.errors);
 			} else if (res.error) {
-				notifyError(res.error.message + " (server)");
+				showErrorToast(res.error.message + " (server)");
 			} else {
-				notifyError(
+				showErrorToast(
 					ctx.t({
 						code: "common.unknown_server_error",
 						msg: "Unknown server error",
@@ -273,12 +282,14 @@ function TableClient(props: TableProps) {
 			}
 			return;
 		}
-		notifyInfo(
-			ctx.t({
+		toast.current?.show({
+			severity: "info",
+			detail: ctx.t({
 				code: "human_effects.your_changes_have_been_saved_on_server",
 				msg: "Your changes have been saved on the server",
 			}),
-		);
+			life: 5000,
+		});
 
 		await reloadData();
 	};
@@ -365,6 +376,7 @@ function TableClient(props: TableProps) {
 
 	return (
 		<div className="table-container">
+			<Toast ref={toast} position="top-center" />
 			<TableCategoryPresence
 				ctx={props.ctx}
 				tblId={props.table}

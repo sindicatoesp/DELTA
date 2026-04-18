@@ -17,8 +17,7 @@ import {
 	defsForTable,
 } from "~/backend.server/models/human_effects";
 import { dr } from "~/db.server";
-import { notifyError } from "~/frontend/utils/notifications";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 
 import { ViewContext } from "~/frontend/context";
@@ -26,6 +25,7 @@ import { ViewContext } from "~/frontend/context";
 import { LangLink } from "~/utils/link";
 import { disasterRecordsById } from "~/backend.server/models/disaster_record";
 import { BackendContext } from "~/backend.server/context";
+import { Toast } from "primereact/toast";
 
 export const loader = authLoaderWithPerm("EditData", async (args) => {
 	const ctx = new BackendContext(args);
@@ -84,6 +84,7 @@ export const action = authLoaderWithPerm("EditData", async (actionArgs) => {
 export default function Screen() {
 	const ld = useLoaderData<typeof loader>();
 	const ctx = new ViewContext();
+	const toast = useRef<Toast>(null);
 
 	const fetcher = useFetcher<typeof loader>();
 	const data = fetcher.data || ld;
@@ -91,7 +92,11 @@ export default function Screen() {
 	useEffect(() => {
 		const vtg = validateTotalGroup(data.totalGroupFlags, data.defs);
 		if (vtg.error) {
-			notifyError(vtg.error.message);
+			toast.current?.show({
+				severity: "error",
+				detail: vtg.error.message,
+				life: 5000,
+			});
 		}
 	}, [data.totalGroupFlags, data.defs]);
 
@@ -101,6 +106,7 @@ export default function Screen() {
 		<MainContainer
 			title={ctx.t({ code: "human_effects", msg: "Human effects" })}
 		>
+			<Toast ref={toast} position="top-center" />
 			<LangLink
 				lang={ctx.lang}
 				to={"/disaster-record/edit/" + ld.recordId}
