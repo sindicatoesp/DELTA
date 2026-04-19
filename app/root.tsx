@@ -207,7 +207,7 @@ export default function Screen() {
 				/>
 			</head>
 			<body>
-				<Toast ref={toast} position="top-center" />
+				<Toast ref={toast} position={loaderData.common.lang === "ar" ? "top-left" : "top-right"} />
 				<PrimeReactProvider
 					value={{
 						ripple: true,

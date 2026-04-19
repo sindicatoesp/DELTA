@@ -6,8 +6,8 @@ import { InputText } from "primereact/inputtext";
 
 import { BackendContext } from "~/backend.server/context";
 import { ApiKeyRepository } from "~/db/queries/apiKeyRepository";
-
 import {
+	authActionGetAuth,
 	authActionWithPerm,
 	authLoaderWithPerm,
 } from "~/utils/auth";
@@ -18,15 +18,14 @@ import {
 
 import { ViewContext } from "~/frontend/context";
 
-export const loader = authLoaderWithPerm("EditAPIKeys", async (args) => {
-	const { params } = args;
-	const item = params.id ? await ApiKeyRepository.getById(params.id) : null;
-	return { item };
+export const loader = authLoaderWithPerm("EditAPIKeys", async () => {
+	return {};
 });
 
 export const action = authActionWithPerm("EditAPIKeys", async (actionArgs) => {
-	const { request, params } = actionArgs;
+	const { request } = actionArgs;
 	const backendCtx = new BackendContext(actionArgs);
+	const auth = authActionGetAuth(actionArgs);
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
 	const formData = await request.formData();
 	const name = (formData.get("name") as string | null)?.trim() ?? "";
@@ -35,16 +34,11 @@ export const action = authActionWithPerm("EditAPIKeys", async (actionArgs) => {
 		return { ok: false, error: backendCtx.t({ code: "common.name_required", msg: "Name is required" }) };
 	}
 
-	if (!params.id) {
-		return { ok: false, error: "Missing ID" };
-	}
-
-	const existing = await ApiKeyRepository.getById(params.id);
-	if (!existing || existing.countryAccountsId !== countryAccountsId) {
-		throw new Response("Not Found", { status: 404 });
-	}
-
-	await ApiKeyRepository.update(params.id, name);
+	await ApiKeyRepository.create({
+		name,
+		managedByUserId: auth.user?.id,
+		countryAccountsId,
+	});
 
 	return redirectWithMessage(actionArgs, "/settings/api-key", {
 		type: "success",
@@ -52,23 +46,23 @@ export const action = authActionWithPerm("EditAPIKeys", async (actionArgs) => {
 	});
 });
 
-export default function ApiKeyEditPage() {
-	const ld = useLoaderData<typeof loader>();
+export default function ApiKeyNewPage() {
+	useLoaderData<typeof loader>();
 	const ctx = new ViewContext();
 	const navigate = useNavigate();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
 	const isSubmitting = navigation.state === "submitting";
 
-	const [nameValue, setNameValue] = useState(ld.item?.name || "");
+	const [nameValue, setNameValue] = useState("");
 
 	const nameError = actionData && !actionData.ok ? actionData.error : "";
 
 	return (
 		<Dialog
 			header={ctx.t({
-				code: "common.edit",
-				msg: "Edit",
+				code: "api_keys.add_new",
+				msg: "Add new API key",
 			})}
 			visible
 			modal
@@ -78,14 +72,14 @@ export default function ApiKeyEditPage() {
 			<Form method="post" className="flex flex-col" noValidate>
 				<p className="mb-3 text-red-700">* Required information</p>
 				<div className="mb-3 flex flex-col gap-2">
-					<label htmlFor="edit-api-key-name">
+					<label htmlFor="create-api-key-name">
 						<span className="inline-flex gap-1">
 							<span>{ctx.t({ code: "common.name", msg: "Name" })}</span>
 							<span className="text-red-700">*</span>
 						</span>
 					</label>
 					<InputText
-						id="edit-api-key-name"
+						id="create-api-key-name"
 						name="name"
 						value={nameValue}
 						invalid={!!nameError}
@@ -94,9 +88,6 @@ export default function ApiKeyEditPage() {
 					/>
 					{nameError ? <small className="text-red-700">{nameError}</small> : null}
 				</div>
-
-
-
 				<div className="mt-4 flex justify-end gap-2">
 					<Button
 						type="button"
