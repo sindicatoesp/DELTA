@@ -7,7 +7,7 @@ import {
 	zeroTimestamp,
 	createdUpdatedTimestamps,
 } from "../../utils/drizzleUtil";
-import { userCountryAccounts } from "./userCountryAccounts";
+import { userCountryAccountsTable } from "./userCountryAccountsTable";
 
 export const userTable = pgTable("user", {
 	id: ourRandomUUID(),
@@ -16,9 +16,6 @@ export const userTable = pgTable("user", {
 	email: text("email").notNull().unique(),
 	password: zeroText("password"),
 	emailVerified: zeroBool("email_verified"),
-	emailVerificationCode: zeroText("email_verification_code"),
-	emailVerificationSentAt: timestamp("email_verification_sent_at"),
-	emailVerificationExpiresAt: zeroTimestamp("email_verification_expires_at"),
 	inviteCode: zeroText("invite_code"),
 	inviteSentAt: timestamp("invite_sent_at"),
 	inviteExpiresAt: zeroTimestamp("invite_expires_at"),
@@ -27,7 +24,6 @@ export const userTable = pgTable("user", {
 	totpEnabled: zeroBool("totp_enabled"),
 	totpSecret: zeroText("totp_secret"),
 	totpSecretUrl: zeroText("totp_secret_url"),
-	organization: zeroText("organization"),
 	hydrometCheUser: zeroBool("hydromet_che_user"),
 	authType: text("auth_type").notNull().default("form"),
 	...createdUpdatedTimestamps,
@@ -37,5 +33,5 @@ export type SelectUser = typeof userTable.$inferSelect;
 export type InsertUser = typeof userTable.$inferInsert;
 
 export const userRelations = relations(userTable, ({ many }) => ({
-	userCountryAccounts: many(userCountryAccounts),
+	userCountryAccounts: many(userCountryAccountsTable),
 }));

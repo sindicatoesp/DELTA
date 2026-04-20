@@ -1,4 +1,4 @@
-import { describe, it } from "node:test";
+import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 import { formSave, SaveResult, CreateResult, UpdateResult } from "./form";
 import { FormError, FormInputDef } from "~/frontend/form";
@@ -25,6 +25,7 @@ import {
 	BackendContext,
 	createTestBackendContext,
 } from "~/backend.server/context";
+import { sessionCookie } from "~/utils/session";
 
 const countryAccountsId = "1234";
 interface TestFields {
@@ -37,6 +38,13 @@ export const fieldsDef: FormInputDef<TestFields>[] = [
 ];
 
 describe("formSave", () => {
+	let testSessionCookie: string;
+
+	before(async () => {
+		const session = await sessionCookie().getSession();
+		testSessionCookie = await sessionCookie().commitSession(session);
+	});
+
 	it("should save a new record", async () => {
 		const saveMock = async (
 			_tx: Tx,
@@ -48,23 +56,22 @@ describe("formSave", () => {
 			return { ok: true, id: 1 };
 		};
 
-		const fd = new FormData();
-		fd.append("field1", "a");
 		const actionArgs = {
 			request: new Request("http://example.com", {
 				method: "POST",
 				body: new URLSearchParams({ field1: "a" }),
+				headers: { Cookie: testSessionCookie },
 			}),
-			params: { id: "new" },
-			userSession: { user: { role: "admin" } },
+			params: { lang: "en", id: "new" },
 		};
 		const res = (await formSave({
 			actionArgs: actionArgs as unknown as ActionFunctionArgs,
 			fieldsDef,
 			save: saveMock,
 			redirectTo: (id: any) => `/test/${id}`,
+			userRole: "admin",
 		})) as any;
-		assert.equal(res.headers.get("Location"), "/test/1");
+		assert.equal(res.headers.get("Location"), "/en/test/1");
 	});
 });
 

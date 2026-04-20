@@ -19,8 +19,10 @@ export type entityType =
 	| "disaster_record";
 
 // Remove id and assigned_at from fields
-export interface EntityValidationAssignmentFields
-	extends Omit<InsertEntityValidationAssignment, "id" | "assigned_at"> {}
+export interface EntityValidationAssignmentFields extends Omit<
+	InsertEntityValidationAssignment,
+	"id" | "assigned_at"
+> {}
 
 export const fieldsDefCommon = [
 	{ key: "entityId", label: "Entity ID", type: "text", required: true },

@@ -4,7 +4,7 @@ import {
 	ourRandomUUID,
 	zeroStrMap,
 } from "../../utils/drizzleUtil";
-import { countryAccounts } from "./countryAccounts";
+import { countryAccountsTable } from "./countryAccountsTable";
 
 ///////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ export const assetTable = pgTable(
 		customNotes: text("custom_notes"),
 
 		countryAccountsId: uuid("country_accounts_id").references(
-			() => countryAccounts.id,
+			() => countryAccountsTable.id,
 			{
 				onDelete: "cascade",
 			},
@@ -41,6 +41,10 @@ export const assetTable = pgTable(
 		).on(table.apiImportId, table.countryAccountsId),
 	}),
 );
+
+export const assetTableConstraints = {
+	assetId: "damages_asset_id_asset_id_fk",
+};
 
 export type SelectAsset = typeof assetTable.$inferSelect;
 export type InsertAsset = typeof assetTable.$inferInsert;

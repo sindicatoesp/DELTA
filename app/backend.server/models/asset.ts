@@ -1,5 +1,9 @@
 import { dr, Tx } from "~/db.server";
-import { assetTable, InsertAsset } from "~/drizzle/schema/assetTable";
+import {
+	assetTable,
+	InsertAsset,
+	assetTableConstraints,
+} from "~/drizzle/schema/assetTable";
 import { eq, sql, inArray, and, or } from "drizzle-orm";
 import {
 	CreateResult,
@@ -10,16 +14,15 @@ import { Errors, FormInputDef, hasErrors } from "~/frontend/form";
 import { deleteByIdForStringId } from "./common";
 import { BackendContext } from "../context";
 
-export interface AssetFields
-	extends Omit<
-		InsertAsset,
-		| "builtInName"
-		| "customName"
-		| "builtInCategory"
-		| "customCategory"
-		| "builtInNotes"
-		| "customNotes"
-	> {
+export interface AssetFields extends Omit<
+	InsertAsset,
+	| "builtInName"
+	| "customName"
+	| "builtInCategory"
+	| "customCategory"
+	| "builtInNotes"
+	| "customNotes"
+> {
 	name: string;
 	notes: string;
 	category: string;
@@ -32,6 +35,8 @@ export async function fieldsDef(
 			key: "sectorIds",
 			label: ctx.t({ code: "common.sector", msg: "Sector" }),
 			type: "other",
+			mcpDescription:
+				"Comma-separated sector IDs. Use sector_list to get available IDs. Required for linking to damage records.",
 		},
 		{
 			key: "name",
@@ -98,6 +103,9 @@ export async function assetCreate(
 		customName: fields.name,
 		customCategory: fields.category,
 		customNotes: fields.notes,
+		sectorIds: Array.isArray(fields.sectorIds)
+			? fields.sectorIds.join(",")
+			: fields.sectorIds || "",
 	};
 
 	const res = await tx
@@ -139,6 +147,9 @@ export async function assetUpdate(
 		customCategory: fields.category,
 		customNotes: fields.notes,
 	};
+	if (Array.isArray(updateValues.sectorIds)) {
+		updateValues.sectorIds = updateValues.sectorIds.join(",");
+	}
 
 	await tx.update(assetTable).set(updateValues).where(eq(assetTable.id, id));
 
@@ -171,12 +182,23 @@ export async function assetUpdateByIdAndCountryAccountsId(
 		throw new Error("Attempted to modify builtin asset");
 	}
 
-	await tx
-		.update(assetTable)
-		.set({
-			...fields,
-		})
-		.where(eq(assetTable.id, id));
+	const updateValues: Partial<InsertAsset> = { ...fields };
+	if (fields.name !== undefined) updateValues.customName = fields.name;
+	if (fields.category !== undefined)
+		updateValues.customCategory = fields.category;
+	if (fields.notes !== undefined) updateValues.customNotes = fields.notes;
+	if (Array.isArray(updateValues.sectorIds)) {
+		updateValues.sectorIds = updateValues.sectorIds.join(",");
+	}
+
+	const fieldsToUpdate = Object.keys(updateValues).filter(
+		(k) => updateValues[k as keyof typeof updateValues] !== undefined,
+	);
+	if (fieldsToUpdate.length === 0) {
+		return { ok: false, errors: { form: ["No fields to update"] } };
+	}
+
+	await tx.update(assetTable).set(updateValues).where(eq(assetTable.id, id));
 
 	return { ok: true };
 }
@@ -229,7 +251,7 @@ export async function assetByIdTx(ctx: BackendContext, tx: Tx, id: string) {
 	let res = await assetSelect(ctx, tx).where(eq(assetTable.id, id));
 
 	if (!res || !res.length) {
-		throw new Error("Id is invalid");
+		throw new Response("Asset not found", { status: 404 });
 	}
 
 	return res[0];
@@ -241,18 +263,29 @@ export async function assetDeleteById(
 ): Promise<DeleteResult> {
 	let id = idStr;
 	let res = await dr.query.assetTable.findFirst({
-		where: and(
-			eq(assetTable.id, id),
-			eq(assetTable.countryAccountsId, countryAccountsId),
-		),
+		where: eq(assetTable.id, id),
 	});
 	if (!res) {
-		throw new Error("Id is invalid");
+		throw new Response("Asset not found", { status: 404 });
 	}
 	if (res.isBuiltIn) {
-		throw new Error("Attempted to delete builtin asset");
+		throw new Response("Cannot delete built-in asset", { status: 403 });
 	}
-	await deleteByIdForStringId(id, assetTable);
+	if (res.countryAccountsId !== countryAccountsId) {
+		throw new Response("Asset not accessible", { status: 403 });
+	}
+	try {
+		await deleteByIdForStringId(id, assetTable);
+	} catch (err: any) {
+		const constraint = err.constraint || err.cause?.constraint;
+		if (constraint === assetTableConstraints.assetId) {
+			return {
+				ok: false,
+				error: "Cannot delete this asset - it is used in damages",
+			};
+		}
+		throw err;
+	}
 	return { ok: true };
 }
 

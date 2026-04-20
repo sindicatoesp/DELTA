@@ -1,9 +1,9 @@
 import { dr } from "~/db.server";
 import {
 	lossesCreate,
-	lossesUpdate,
-	lossesById,
-	lossesByIdTx,
+	lossesUpdateByIdAndCountryAccountsId,
+	lossesByIdAndCountryAccountsId,
+	lossesByIdAndCountryAccountsIdTx,
 	LossesViewModel,
 	LossesFields,
 	createFieldsDef,
@@ -13,14 +13,16 @@ import { LossesForm, route } from "~/frontend/losses";
 
 import { FormInputDef, formScreen } from "~/frontend/form";
 
-import { createOrUpdateAction } from "~/backend.server/handlers/form/form";
+import { createActionWithCountryAccountsId } from "~/backend.server/handlers/form/form";
 import { getTableName, eq, and, isNull, isNotNull } from "drizzle-orm";
 import { lossesTable } from "~/drizzle/schema/lossesTable";
 import { authLoaderWithPerm } from "~/utils/auth";
 import { useLoaderData } from "react-router";
 import { sectorIsAgriculture } from "~/backend.server/models/sector";
+import { isValidUUID } from "~/utils/id";
 
 import { divisionTable } from "~/drizzle/schema/divisionTable";
+import { sectorTable } from "~/drizzle/schema/sectorTable";
 
 import { ContentRepeaterUploadFile } from "~/components/ContentRepeater/UploadFile";
 import { ActionFunction, ActionFunctionArgs } from "react-router";
@@ -85,6 +87,17 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 		if (!sectorId) {
 			throw new Response("Not Found", { status: 404 });
 		}
+		if (sectorId !== "0") {
+			if (!isValidUUID(sectorId)) {
+				throw new Response("Not Found", { status: 404 });
+			}
+			const sectorCheck = await dr.query.sectorTable.findFirst({
+				where: eq(sectorTable.id, sectorId),
+			});
+			if (!sectorCheck) {
+				throw new Response("Not Found", { status: 404 });
+			}
+		}
 		let res: LoaderRes = {
 			item: null,
 			fieldDef: createFieldsDef(ctx, currencies),
@@ -97,7 +110,7 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 		};
 		return res;
 	}
-	const item = await lossesById(ctx, params.id);
+	const item = await lossesByIdAndCountryAccountsId(ctx, params.id, countryAccountsId);
 	if (!item) {
 		throw new Response("Not Found", { status: 404 });
 	}
@@ -117,15 +130,14 @@ export const loader = authLoaderWithPerm("EditData", async (loaderArgs) => {
 export const action: ActionFunction = async (args: ActionFunctionArgs) => {
 	const ctx = new BackendContext(args);
 	const { request } = args;
-	const countryAccountsId = await getCountryAccountsIdFromSession(request);
 	const settings = await getCountrySettingsFromSession(request);
 	const currencies = [settings?.currencyCode || "USD"];
 
-	return createOrUpdateAction({
+	return createActionWithCountryAccountsId({
 		fieldsDef: createFieldsDef(ctx, currencies),
 		create: lossesCreate,
-		update: lossesUpdate,
-		getById: lossesByIdTx,
+		update: lossesUpdateByIdAndCountryAccountsId,
+		getById: lossesByIdAndCountryAccountsIdTx,
 		redirectTo: (id) => `${route}/${id}`,
 		tableName: getTableName(lossesTable),
 		postProcess: async (id, data) => {
@@ -152,7 +164,6 @@ export const action: ActionFunction = async (args: ActionFunctionArgs) => {
 				})
 				.where(eq(lossesTable.id, id));
 		},
-		countryAccountsId,
 	})(args);
 };
 

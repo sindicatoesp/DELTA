@@ -1,16 +1,20 @@
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import path from "path";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
 	ssr: {
-		noExternal: ["primereact", "primeflex", "primeicons"],
+		noExternal: ["primereact", "primeicons"],
 	},
 	plugins: [
 		reactRouter(),
+		tailwindcss(),
 		{
 			name: "custom-security-headers",
 			configureServer(server) {
+				const port = server.config.server.port;
+				process.env.VITE_SERVER_PORT = String(port);
 				server.middlewares.use((req, res, next) => {
 					req.url;
 					res.setHeader("Referrer-Policy", "no-referrer-when-downgrade");
@@ -40,6 +44,10 @@ export default defineConfig({
 			"~": path.resolve(__dirname, "app"), // Define "~" as an alias for the "app" directory
 			"~node_modules": path.resolve(__dirname, "node_modules"), // Points to "node_modules"
 		},
+		dedupe: ["react", "react-dom", "react-router"],
 	},
 	publicDir: path.resolve(__dirname, "public"), // Ensures the "public" folder is correctly configured
+	optimizeDeps: {
+		include: ["react", "react-dom", "react-router"],
+	},
 });

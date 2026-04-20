@@ -5046,8 +5046,8 @@
 	},
 	{
 		"description": "File: routes/$lang+/user+/change-password.tsx:76",
-		"id": "meta.reset_password",
-		"translation": "Reset Password"
+		"id": "meta.change_password",
+		"translation": "Change Password"
 	},
 	{
 		"description": "File: routes/$lang+/analytics+/sectors.tsx:548",
@@ -5311,8 +5311,8 @@
 	},
 	{
 		"description": "File: frontend/header/header.tsx:339",
-		"id": "nav.your_profile",
-		"translation": "Your profile"
+		"id": "nav.profile",
+		"translation": "Profile"
 	},
 	{
 		"description": "File: routes/$lang+/disaster-record+/edit.$id.tsx:803",
@@ -6385,7 +6385,7 @@
 	{
 		"description": "Link text for forgot password on login form File: routes/$lang+/user+/login.tsx:412",
 		"id": "user_login.forgot_password",
-		"translation": "Forgot password"
+		"translation": "Forgot password?"
 	},
 	{
 		"description": "Login page intro text File: routes/$lang+/user+/login.tsx:303",
@@ -6691,5 +6691,37 @@
 		"description": "File: frontend/events/hazardeventform.tsx:484",
 		"id": "validationflow.savesubmitmodal.decide_action",
 		"translation": "Decide what you’d like to do with this data that you’ve added or updated."
-	}
+	},
+	{
+		"description": "",
+		"id": "user_login.enter_your_email",
+		"translation": "Enter your email"
+	},
+	{
+		"description": "",
+		"id": "user_login.enter_your_password",
+		"translation": "Enter your password"
+	},
+	{
+		"id": "user_forgot_password.email_sent_inline_message",
+		"translation": "Check your inbox for a password reset link if this email is associated with an account.",
+		"description": "A message when correct email format entered in forgot password page."
+	},
+	{
+		"id": "home",
+		"translation": "Home",
+		"description": "link to home page"
+	},
+	{
+		"id": "users.enter_your_first_name",
+		"translation": "Enter your first name",
+		"description": "place holder for enter your first name"
+	},
+	{ "id": "page_not_found", "translation": "Page not found" },
+	{
+		"id": "page_not_found_message",
+		"translation": "The page you are looking for might have been removed, renamed, or is temporarily unavailable."
+	},
+	{ "id": "go_to_home", "translation": "Go to Home" },
+	{ "id": "go_back", "translation": "Go Back" }
 ]

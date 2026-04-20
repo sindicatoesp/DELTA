@@ -10,10 +10,9 @@ import {
 	UpdateResult,
 } from "~/backend.server/handlers/form/form";
 import { Errors, FormInputDef, hasErrors } from "~/frontend/form";
-import { deleteByIdForStringId } from "./common";
 import { unitsEnum } from "~/frontend/unit_picker";
 import { updateTotalsUsingDisasterRecordId } from "./analytics/disaster-events-cost-calculator";
-import { getDisasterRecordsByIdAndCountryAccountsId } from "~/db/queries/disasterRecords";
+import { DisasterRecordsRepository } from "~/db/queries/disasterRecordsRepository";
 import { BackendContext } from "../context";
 
 export interface DamagesFields extends Omit<InsertDamages, "id"> {}
@@ -171,8 +170,20 @@ export async function fieldsDef(
 	}
 
 	return [
-		{ key: "recordId", label: "", type: "uuid" },
-		{ key: "sectorId", label: "", type: "other" },
+		{
+			key: "recordId",
+			label: "Disaster Record ID",
+			type: "uuid",
+			mcpDescription:
+				"ID of the disaster record this damage belongs to. Use disaster-record_list to get available IDs.",
+		},
+		{
+			key: "sectorId",
+			label: "Sector ID",
+			type: "uuid",
+			mcpDescription:
+				"ID of the sector. Use sector_list to get available IDs. Must match a sector that the asset belongs to.",
+		},
 		{
 			key: "assetId",
 			label: ctx.t({
@@ -180,6 +191,8 @@ export async function fieldsDef(
 				msg: "Assets",
 			}),
 			type: "uuid",
+			mcpDescription:
+				"ID of the asset. Use asset_list to get available IDs. The asset must belong to the selected sector (check asset's sectorIds field).",
 		},
 		{
 			key: "unit",
@@ -375,11 +388,13 @@ export async function damagesUpdateByIdAndCountryAccountsId(
 	if (hasErrors(errors)) return { ok: false, errors };
 
 	let recordId = await getRecordId(tx, id);
-	const disasterRecords = getDisasterRecordsByIdAndCountryAccountsId(
-		recordId,
-		countryAccountsId,
-	);
-	if (!disasterRecords) {
+	const disasterRecords =
+		await DisasterRecordsRepository.getByIdAndCountryAccountsId(
+			recordId,
+			countryAccountsId,
+			tx,
+		);
+	if (!disasterRecords || disasterRecords.length === 0) {
 		return {
 			ok: false,
 			errors: {
@@ -440,7 +455,7 @@ export async function damagesIdByImportIdAndCountryAccountsId(
 
 export type DamagesViewModel = Exclude<
 	Awaited<ReturnType<typeof damagesById>>,
-	undefined
+	undefined | null
 >;
 export async function damagesById(ctx: BackendContext, id: string) {
 	return damagesByIdTx(ctx, dr, id);
@@ -463,12 +478,74 @@ export async function damagesByIdTx(ctx: BackendContext, tx: Tx, id: string) {
 			},
 		},
 	});
-	if (!res) throw new Error("Id is invalid");
+	if (!res) return null;
 	return res;
 }
 
-export async function damagesDeleteById(id: string): Promise<DeleteResult> {
-	await deleteByIdForStringId(id, damagesTable);
+export async function damagesByIdAndCountryAccountsId(
+	ctx: BackendContext,
+	id: string,
+	countryAccountsId: string,
+) {
+	return damagesByIdAndCountryAccountsIdTx(ctx, dr, id, countryAccountsId);
+}
+
+export async function damagesByIdAndCountryAccountsIdTx(
+	ctx: BackendContext,
+	tx: Tx,
+	id: string,
+	countryAccountsId: string,
+) {
+	let res = await tx.query.damagesTable.findFirst({
+		where: eq(damagesTable.id, id),
+		with: {
+			asset: {
+				columns: { id: true },
+				extras: {
+					name: sql<string>`CASE
+            WHEN ${assetTable.isBuiltIn} THEN dts_jsonb_localized(${assetTable.builtInName}, ${ctx.lang})
+            ELSE ${assetTable.customName}
+          END`.as("name"),
+				},
+			},
+			disasterRecord: {
+				columns: { countryAccountsId: true },
+			},
+		},
+	});
+	if (!res) return null;
+	if (res.disasterRecord.countryAccountsId !== countryAccountsId) return null;
+	return res;
+}
+
+export async function damagesDeleteById(
+	id: string,
+	countryAccountsId: string,
+): Promise<DeleteResult> {
+	const record = await dr
+		.select({ recordId: damagesTable.recordId })
+		.from(damagesTable)
+		.innerJoin(
+			disasterRecordsTable,
+			eq(damagesTable.recordId, disasterRecordsTable.id),
+		)
+		.where(
+			and(
+				eq(damagesTable.id, id),
+				eq(disasterRecordsTable.countryAccountsId, countryAccountsId),
+			),
+		)
+		.execute();
+
+	if (record.length === 0) {
+		return {
+			ok: false,
+			error: "No matching record found or you don't have access",
+		};
+	}
+
+	await dr.delete(damagesTable).where(eq(damagesTable.id, id));
+
 	return { ok: true };
 }
 

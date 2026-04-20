@@ -12,9 +12,8 @@ import {
 	UpdateResult,
 } from "~/backend.server/handlers/form/form";
 import { Errors, FormInputDef, hasErrors } from "~/frontend/form";
-import { deleteByIdForStringId } from "./common";
 import { updateTotalsUsingDisasterRecordId } from "./analytics/disaster-events-cost-calculator";
-import { getDisasterRecordsByIdAndCountryAccountsId } from "~/db/queries/disasterRecords";
+import { DisasterRecordsRepository } from "~/db/queries/disasterRecordsRepository";
 import { BackendContext } from "../context";
 import { DContext } from "~/utils/dcontext";
 export interface DisruptionFields extends Omit<InsertDisruption, "id"> {}
@@ -240,11 +239,13 @@ export async function disruptionUpdateByIdAndCountryAccountsId(
 
 	let recordId = await getRecordId(tx, id);
 
-	const disasterRecords = getDisasterRecordsByIdAndCountryAccountsId(
-		recordId,
-		countryAccountsId,
-	);
-	if (!disasterRecords) {
+	const disasterRecords =
+		await DisasterRecordsRepository.getByIdAndCountryAccountsId(
+			recordId,
+			countryAccountsId,
+			tx,
+		);
+	if (!disasterRecords || disasterRecords.length === 0) {
 		return {
 			ok: false,
 			errors: {
@@ -279,7 +280,7 @@ export async function getRecordId(tx: Tx, id: string) {
 
 export type DisruptionViewModel = Exclude<
 	Awaited<ReturnType<typeof disruptionById>>,
-	undefined
+	undefined | null
 >;
 
 export async function disruptionIdByImportId(tx: Tx, importId: string) {
@@ -333,13 +334,66 @@ export async function disruptionByIdTx(
 		where: eq(disruptionTable.id, id),
 	});
 	if (!res) {
-		throw new Error("Id is invalid");
+		return null;
 	}
 	return res;
 }
 
-export async function disruptionDeleteById(id: string): Promise<DeleteResult> {
-	await deleteByIdForStringId(id, disruptionTable);
+export async function disruptionByIdAndCountryAccountsId(
+	ctx: BackendContext,
+	id: string,
+	countryAccountsId: string,
+) {
+	return disruptionByIdAndCountryAccountsIdTx(ctx, dr, id, countryAccountsId);
+}
+
+export async function disruptionByIdAndCountryAccountsIdTx(
+	_ctx: BackendContext,
+	tx: Tx,
+	id: string,
+	countryAccountsId: string,
+) {
+	let res = await tx.query.disruptionTable.findFirst({
+		where: eq(disruptionTable.id, id),
+		with: {
+			disasterRecord: {
+				columns: { countryAccountsId: true },
+			},
+		},
+	});
+	if (!res) return null;
+	if (res.disasterRecord.countryAccountsId !== countryAccountsId) return null;
+	return res;
+}
+
+export async function disruptionDeleteById(
+	id: string,
+	countryAccountsId: string,
+): Promise<DeleteResult> {
+	const record = await dr
+		.select({ recordId: disruptionTable.recordId })
+		.from(disruptionTable)
+		.innerJoin(
+			disasterRecordsTable,
+			eq(disruptionTable.recordId, disasterRecordsTable.id),
+		)
+		.where(
+			and(
+				eq(disruptionTable.id, id),
+				eq(disasterRecordsTable.countryAccountsId, countryAccountsId),
+			),
+		)
+		.execute();
+
+	if (record.length === 0) {
+		return {
+			ok: false,
+			error: "No matching record found or you don't have access",
+		};
+	}
+
+	await dr.delete(disruptionTable).where(eq(disruptionTable.id, id));
+
 	return { ok: true };
 }
 

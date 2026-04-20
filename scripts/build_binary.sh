@@ -2,7 +2,7 @@
 set -e
 
 # Total number of steps
-TOTAL_STEPS=10
+TOTAL_STEPS=11
 
 # Initialize step counter
 STEP=0
@@ -52,6 +52,7 @@ cp -f scripts/dts_database/upgrade_database.sql dts_shared_binary/dts_database/u
 cp -f scripts/dts_database/upgrade_from_1.0.0_to_0.1.2.sql dts_shared_binary/dts_database/upgrade_from_1.0.0_to_0.1.2.sql
 cp -f scripts/dts_database/upgrade_from_0.1.2_to_0.1.3.sql dts_shared_binary/dts_database/upgrade_from_0.1.2_to_0.1.3.sql
 cp -f scripts/dts_database/upgrade_from_0.1.3_to_0.2.0.sql dts_shared_binary/dts_database/upgrade_from_0.1.3_to_0.2.0.sql
+cp -f scripts/dts_database/upgrade_from_0.2.0_to_0.2.1.sql dts_shared_binary/dts_database/upgrade_from_0.2.0_to_0.2.1.sql
 
 # Step 8: Copy shell and batch scripts into dts_shared_binary
 next_step "Copying shell scripts into dts_shared_binary"
@@ -64,12 +65,17 @@ cp -f scripts/start.sh dts_shared_binary/start.sh
 cp -f scripts/upgrade_database.sh dts_shared_binary/upgrade_database.sh
 cp -f scripts/upgrade_database.bat dts_shared_binary/upgrade_database.bat
 
-# Step 9: Copying locale folder into dts_shared_binary
+# Step 9: Copy shell and batch scripts into dts_shared_binary
+next_step "Copying primereact theme.css to make sure we have updated theme.css"
+cp -f node_modules/primereact/resources/themes/lara-light-blue/theme.css public/themes/lara-light-blue/theme.css
+
+
+# Step 10: Copying locale folder into dts_shared_binary
 next_step "Copying locale folder into dts_shared_binary"
 cp -f scripts/upgrade_database.bat dts_shared_binary/upgrade_database.bat
 cp -r ./locales dts_shared_binary/locales
 
-# Step 10: Copying README.md file into dts_shared_binary
+# Step 11: Copying README.md file into dts_shared_binary
 next_step "Copying README.md file into dts_shared_binary"
 cp -f scripts/README.md dts_shared_binary/README.md
 

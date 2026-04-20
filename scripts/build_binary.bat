@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: Total number of steps
-set TOTAL_STEPS=10
+set TOTAL_STEPS=11
 
 :: Initialize step counter
 set STEP=0
@@ -53,6 +53,7 @@ copy scripts\dts_database\upgrade_database.sql dts_shared_binary\dts_database\up
 copy scripts\dts_database\upgrade_from_1.0.0_to_0.1.2.sql dts_shared_binary\dts_database\upgrade_from_1.0.0_to_0.1.2.sql /Y
 copy scripts\dts_database\upgrade_from_0.1.2_to_0.1.3.sql dts_shared_binary\dts_database\upgrade_from_0.1.2_to_0.1.3.sql /Y
 copy scripts\dts_database\upgrade_from_0.1.3_to_0.2.0.sql dts_shared_binary\dts_database\upgrade_from_0.1.3_to_0.2.0.sql /Y
+copy scripts\dts_database\upgrade_from_0.2.0_to_0.2.1.sql dts_shared_binary\dts_database\upgrade_from_0.2.0_to_0.2.1.sql /Y
 
 set /A STEP+=1
 echo === Step !STEP!/%TOTAL_STEPS%!. Copying shell scripts into dts_shared_binary ===
@@ -64,6 +65,11 @@ copy .\scripts\start.bat dts_shared_binary\start.bat /Y
 copy .\scripts\start.sh dts_shared_binary\start.sh /Y
 copy .\scripts\upgrade_database.sh dts_shared_binary\upgrade_database.sh /Y
 copy .\scripts\upgrade_database.bat dts_shared_binary\upgrade_database.bat /Y
+
+set /A STEP+=1
+echo === Step !STEP!/%TOTAL_STEPS%!. Copying primereact theme.css to make sure we have updated theme.css ===
+copy node_modules/primereact/resources/themes/lara-light-blue/theme.css public/themes/lara-light-blue/theme.css /Y
+
 
 set /A STEP+=1
 echo === Step !STEP!/%TOTAL_STEPS%!. Copying locale folder into dts_shared_binary ===

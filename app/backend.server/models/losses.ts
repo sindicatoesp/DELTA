@@ -9,13 +9,12 @@ import {
 	UpdateResult,
 } from "~/backend.server/handlers/form/form";
 import { Errors, FormInputDef, hasErrors } from "~/frontend/form";
-import { deleteByIdForStringId } from "./common";
 import { unitsEnum } from "~/frontend/unit_picker";
 import {
 	typeEnumAgriculture,
 	typeEnumNotAgriculture,
 } from "~/frontend/losses_enums";
-import { getDisasterRecordsByIdAndCountryAccountsId } from "~/db/queries/disasterRecords";
+import { DisasterRecordsRepository } from "~/db/queries/disasterRecordsRepository";
 import { BackendContext } from "../context";
 import { DContext } from "~/utils/dcontext";
 
@@ -348,11 +347,11 @@ export async function lossesUpdateByIdAndCountryAccountsId(
 
 	let recordId = await getRecordId(tx, id);
 
-	const disasterRecords = getDisasterRecordsByIdAndCountryAccountsId(
+	const disasterRecords = await DisasterRecordsRepository.getByIdAndCountryAccountsId(
 		recordId,
 		countryAccountsId,
 	);
-	if (!disasterRecords) {
+	if (!disasterRecords || disasterRecords.length === 0) {
 		return {
 			ok: false,
 			errors: {
@@ -390,7 +389,7 @@ async function getRecordId(tx: Tx, id: string) {
 
 export type LossesViewModel = Exclude<
 	Awaited<ReturnType<typeof lossesById>>,
-	undefined
+	undefined | null
 >;
 
 export async function lossesIdByImportId(tx: Tx, importId: string) {
@@ -429,12 +428,65 @@ export async function lossesByIdTx(_ctx: BackendContext, tx: Tx, id: string) {
 	let res = await tx.query.lossesTable.findFirst({
 		where: eq(lossesTable.id, id),
 	});
-	if (!res) throw new Error("Id is invalid");
+	if (!res) return null;
 	return res;
 }
 
-export async function lossesDeleteById(id: string): Promise<DeleteResult> {
-	await deleteByIdForStringId(id, lossesTable);
+export async function lossesByIdAndCountryAccountsId(
+	ctx: BackendContext,
+	id: string,
+	countryAccountsId: string,
+) {
+	return lossesByIdAndCountryAccountsIdTx(ctx, dr, id, countryAccountsId);
+}
+
+export async function lossesByIdAndCountryAccountsIdTx(
+	_ctx: BackendContext,
+	tx: Tx,
+	id: string,
+	countryAccountsId: string,
+) {
+	let res = await tx.query.lossesTable.findFirst({
+		where: eq(lossesTable.id, id),
+		with: {
+			disasterRecord: {
+				columns: { countryAccountsId: true },
+			},
+		},
+	});
+	if (!res) return null;
+	if (res.disasterRecord.countryAccountsId !== countryAccountsId) return null;
+	return res;
+}
+
+export async function lossesDeleteById(
+	id: string,
+	countryAccountsId: string,
+): Promise<DeleteResult> {
+	const record = await dr
+		.select({ recordId: lossesTable.recordId })
+		.from(lossesTable)
+		.innerJoin(
+			disasterRecordsTable,
+			eq(lossesTable.recordId, disasterRecordsTable.id),
+		)
+		.where(
+			and(
+				eq(lossesTable.id, id),
+				eq(disasterRecordsTable.countryAccountsId, countryAccountsId),
+			),
+		)
+		.execute();
+
+	if (record.length === 0) {
+		return {
+			ok: false,
+			error: "No matching record found or you don't have access",
+		};
+	}
+
+	await dr.delete(lossesTable).where(eq(lossesTable.id, id));
+
 	return { ok: true };
 }
 

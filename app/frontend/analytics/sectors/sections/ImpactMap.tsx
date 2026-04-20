@@ -96,12 +96,12 @@ export default function ImpactMap({
 	// More lenient check for valid data
 	const hasValidData = Boolean(
 		geographicImpactData &&
-			// Either it has features array with items
-			((geographicImpactData.features &&
-				Array.isArray(geographicImpactData.features) &&
-				geographicImpactData.features.length > 0) ||
-				// Or it has type='FeatureCollection' which indicates it's GeoJSON
-				geographicImpactData.type === "FeatureCollection"),
+		// Either it has features array with items
+		((geographicImpactData.features &&
+			Array.isArray(geographicImpactData.features) &&
+			geographicImpactData.features.length > 0) ||
+			// Or it has type='FeatureCollection' which indicates it's GeoJSON
+			geographicImpactData.type === "FeatureCollection"),
 	);
 
 	// Use sectors data from props for dynamic titles

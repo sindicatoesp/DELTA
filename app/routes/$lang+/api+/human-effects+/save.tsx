@@ -1,3 +1,5 @@
+// API endpoint to save human effects data via API (for external integrations).
+// See _docs/human-direct-effects.md for overview.
 import { authLoaderApi, authActionApi } from "~/utils/auth";
 import { saveHumanEffectsData } from "~/backend.server/handlers/human_effects";
 import { disasterRecordsById } from "~/backend.server/models/disaster_record";
@@ -27,15 +29,11 @@ export const action = authActionApi(async (actionArgs) => {
 		throw new Response("Missing recordId parameter", { status: 400 });
 	}
 
-	const disasterRecord = await disasterRecordsById(recordId);
+	const disasterRecord = await disasterRecordsById(recordId, countryAccountsId);
 	if (!disasterRecord) {
 		throw new Response(`Disaster record with id = ${recordId} not found`, {
 			status: 404,
 		});
-	}
-
-	if (disasterRecord.countryAccountsId !== countryAccountsId) {
-		throw new Response(`Unauthorized access`, { status: 403 });
 	}
 
 	return await saveHumanEffectsData(ctx, request, recordId, countryAccountsId);

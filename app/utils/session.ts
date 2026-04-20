@@ -6,12 +6,12 @@ import {
 } from "react-router";
 import { dr } from "~/db.server";
 
-import { InferSelectModel, eq } from "drizzle-orm";
+import { InferSelectModel, eq, and } from "drizzle-orm";
 import { sessionActivityTimeoutMinutes } from "~/utils/session-activity-config";
 import { LangRouteParam } from "./lang.backend";
 import { redirectLangFromRoute } from "./url.backend";
 import { sessionTable } from "~/drizzle/schema/sessionTable";
-import { userTable } from "~/drizzle/schema";
+import { userTable, userCountryAccountsTable } from "~/drizzle/schema";
 
 export let _sessionCookie: SessionStorage<SessionData, SessionData> | null =
 	null;
@@ -110,7 +110,6 @@ export async function createUserSession(userId: string) {
 
 	const session = await sessionCookie().getSession();
 	session.set("sessionId", sessionId);
-	session.set("userId", res[0].userId);
 
 	const setCookie = await sessionCookie().commitSession(session);
 	return {
@@ -211,7 +210,13 @@ export function flashMessage(session: Session, message: FlashMessage) {
 	session.flash("flashMessageType", message.type);
 }
 
-type FlashMessageType = "info" | "error";
+type FlashMessageType =
+	| "info"
+	| "error"
+	| "success"
+	| "warn"
+	| "secondary"
+	| "contrast";
 
 export interface FlashMessage {
 	type: FlashMessageType;
@@ -223,11 +228,7 @@ export function getFlashMessage(session: Session): FlashMessage | undefined {
 	if (!text) {
 		return;
 	}
-	const typeStr = session.get("flashMessageType");
-	let type: FlashMessageType = "info";
-	if (typeStr == "error") {
-		type = "error";
-	}
+	const type = session.get("flashMessageType");
 	return {
 		text: text,
 		type: type,
@@ -255,30 +256,34 @@ export async function getCountrySettingsFromSession(request: Request) {
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
-	const countrySettings = session.get("countrySettings");
-	return countrySettings;
+	return session.get("countrySettings");
 }
 
 export async function getUserRoleFromSession(request: Request) {
-	const session = await sessionCookie().getSession(
-		request.headers.get("Cookie"),
-	);
-	const countrySettings = session.get("userRole");
-	return countrySettings;
+	const userSession = await getUserFromSession(request);
+	if (!userSession) return;
+
+	const countryAccountsId = await getCountryAccountsIdFromSession(request);
+	if (!countryAccountsId) return;
+
+	const userCountryAccount = await dr.query.userCountryAccountsTable.findFirst({
+		where: and(
+			eq(userCountryAccountsTable.userId, userSession.user.id),
+			eq(userCountryAccountsTable.countryAccountsId, countryAccountsId),
+		),
+	});
+
+	return userCountryAccount?.role;
 }
 
 export async function getCountryAccountsIdFromSession(request: Request) {
 	const session = await sessionCookie().getSession(
 		request.headers.get("Cookie"),
 	);
-	const countryAccountsId = session.get("countryAccountsId");
-	return countryAccountsId;
+	return session.get("countryAccountsId");
 }
 
 export async function getUserIdFromSession(request: Request) {
-	const session = await sessionCookie().getSession(
-		request.headers.get("Cookie"),
-	);
-	const userId = session.get("userId");
-	return userId;
+	const userSession = await getUserFromSession(request);
+	return userSession?.user?.id;
 }

@@ -16,7 +16,7 @@ import {
 	zeroText,
 } from "../../utils/drizzleUtil";
 import { eventTable } from "./eventTable";
-import { countryAccounts } from "./countryAccounts";
+import { countryAccountsTable } from "./countryAccountsTable";
 import { hipHazardTable } from "./hipHazardTable";
 import { hipClusterTable } from "./hipClusterTable";
 import { hipTypeTable } from "./hipTypeTable";
@@ -34,7 +34,7 @@ export const hazardousEventTable = pgTable(
 			.references((): AnyPgColumn => eventTable.id)
 			.primaryKey(),
 		countryAccountsId: uuid("country_accounts_id").references(
-			() => countryAccounts.id,
+			() => countryAccountsTable.id,
 		),
 		status: text("status").notNull().default("pending"),
 		nationalSpecification: zeroText("national_specification"),
@@ -62,6 +62,8 @@ export const hazardousEventTable = pgTable(
 export const hazardousEventTableConstraits = {
 	apiImportId: "hazardous_event_apiImportId_unique",
 	hipHazardId: "hazardous_event_hip_hazard_id_hip_hazard_id_fk",
+	hipClusterId: "hazardous_event_hip_cluster_id_hip_cluster_id_fk",
+	hipTypeId: "hazardous_event_hip_type_id_hip_type_id_fk",
 };
 
 export type SelectHazardousEvent = typeof hazardousEventTable.$inferSelect;
@@ -72,9 +74,9 @@ export const hazardousEventRel = relations(hazardousEventTable, ({ one }) => ({
 		fields: [hazardousEventTable.id],
 		references: [eventTable.id],
 	}),
-	countryAccount: one(countryAccounts, {
+	countryAccount: one(countryAccountsTable, {
 		fields: [hazardousEventTable.countryAccountsId],
-		references: [countryAccounts.id],
+		references: [countryAccountsTable.id],
 	}),
 	hipHazard: one(hipHazardTable, {
 		fields: [hazardousEventTable.hipHazardId],

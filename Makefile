@@ -31,9 +31,9 @@ logs:
 db-shell:
 	docker exec -it $(shell docker-compose ps -q db) bash
 
-# Run database migrations
+# Run database migrations (uses drizzle-kit migrate, not push — see _docs/code-structure/drizzle.md)
 migrate:
-	docker-compose exec app yarn run drizzle-kit push
+	docker-compose exec app yarn dbsync
 
 # Rollback database migrations
 rollback:

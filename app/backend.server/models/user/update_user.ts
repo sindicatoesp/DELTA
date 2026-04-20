@@ -1,7 +1,7 @@
 import { dr } from "~/db.server";
 import { and, eq, sql } from "drizzle-orm";
 
-import { userCountryAccounts } from "~/drizzle/schema/userCountryAccounts";
+import { userCountryAccountsTable } from "~/drizzle/schema/userCountryAccountsTable";
 import { userTable } from "~/drizzle/schema";
 
 import { Errors, hasErrors } from "~/frontend/form";
@@ -22,23 +22,8 @@ export interface AdminUpdateUserFields {
 	emailVerified: boolean;
 	firstName: string;
 	lastName: string;
-	organization: string;
+	// organization: string;
 	role: string;
-}
-
-export function adminUpdateUserFieldsFromMap(data: {
-	[key: string]: string;
-}): AdminUpdateUserFields {
-	const fields: (keyof AdminUpdateUserFields)[] = [
-		"email",
-		"firstName",
-		"lastName",
-		"organization",
-		"role",
-	];
-	return Object.fromEntries(
-		fields.map((field) => [field, data[field] || ""]),
-	) as unknown as AdminUpdateUserFields;
 }
 
 export async function adminUpdateUser(
@@ -79,21 +64,21 @@ export async function adminUpdateUser(
 					email: fields.email,
 					firstName: fields.firstName,
 					lastName: fields.lastName,
-					organization: fields.organization,
+					// organization: fields.organization,
 					updatedAt: sql`CURRENT_TIMESTAMP`,
 				})
 				.where(eq(userTable.id, id))
 				.returning();
 
 			updatedUserCountryAccounts = await tx
-				.update(userCountryAccounts)
+				.update(userCountryAccountsTable)
 				.set({
 					role: fields.role,
 				})
 				.where(
 					and(
-						eq(userCountryAccounts.userId, id),
-						eq(userCountryAccounts.countryAccountsId, countryAccountsId),
+						eq(userCountryAccountsTable.userId, id),
+						eq(userCountryAccountsTable.countryAccountsId, countryAccountsId),
 					),
 				)
 				.returning();

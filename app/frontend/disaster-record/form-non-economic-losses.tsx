@@ -54,8 +54,7 @@ export const fieldsDefView: FormInputDef<Partial<DisasterRecordsViewModel>>[] =
 		},
 	];
 
-interface DisasterRecordsFormProps
-	extends UserFormProps<DisasterRecordsFields> {
+interface DisasterRecordsFormProps extends UserFormProps<DisasterRecordsFields> {
 	parent?: DisasterRecordsViewModel;
 }
 

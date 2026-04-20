@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+// React component for editable table UI. Used exclusively for human effects data entry.
+// See _docs/human-direct-effects.md for overview.
+import { useEffect, useRef, useState } from "react";
 import {
 	ColWidth,
 	Def,
@@ -22,10 +24,10 @@ import React from "react";
 import { toStandardDate } from "~/utils/date";
 import { eqArr } from "~/utils/array";
 import { useFetcher } from "react-router";
-import { notifyError, notifyInfo } from "../utils/notifications";
 import { validate } from "./validate";
 import { LangLink } from "~/utils/link";
 import { ViewContext } from "../context";
+import { Toast } from "primereact/toast";
 
 interface TableProps {
 	ctx: ViewContext;
@@ -70,6 +72,15 @@ const storageVersion = "v3";
 
 function TableClient(props: TableProps) {
 	let ctx = props.ctx;
+	const toast = useRef<Toast>(null);
+
+	const showErrorToast = (detail: string) => {
+		toast.current?.show({
+			severity: "error",
+			detail,
+			life: 5000,
+		});
+	};
 
 	let [revertToIds, setRevertToIds] = useState(props.initialIds);
 	let [revertToData, setRevertToData] = useState(props.initialData);
@@ -163,6 +174,17 @@ function TableClient(props: TableProps) {
 		setChildProps({ defs: props.defs, data: data });
 	}, [data]);
 
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+				e.preventDefault();
+				handleSave();
+			}
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [data, sort]);
+
 	const updateCell = (rowId: string, colIndex: number, value: any) => {
 		console.log("updating cell", rowId, colIndex, value);
 		data.updateField(rowId, colIndex, value);
@@ -201,7 +223,7 @@ function TableClient(props: TableProps) {
 
 	const setTotalGroup = (totalGroup: TotalGroupString) => {
 		if (totalGroup && groupKeyOnlyZeroes(totalGroup)) {
-			notifyError(
+			showErrorToast(
 				ctx.t({
 					code: "human_effects.group_doesnt_have_disaggregations_set",
 					msg: "Group does not have disaggregations set",
@@ -217,7 +239,7 @@ function TableClient(props: TableProps) {
 		console.log("Validating data in the browser");
 		reSort();
 		if (data.getTotalGroupString() == "invalid") {
-			notifyError(
+			showErrorToast(
 				ctx.t({
 					code: "human_effects.select_group_to_use_as_source_for_total",
 					msg: "Please select a group to use as source for total",
@@ -227,7 +249,7 @@ function TableClient(props: TableProps) {
 		}
 		let e = data.validate(ctx);
 		if (e) {
-			notifyError(e);
+			showErrorToast(String(e));
 			return;
 		}
 		console.log("Saving data to server");
@@ -249,9 +271,9 @@ function TableClient(props: TableProps) {
 			if (res.errors) {
 				setTableErrors(res.errors);
 			} else if (res.error) {
-				notifyError(res.error.message + " (server)");
+				showErrorToast(res.error.message + " (server)");
 			} else {
-				notifyError(
+				showErrorToast(
 					ctx.t({
 						code: "common.unknown_server_error",
 						msg: "Unknown server error",
@@ -260,12 +282,14 @@ function TableClient(props: TableProps) {
 			}
 			return;
 		}
-		notifyInfo(
-			ctx.t({
+		toast.current?.show({
+			severity: "info",
+			detail: ctx.t({
 				code: "human_effects.your_changes_have_been_saved_on_server",
 				msg: "Your changes have been saved on the server",
 			}),
-		);
+			life: 5000,
+		});
 
 		await reloadData();
 	};
@@ -352,6 +376,7 @@ function TableClient(props: TableProps) {
 
 	return (
 		<div className="table-container">
+			<Toast ref={toast} position="top-center" />
 			<TableCategoryPresence
 				ctx={props.ctx}
 				tblId={props.table}
@@ -400,7 +425,11 @@ function TableClient(props: TableProps) {
 						reSort={reSort}
 					/>
 					<TableLegend ctx={ctx} />
-					<LangLink lang={ctx.lang} to="/settings/human-effects-dsg">
+					<LangLink
+						lang={ctx.lang}
+						to="/settings/human-effects-dsg"
+						className="text-[#00afae] hover:text-blue-800 underline mb-4 inline-block"
+					>
 						{ctx.t({
 							code: "human_effects.configure_disaggregations",
 							msg: "Configure disaggregations",
@@ -569,7 +598,12 @@ function TableContent(props: TableContentProps) {
 							<React.Fragment key={colIndex}>
 								<td>
 									{props.totalGroup ? (
-										<input type="text" value={v ?? ""} disabled />
+										<input
+											type="text"
+											value={v ?? ""}
+											disabled
+											className="px-3 py-1.5 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed w-full"
+										/>
 									) : (
 										<input
 											type="text"
@@ -578,10 +612,10 @@ function TableContent(props: TableContentProps) {
 												let v = parseInt(e.target.value, 10);
 												props.updateTotals(colIndex, isNaN(v) ? null : v);
 											}}
+											className="px-3 py-1.5 text-sm rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#004F91] focus:border-transparent w-full cursor-text"
 										/>
 									)}
 								</td>
-								{/*<td>100%</td>*/}
 							</React.Fragment>
 						);
 					})}
@@ -966,14 +1000,17 @@ function TableContent(props: TableContentProps) {
 
 	const renderRowActions = (id: string) => (
 		<>
-			<button onClick={() => props.copyRow(id)}>
+			<button
+				onClick={() => props.copyRow(id)}
+				className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
 				{ctx.t({ code: "common.copy", msg: "Copy" })}
 			</button>
-			<button onClick={() => props.deleteRow(id)}>
-				<img
-					alt={ctx.t({ code: "common.delete", msg: "Delete" })}
-					src="/assets/icons/trash-alt.svg"
-				/>
+			<button
+				onClick={() => props.deleteRow(id)}
+				className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 h-[32px] text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-red-100 hover:border-red-500 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
+				<i className="pi pi-trash text-gray-700" />
 			</button>
 		</>
 	);
@@ -985,7 +1022,10 @@ function TableContent(props: TableContentProps) {
 				<tr>
 					<td colSpan={colCount - 1}></td>
 					<td className="dts-table-actions">
-						<button onClick={() => props.addRowEnd()}>
+						<button
+							onClick={() => props.addRowEnd()}
+							className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+						>
 							{ctx.t({ code: "common.add", msg: "Add" })}
 						</button>
 					</td>
@@ -1028,6 +1068,7 @@ function renderInput(
 						//}
 						reSort();
 					}}
+					className="px-3 py-1.5 text-sm rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#004F91] focus:border-transparent cursor-pointer hover:border-gray-400 transition-colors w-full"
 				>
 					<option key="null" value="">
 						-
@@ -1050,6 +1091,7 @@ function renderInput(
 						let v = parseInt(e.target.value, 10);
 						updateCell(rowId, colIndex, isNaN(v) ? null : v);
 					}}
+					className="px-3 py-1.5 text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#004F91] focus:border-transparent w-full cursor-text"
 				/>
 			);
 		case "date":
@@ -1084,28 +1126,45 @@ function TableActions(props: TableActionsProps) {
 	const ctx = props.ctx;
 	return (
 		<div className="dts-table-actions dts-table-actions-main">
-			<button onClick={props.addRowStart}>
+			<button
+				onClick={props.addRowStart}
+				className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
 				{ctx.t({ code: "human_effects.add_row", msg: "Add row" })}
 			</button>
-			{/*<button onClick={props.reSort}>Sort into groups</button>*/}
 
-			<button onClick={props.onSave}>
+			<button
+				onClick={props.onSave}
+				className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
 				{ctx.t({ code: "common.save", msg: "Save" })}
 			</button>
 
-			<button onClick={props.onClear}>
+			<button
+				onClick={props.onClear}
+				className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
 				{ctx.t({ code: "common.clear", msg: "Clear" })}
 			</button>
 
-			<button onClick={props.onRevert}>
+			<button
+				onClick={props.onRevert}
+				className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
 				{ctx.t({ code: "common.revert", msg: "Revert" })}
 			</button>
 
-			<a href={props.csvExportUrl}>
+			<a
+				href={props.csvExportUrl}
+				className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
 				{ctx.t({ code: "common.csv_export", msg: "CSV export" })}
 			</a>
 
-			<a href={props.csvImportUrl}>
+			<a
+				href={props.csvImportUrl}
+				className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-black bg-gray-100 hover:bg-gray-200 hover:cursor-pointer active:scale-[0.98] transition-colors text-gray-800 mx-1"
+			>
 				{ctx.t({ code: "common.csv_import", msg: "CSV import" })}
 			</a>
 		</div>
@@ -1141,7 +1200,7 @@ function TableCategoryPresence(props: TableCategoryPresenceProps) {
 	return (
 		<fetcher.Form method="post">
 			<input type="hidden" name="tblId" value={props.tblId} />
-			<h3>
+			<h3 className="font-bold">
 				{ctx.t({
 					code: "human_effects.category_presence",
 					msg: "Category presence",
@@ -1159,6 +1218,7 @@ function TableCategoryPresence(props: TableCategoryPresenceProps) {
 								<select
 									name={d.jsName}
 									value={vStr}
+									className="border border-gray-300 rounded-md px-3 py-2 mb-2 inline-block"
 									onChange={(e) => handleChange(e, d.jsName)}
 								>
 									<option value="">

@@ -11,8 +11,8 @@ import {
 	loginGetCode,
 } from "~/utils/ssoauzeb2c";
 import { loginAzureB2C } from "~/backend.server/models/user/auth";
-import { getInstanceSystemSettingsByCountryAccountId } from "~/db/queries/instanceSystemSetting";
-import { getUserCountryAccountsByUserId } from "~/db/queries/userCountryAccounts";
+import { InstanceSystemSettingRepository } from "~/db/queries/instanceSystemSettingRepository";
+import { UserCountryAccountRepository } from "~/db/queries/userCountryAccountsRepository";
 import { redirectLangFromRoute } from "~/utils/url.backend";
 import { proxiedFetch } from "~/utils/proxied-fetch";
 
@@ -114,13 +114,13 @@ export const loader = async (
 			}
 
 			const headers = await createUserSession(retLogin.userId);
-			const userCountryAccounts = await getUserCountryAccountsByUserId(
+			const userCountryAccounts = await UserCountryAccountRepository.getByUserId(
 				retLogin.userId,
 			);
 
 			if (userCountryAccounts && userCountryAccounts.length === 1) {
 				const countrySettings =
-					await getInstanceSystemSettingsByCountryAccountId(
+					await InstanceSystemSettingRepository.getByCountryAccountId(
 						userCountryAccounts[0].countryAccountsId,
 					);
 
@@ -129,7 +129,6 @@ export const loader = async (
 					"countryAccountsId",
 					userCountryAccounts[0].countryAccountsId,
 				);
-				session.set("userRole", userCountryAccounts[0].role);
 				session.set("countrySettings", countrySettings);
 				const setCookie = await sessionCookie().commitSession(session);
 
