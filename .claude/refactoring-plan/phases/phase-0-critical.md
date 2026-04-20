@@ -24,6 +24,27 @@
 
 **No TDD needed** — deletion verified by confirming routes return 404 after removal.
 
+### Review Decision (Haroon – 2026-04-20)
+
+**Decision:** Choose Option 1 — Delete routes completely.
+
+**Rationale:**
+- These routes expose internal implementation details and scaffolding APIs.
+- They have no production value for end users.
+- Keeping them (even guarded) increases attack surface and maintenance overhead.
+
+**Action Items:**
+- Remove `app/routes/$lang+/examples+/` 
+- Remove `app/routes/$lang+/api+/dev-example1+/`
+- Remove all related files (components, services, loaders/actions, tests)
+- Remove all imports and references across the codebase
+- Ensure no imports or references remain
+- Remove test and i18n remnants
+- Remove/update references in related .md files (examples, forms, API docs, copilot instructions)
+- Drop dev_example1 table via Drizzle migration
+- Verify all related routes return `404` in production
+
+
 ---
 
 ---
