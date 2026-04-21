@@ -6,7 +6,7 @@
 
 ---
 
-### P0-0 · Remove or Guard Example & Dev-Example Routes in Production
+### P0-0 · Remove or Guard Example & Dev-Example Routes in Production (Not Critial)
 
 | | |
 |---|---|
@@ -46,7 +46,7 @@
 
 ---
 
-### P0-1 · Fix `NODE_ENV` in Production Dockerfile
+### P0-1 · Fix `NODE_ENV` in Production Dockerfile (Not Critial)
 
 | | |
 |---|---|
@@ -63,7 +63,7 @@
 
 ---
 
-### P0-2 · Fix No-Op Existence Check in `deleteById`
+### P0-2 · Fix No-Op Existence Check in `deleteById` (Not Critial)
 
 | | |
 |---|---|
@@ -99,7 +99,7 @@ if (existingRecord.length === 0) {
 - Verify no remaining references after P0-0 cleanup
 ---
 
-### P0-3 · Remove Debug `console.log` Calls + Add `no-console` Lint Rule
+### P0-3 · Remove Debug `console.log` Calls + Add `no-console` Lint Rule (Not Critial)
 
 | | |
 |---|---|
@@ -126,7 +126,7 @@ if (existingRecord.length === 0) {
 
 ---
 
-### P0-4 · Add Coverage Thresholds to `vitest.config.ts`
+### P0-4 · Add Coverage Thresholds to `vitest.config.ts` (Not Critial)
 
 | | |
 |---|---|
@@ -152,7 +152,7 @@ thresholds: {
 
 ---
 
-### P0-5 · Fix Placeholder Support Email in Production Error Boundary
+### P0-5 · Fix Placeholder Support Email in Production Error Boundary (Critial)
 
 | | |
 |---|---|
@@ -177,7 +177,7 @@ thresholds: {
 
 ---
 
-### P0-6 · Fix Hardcoded `/en/` URL in Email Notification Service
+### P0-6 · Fix Hardcoded `/en/` URL in Email Notification Service (Not Critial)
 
 | | |
 |---|---|
@@ -200,7 +200,7 @@ recordUrl += `/${ctx.lang}/hazardous-event/${entityId}`;
 
 ---
 
-### P0-7 · Fix `deleteAllData` Silent Error Swallow in `human_effects.ts`
+### P0-7 · Fix `deleteAllData` Silent Error Swallow in `human_effects.ts` (Critial)
 
 | | |
 |---|---|
@@ -287,7 +287,7 @@ if (e instanceof TransactionAbortError) return null;
 
 ---
 
-### P0-10 · Fix Type Export Bugs in `humanCategoryPresenceTable.ts` and `hipHazardTable.ts`
+### P0-10 · Fix Type Export Bugs in `humanCategoryPresenceTable.ts` and `hipHazardTable.ts` (Critial)
 
 | | |
 |---|---|
@@ -316,7 +316,7 @@ export type InsertHumanCategoryPresence = typeof humanCategoryPresenceTable.$inf
 
 ---
 
-### P0-11 · Remove Dead `countryName` Column from `instance_system_settings`
+### P0-11 · Remove Dead `countryName` Column from `instance_system_settings` (Not Critical)
 
 | | |
 |---|---|
@@ -364,7 +364,7 @@ Grep for `countryName` / `country_name` in `app/` before Step B to confirm no ac
 
 ---
 
-### P0-13 · Fix `rejectUnauthorized: false` in SMTP Transport
+### P0-13 · Fix `rejectUnauthorized: false` in SMTP Transport (Critical)
 
 | | |
 |---|---|
@@ -388,7 +388,7 @@ If the SMTP server uses a self-signed certificate (common in internal deployment
 
 ---
 
-### P0-14 · Fix `sanitizeInput` — Remove Destructive Quote Stripping
+### P0-14 · Fix `sanitizeInput` — Remove Destructive Quote Stripping (Critical)
 
 | | |
 |---|---|
@@ -416,7 +416,7 @@ export function sanitizeInput(input: string | null): string | null {
 
 ---
 
-### P0-15 · Fix `destroyUserSession` — Graceful Handling of Missing Session
+### P0-15 · Fix `destroyUserSession` — Graceful Handling of Missing Session (Not Critical)
 
 | | |
 |---|---|
@@ -439,7 +439,7 @@ if (!sessionId) {
 
 ---
 
-### P0-16 · Delete Dead Cost Calculation API Endpoints
+### P0-16 · Delete Dead Cost Calculation API Endpoints (Not Critical)
 
 | | |
 |---|---|
@@ -455,7 +455,7 @@ if (!sessionId) {
 
 ---
 
-### P0-17 · Fix `export_tables_for_translation.ts` — Writes to Directory, Not File
+### P0-17 · Fix `export_tables_for_translation.ts` — Writes to Directory, Not File (Critical)
 
 | | |
 |---|---|
@@ -474,7 +474,7 @@ const filePath = path.resolve(process.cwd(), "locales", "content", "en.json");
 
 ---
 
-### P0-18 · Add `.dockerignore`
+### P0-18 · Add `.dockerignore` (Not Critical)
 
 | | |
 |---|---|
@@ -501,7 +501,7 @@ tests/e2e/
 
 ---
 
-### P0-19 · Fix `build_binary.sh` — Build Failure Must Be Fatal
+### P0-19 · Fix `build_binary.sh` — Build Failure Must Be Fatal (Critical)
 
 | | |
 |---|---|
@@ -519,7 +519,7 @@ yarn build  # set -e at top of script will exit on failure
 
 ---
 
-### P0-20 · Add CSP Header to `entry.server.tsx`
+### P0-20 · Add CSP Header to `entry.server.tsx` (Not Critical)
 
 | | |
 |---|---|
@@ -542,7 +542,7 @@ Apply in `entry.server.tsx` from this constant. Apply in `vite.config.ts` from t
 
 ---
 
-### P0-21 · Delete Dead Selenium Legacy File
+### P0-21 · Delete Dead Selenium Legacy File (Not Critical)
 
 | | |
 |---|---|
@@ -558,7 +558,7 @@ Apply in `entry.server.tsx` from this constant. Apply in `vite.config.ts` from t
 
 ---
 
-### P0-22 · Fix `readme.md` Factual Errors
+### P0-22 · Fix `readme.md` Factual Errors (Not Critical)
 
 | | |
 |---|---|
@@ -578,7 +578,7 @@ Apply in `entry.server.tsx` from this constant. Apply in `vite.config.ts` from t
 
 ---
 
-### P0-23 · Fill Apache 2.0 License Copyright Placeholder
+### P0-23 · Fill Apache 2.0 License Copyright Placeholder (Critical)
 
 | | |
 |---|---|
@@ -594,7 +594,7 @@ Apply in `entry.server.tsx` from this constant. Apply in `vite.config.ts` from t
 
 ---
 
-### P0-24 · Create `CONTRIBUTING.md`
+### P0-24 · Create `CONTRIBUTING.md` (Not Critical)
 
 | | |
 |---|---|
@@ -617,7 +617,7 @@ Apply in `entry.server.tsx` from this constant. Apply in `vite.config.ts` from t
 
 ---
 
-### P0-25 · Create `CODE_OF_CONDUCT.md`
+### P0-25 · Create `CODE_OF_CONDUCT.md` (Not Critical)
 
 | | |
 |---|---|
@@ -633,7 +633,7 @@ Apply in `entry.server.tsx` from this constant. Apply in `vite.config.ts` from t
 
 ---
 
-### P0-26 · Create `SECURITY.md`
+### P0-26 · Create `SECURITY.md` (Not Critical)
 
 | | |
 |---|---|
@@ -654,7 +654,7 @@ Apply in `entry.server.tsx` from this constant. Apply in `vite.config.ts` from t
 
 ---
 
-### P0-27 · Add `NOTICE` File (Apache 2.0 Requirement)
+### P0-27 · Add `NOTICE` File (Apache 2.0 Requirement)  (Not Critical)
 
 | | |
 |---|---|
