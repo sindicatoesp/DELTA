@@ -1,7 +1,5 @@
 # Phase 0 — Critical Fixes 
 
-### Haroon commemt: All below issues are not critial
-
 > Zero-risk, zero-breaking-change. All items can be done in any order within this phase. Ship as a rapid patch batch.
 >
 > **28 items** — check status in [`../INDEX.md`](../INDEX.md)
