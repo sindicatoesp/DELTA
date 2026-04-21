@@ -170,8 +170,6 @@ export async function emailValidationWorkflowStatusChangeNotificationService({
 		}
 	}
 
-	console.log("record", record);
-
 	// Notify submitter depending on status
 	try {
 		const submitterUserId = record?.submittedByUserId;
