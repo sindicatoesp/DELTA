@@ -344,7 +344,7 @@ Grep for `countryName` / `country_name` in `app/` before Step B to confirm no ac
 
 ---
 
-### P0-12 · Remove Secret Logging in `env.ts`
+### P0-12 · Remove Secret Logging in `env.ts` (Critical)
 
 | | |
 |---|---|
