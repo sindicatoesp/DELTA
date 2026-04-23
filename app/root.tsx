@@ -333,7 +333,7 @@ export function ErrorBoundary() {
 									href={supportUrl ? supportUrl : `mailto:${supportEmail}`}
 									className="text-blue-600 hover:underline font-medium"
 								>
-									{supportUrl ? "Contact Us" : supportEmail}
+									Contact Us
 								</a>
 								.
 							</div>
