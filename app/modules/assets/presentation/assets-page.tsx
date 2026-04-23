@@ -85,7 +85,7 @@ export default function AssetsPage({
     };
 
     const actionsBodyTemplate = (item: AssetListItem) => (
-        <div className="flex items-center justify-center gap-1">
+        <div className="flex items-center justify-end gap-1">
             <Button
                 type="button"
                 aria-label={"View"}
@@ -215,9 +215,9 @@ export default function AssetsPage({
                                 bodyClassName="w-[12%] px-2 py-3 border-b border-gray-200"
                             />
                             <Column
-                                header={"Actions"}
+                                header={""}
                                 body={actionsBodyTemplate}
-                                headerClassName="w-[16%] bg-gray-100 px-2 py-3 text-center font-medium border-b border-gray-200"
+                                headerClassName="w-[16%] bg-gray-100 px-2 py-3 text-right font-medium border-b border-gray-200"
                                 bodyClassName="w-[16%] px-2 py-3 border-b border-gray-200"
                             />
                         </DataTable>

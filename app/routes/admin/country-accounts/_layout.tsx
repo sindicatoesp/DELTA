@@ -163,7 +163,7 @@ export default function CountryAccountsLayout() {
         const adminUser = countryAccount.userCountryAccounts[0]?.user;
 
         return (
-            <>
+            <div className="flex items-center justify-end gap-2">
                 <Button
                     text
                     severity="secondary"
@@ -224,7 +224,7 @@ export default function CountryAccountsLayout() {
                         <i className="pi pi-trash" style={{ fontSize: "1rem" }}></i>
                     </Button>
                 )}
-            </>
+            </div>
         );
     }
 
@@ -286,7 +286,9 @@ export default function CountryAccountsLayout() {
                         body={modifiedAtBodyTemplate}
                     />
                     <Column
-                        header={"Actions"}
+                        header={""}
+                        headerClassName="text-right"
+                        bodyClassName="text-right"
                         body={actionsBodyTemplate}
                     />
                 </DataTable>

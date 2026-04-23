@@ -109,7 +109,7 @@ export default function AccessManagementPage() {
         item.addedAt ? format(item.addedAt, "dd-MM-yyyy") : "";
 
     const actionsBodyTemplate = (item: (typeof filteredItems)[number]) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
             <Button
                 type="button"
                 text
@@ -242,7 +242,7 @@ export default function AccessManagementPage() {
                         />
                         <Column header={"Role"} body={roleBodyTemplate} />
                         <Column header={"Added At"} body={addedAtBodyTemplate} />
-                        <Column header={"Actions"} body={actionsBodyTemplate} />
+                        <Column header={""} body={actionsBodyTemplate} />
                     </DataTable>
                 </section>
             )}

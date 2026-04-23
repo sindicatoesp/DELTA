@@ -55,10 +55,12 @@ export default function FictitiousCountryManagementLayout() {
                         header={"Name"}
                     />
                     <Column
-                        header={"Actions"}
+                        header={""}
+                        headerClassName="text-right"
+                        bodyClassName="text-right"
                         body={(row: { id: string; name: string }) => {
                             return (
-                                <div className="flex gap-2">
+                                <div className="flex justify-end gap-2">
                                     <Button
                                         text
                                         severity="secondary"

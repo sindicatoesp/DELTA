@@ -396,7 +396,7 @@ export default function GeographicLevelsPage({
                                             />
                                         ))}
                                         <Column
-                                            header="Actions"
+                                            header=""
                                             body={actionsBody}
                                             headerClassName="text-right"
                                             bodyClassName="text-right"
