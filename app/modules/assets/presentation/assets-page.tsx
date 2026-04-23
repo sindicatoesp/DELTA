@@ -6,6 +6,7 @@ import { DataTable } from "primereact/datatable";
 import { Paginator } from "primereact/paginator";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
+import { Tag } from "primereact/tag";
 
 import { MainContainer } from "~/frontend/container";
 import { NavSettings } from "~/frontend/components/nav-settings";
@@ -119,7 +120,10 @@ export default function AssetsPage({
     );
 
     const isCustomBodyTemplate = (item: AssetListItem) => (
-        <span>{item.isBuiltIn ? "No" : "Yes"}</span>
+        <Tag
+            value={item.isBuiltIn ? "Built-in" : "Custom"}
+            severity={item.isBuiltIn ? "info" : "success"}
+        />
     );
 
     return (
