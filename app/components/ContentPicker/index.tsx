@@ -408,10 +408,24 @@ export const ContentPicker = forwardRef<HTMLDivElement, ContentPickerProps>(
 
 				if (dialogRef.current) dialogRef.current.close();
 
-				setSelectedId(selectedIds.length ? selectedIds.join(",") : "");
+				const nextSelectedIds = selectedIds.length ? selectedIds.join(",") : "";
+				setSelectedId(nextSelectedIds);
 				setSelectedName(selectedNames.length ? selectedNames : []);
+
+				if (typeof onSelect === "function") {
+					onSelect({
+						value: nextSelectedIds,
+						name: selectedNames,
+						object: null,
+					});
+				}
 			}
 		};
+
+		const hiddenValue =
+			typeof selectedId === "string"
+				? selectedId
+				: "";
 
 		const renderMultiSelect = (
 			selectedItems: { id: number; name: string }[] = [],
@@ -771,7 +785,7 @@ export const ContentPicker = forwardRef<HTMLDivElement, ContentPickerProps>(
 								<svg aria-hidden="true" focusable="false" role="img"></svg>
 							</div>
 						)}
-						<input type="hidden" id={id} name={id} defaultValue={selectedId} />
+						<input type="hidden" id={id} name={id} value={hiddenValue} readOnly />
 						<div className="cp-validation-popup">
 							⚠️
 							{"Please fill out this field"}

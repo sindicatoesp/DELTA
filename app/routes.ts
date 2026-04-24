@@ -36,11 +36,12 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 				);
 			});
 
-			route("assets", "routes/settings/assets/_index.tsx");
-			route("assets/new", "routes/settings/assets/new.tsx");
+			route("assets", "routes/settings/assets/_index.tsx", () => {
+				route("new", "routes/settings/assets/new.tsx");
+				route(":id/edit", "routes/settings/assets/edit.tsx");
+				route(":id/delete", "routes/settings/assets/delete.tsx");
+			});
 			route("assets/:id", "routes/settings/assets/$id.tsx");
-			route("assets/:id/edit", "routes/settings/assets/edit.tsx");
-			route("assets/:id/delete", "routes/settings/assets/delete.tsx");
 			route(
 				"assets/content-picker-datasource",
 				"routes/settings/assets/content-picker-datasource.tsx",

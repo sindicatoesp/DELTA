@@ -17,6 +17,7 @@ import {
 	makeGetAssetByIdUseCase,
 } from "~/modules/assets/assets-module.server";
 import { ASSETS_ROUTE } from "~/modules/assets/presentation/asset-form";
+import DeleteAssetDialog from "~/modules/assets/presentation/delete-asset-dialog";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	await requirePermission(request, PERMISSIONS.ASSETS_DELETE);
@@ -62,35 +63,11 @@ export default function AssetDeletePage() {
 	const isSubmitting = navigation.state === "submitting";
 
 	return (
-		<div className="p-4">
-			<h2 className="text-lg font-semibold mb-4">
-				{"Delete asset"}: {ld.item.name}
-			</h2>
-			{actionData?.error && (
-				<p className="text-red-600 mb-4">{actionData.error}</p>
-			)}
-			<form method="post">
-				<p className="mb-4">
-					{"Are you sure you want to delete this asset? This action cannot be undone."}
-				</p>
-				<div className="flex gap-3">
-					<button
-						type="button"
-						className="btn btn-secondary"
-						onClick={() => navigate(ASSETS_ROUTE)}
-						disabled={isSubmitting}
-					>
-						{"Cancel"}
-					</button>
-					<button
-						type="submit"
-						className="btn btn-danger"
-						disabled={isSubmitting}
-					>
-						{isSubmitting ? "Deleting..." : "Delete"}
-					</button>
-				</div>
-			</form>
-		</div>
+		<DeleteAssetDialog
+			name={ld.item.name}
+			error={actionData?.error}
+			isSubmitting={isSubmitting}
+			onCancel={() => navigate(ASSETS_ROUTE)}
+		/>
 	);
 }

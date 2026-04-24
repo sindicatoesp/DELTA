@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useActionData, useLoaderData, useNavigate, useNavigation } from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 import { PERMISSIONS } from "~/frontend/user/roles";
@@ -16,16 +16,8 @@ import {
 } from "~/modules/assets/assets-module.server";
 import { contentPickerConfigSector } from "~/modules/assets/presentation/sector-picker-config";
 import { dr } from "~/db.server";
-import { AssetForm, ASSETS_ROUTE } from "~/modules/assets/presentation/asset-form";
-import { formScreen } from "~/frontend/form";
-
-const fieldsDef = [
-	{ key: "sectorIds" as const, label: "Sector", type: "other" as const },
-	{ key: "name" as const, label: "Name", type: "text" as const, required: true },
-	{ key: "category" as const, label: "Category", type: "text" as const },
-	{ key: "nationalId" as const, label: "National ID", type: "text" as const },
-	{ key: "notes" as const, label: "Notes", type: "textarea" as const },
-];
+import { ASSETS_ROUTE } from "~/modules/assets/presentation/asset-form";
+import EditAssetDialog from "~/modules/assets/presentation/edit-asset-dialog";
 
 export const loader = async (args: LoaderFunctionArgs) => {
 	const { request, params } = args;
@@ -35,10 +27,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
 	);
 
 	const countryAccountsId = await getCountryAccountsIdFromSession(request);
-
-	if (params.id === "new") {
-		return { item: null, fieldsDef, selectedDisplay: {} };
-	}
 
 	const item = await makeGetAssetByIdUseCase().execute({ id: params.id! });
 	if (!item) {
@@ -53,11 +41,11 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		item.sectorIds || "",
 	);
 
-	return { item, fieldsDef, selectedDisplay };
+	return { item, selectedDisplay };
 };
 
 export const action = authActionWithPerm(
-	PERMISSIONS.ASSETS_CREATE,
+	PERMISSIONS.ASSETS_UPDATE,
 	async (actionArgs: ActionFunctionArgs) => {
 		const { request, params } = actionArgs;
 		const countryAccountsId = await getCountryAccountsIdFromSession(request);
@@ -67,40 +55,71 @@ export const action = authActionWithPerm(
 
 		const formData = await request.formData();
 		const id = params.id ?? null;
-		const isNew = !id || id === "new";
+		await requirePermission(request, PERMISSIONS.ASSETS_UPDATE);
+		const sectorIds =
+			formData
+				.getAll("sectorIds")
+				.map((value) => String(value || "").trim())
+				.filter(Boolean)
+				.at(-1) || "";
 
-		if (!isNew) {
-			await requirePermission(request, PERMISSIONS.ASSETS_UPDATE);
-		}
+		const fields = {
+			name: String(formData.get("name") || "").trim(),
+			category: String(formData.get("category") || "").trim(),
+			notes: String(formData.get("notes") || "").trim(),
+			sectorIds,
+			nationalId: String(formData.get("nationalId") || "").trim() || null,
+		};
 
 		const result = await makeSaveAssetUseCase().execute({
 			id,
 			countryAccountsId,
-			name: String(formData.get("name") || "").trim(),
-			category: String(formData.get("category") || "").trim(),
-			notes: String(formData.get("notes") || "").trim(),
-			sectorIds: String(formData.get("sectorIds") || "").trim(),
-			nationalId:
-				String(formData.get("nationalId") || "").trim() || null,
+			...fields,
 		});
+
+		if (!result.ok) {
+			return {
+				ok: false,
+				data: fields,
+				errors: {
+					fields: {
+						name: [result.error],
+					},
+				},
+			};
+		}
 
 		return redirectWithMessage(
 			actionArgs,
 			`${ASSETS_ROUTE}/${result.id}`,
-			{ type: "success", text: isNew ? "Asset created" : "Asset updated" },
+			{ type: "success", text: "Asset updated" },
 		);
 	},
 );
 
 export default function Screen() {
 	const ld = useLoaderData<typeof loader>();
-	const selectedDisplay = ld.selectedDisplay || {};
+	const actionData = useActionData<typeof action>();
+	const navigate = useNavigate();
+	const navigation = useNavigation();
+	const isSubmitting = navigation.state === "submitting";
+	const actionNameError =
+		actionData && !actionData.ok
+			? actionData.errors?.fields?.name?.[0] || ""
+			: "";
+	const nameValue =
+		actionData && !actionData.ok
+			? String(actionData.data?.name || "")
+			: ld.item.name;
 
-	return formScreen({
-		extraData: { fieldDef: ld.fieldsDef, selectedDisplay },
-		fieldsInitial: ld.item ? { ...ld.item } : {},
-		form: AssetForm,
-		edit: !!ld.item,
-		id: ld.item?.id || undefined,
-	});
+	return (
+		<EditAssetDialog
+			item={ld.item}
+			nameValue={nameValue}
+			nameError={actionNameError}
+			isSubmitting={isSubmitting}
+			onHide={() => navigate(ASSETS_ROUTE)}
+			initialSectorDisplay={ld.selectedDisplay}
+		/>
+	);
 }
