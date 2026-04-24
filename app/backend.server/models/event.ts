@@ -6,13 +6,6 @@ import {
 } from "~/backend.server/handlers/form/form";
 
 import { Errors, hasErrors } from "~/frontend/form";
-import { hipHazardTable } from "~/drizzle/schema/hipHazardTable";
-import { hipClusterTable } from "~/drizzle/schema/hipClusterTable";
-import { hipTypeTable } from "~/drizzle/schema/hipTypeTable";
-import {
-	InsertDisasterEvent,
-	disasterEventTable,
-} from "~/drizzle/schema/disasterEventTable";
 import {
 	hazardousEventTable,
 	InsertHazardousEvent,
@@ -1193,20 +1186,6 @@ export async function hazardousEventDelete(
 	countryAccountsId: string,
 ): Promise<DeleteResult> {
 	try {
-		// First check if there are any disaster events linked to this hazard event
-		const linkedDisasterEvents = await dr
-			.select()
-			.from(disasterEventTable)
-			.where(and(eq(disasterEventTable.hazardousEventId, id)));
-
-		if (linkedDisasterEvents.length > 0) {
-			return {
-				ok: false,
-				error:
-					"Cannot delete hazard event because it is linked to one or more disaster events. Please delete the associated disaster events first.",
-			};
-		}
-
 		const whereClause = and(
 			eq(hazardousEventTable.id, id),
 			eq(hazardousEventTable.countryAccountsId, countryAccountsId),
@@ -1250,107 +1229,6 @@ export async function hazardousEventDelete(
 		}
 	}
 	return { ok: true };
-}
-
-export interface DisasterEventFields
-	extends Omit<EventInsert, "id">, Omit<InsertDisasterEvent, "id"> {
-	createdByUserId?: string;
-	updatedByUserId?: string;
-}
-
-export type DisasterEventViewModel = Exclude<
-	Awaited<ReturnType<typeof disasterEventById>>,
-	undefined
->;
-
-export async function disasterEventById(id: any) {
-	if (typeof id !== "string") {
-		throw new Error("Invalid ID: must be a string");
-	}
-
-	const disasterEvent = await dr.query.disasterEventTable.findFirst({
-		where: and(eq(disasterEventTable.id, id)),
-	});
-
-	if (!disasterEvent) {
-		throw new Error("Id is invalid");
-	}
-
-	// Then load related data in separate queries to avoid argument limit
-	const [hazardousEvent, hipHazard, hipCluster, hipType, event] =
-		await Promise.all([
-			disasterEvent.hazardousEventId
-				? dr.query.hazardousEventTable.findFirst({
-						where: eq(hazardousEventTable.id, disasterEvent.hazardousEventId),
-					})
-				: Promise.resolve(null),
-			disasterEvent.hipHazardId
-				? dr.query.hipHazardTable.findFirst({
-						columns: {
-							id: true,
-						},
-						extras: {
-							name: sql<string>`${hipHazardTable.name_en}`.as("name"),
-						},
-						where: eq(hipHazardTable.id, disasterEvent.hipHazardId),
-					})
-				: Promise.resolve(null),
-			disasterEvent.hipClusterId
-				? dr.query.hipClusterTable.findFirst({
-						columns: {
-							id: true,
-						},
-						extras: {
-							name: sql<string>`${hipClusterTable.name_en}`.as("name"),
-						},
-						where: eq(hipClusterTable.id, disasterEvent.hipClusterId),
-					})
-				: Promise.resolve(null),
-			disasterEvent.hipTypeId
-				? dr.query.hipTypeTable.findFirst({
-						columns: {
-							id: true,
-						},
-						extras: {
-							name: sql<string>`${hipTypeTable.name_en}`.as("name"),
-						},
-						where: eq(hipTypeTable.id, disasterEvent.hipTypeId),
-					})
-				: Promise.resolve(null),
-			dr.query.eventTable.findFirst({
-				where: eq(eventTable.id, id),
-			}),
-		]);
-
-	return {
-		...disasterEvent,
-		hazardousEvent: hazardousEvent || undefined,
-		hipHazard: hipHazard || undefined,
-		hipCluster: hipCluster || undefined,
-		hipType: hipType || undefined,
-		event: event || undefined,
-		disasterEvent: disasterEvent, // Self-reference for backward compatibility
-	};
-}
-
-export type DisasterEventBasicInfoViewModel = Exclude<
-	Awaited<ReturnType<typeof disasterEventBasicInfoById>>,
-	undefined
->;
-
-async function disasterEventBasicInfoById(id: any, countryAccountsId?: string) {
-	if (typeof id !== "string") {
-		throw new Error("Invalid ID: must be a string");
-	}
-	const res = await dr.query.disasterEventTable.findFirst({
-		where: countryAccountsId
-			? and(
-					eq(disasterEventTable.id, id),
-					eq(disasterEventTable.countryAccountsId, countryAccountsId),
-				)
-			: eq(disasterEventTable.id, id),
-	});
-	return res;
 }
 
 async function processAndSaveAttachments(

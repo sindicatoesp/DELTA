@@ -41,13 +41,20 @@ import {
 	countryAccountStatuses,
 	countryAccountTypesTable,
 } from "~/drizzle/schema/countryAccountsTable";
+import { disasterCausalityTable } from "~/drizzle/schema/disasterCausalityTable";
+import { disasterEventAssessmentTable } from "~/drizzle/schema/disasterEventAssessmentTable";
+import { disasterEventAttachmentTable } from "~/drizzle/schema/disasterEventAttachmentTable";
+import { disasterEventDeclarationTable } from "~/drizzle/schema/disasterEventDeclarationTable";
+import { disasterEventGeographyTable } from "~/drizzle/schema/disasterEventGeographyTable";
+import { disasterEventResponseTable } from "~/drizzle/schema/disasterEventResponseTable";
+import { disasterHazardousCausalityTable } from "~/drizzle/schema/disasterHazardousCausalityTable";
 import { hazardousEventTable } from "~/modules/hazardous-event/infrastructure/db/schema";
 import { CountryAccountValidationError } from "~/modules/country-account/application/errors/country-account-error";
 import type { CountryAccountRepositoryPort } from "~/modules/country-account/domain/repositories/country-account-repository";
 import type { CountryAccountDb } from "~/modules/country-account/infrastructure/db/client.server";
 import { COUNTRY_TYPE } from "~/drizzle/schema/countriesTable";
 import { BASE_UPLOAD_PATH } from "~/utils/paths";
-import { eq } from "drizzle-orm";
+import { eq, inArray, or } from "drizzle-orm";
 
 function createIdMap(ids: string[]) {
 	return new Map(ids.map((id) => [id, randomUUID()]));
@@ -767,19 +774,323 @@ export class DrizzleCountryAccountRepository implements CountryAccountRepository
 						...row,
 						id: getMappedId(eventIdMap, row.id, "disaster event"),
 						countryAccountsId: newCountryAccountId,
-						attachments: cloneAttachmentsForCountryAccount(
-							row.attachments,
-							newCountryAccountId,
-						),
-						hazardousEventId: row.hazardousEventId
-							? getMappedId(eventIdMap, row.hazardousEventId, "hazardous event")
-							: null,
-						disasterEventId: row.disasterEventId
-							? getMappedId(eventIdMap, row.disasterEventId, "disaster event")
+						hipHazardId: row.hipHazardId
+							? getMappedId(eventIdMap, row.hipHazardId, "hazardous event")
 							: null,
 					})),
 					tx,
 				);
+
+				const disasterEventIds = disasterEvents.map((row) => row.id);
+
+				const disasterDeclarationRows = await tx
+					.select()
+					.from(disasterEventDeclarationTable)
+					.where(
+						inArray(
+							disasterEventDeclarationTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				if (disasterDeclarationRows.length > 0) {
+					const declarationIdMap = createIdMap(
+						disasterDeclarationRows.map((row) => row.id),
+					);
+					await tx
+						.insert(disasterEventDeclarationTable)
+						.values(
+							disasterDeclarationRows
+								.filter(
+									(row) =>
+										!!row.disasterEventId &&
+										eventIdMap.has(row.disasterEventId),
+								)
+								.map((row) => ({
+									...row,
+									id: getMappedId(
+										declarationIdMap,
+										row.id,
+										"disaster declaration",
+									),
+									disasterEventId: getMappedId(
+										eventIdMap,
+										row.disasterEventId!,
+										"disaster event",
+									),
+								})),
+						)
+						.execute();
+				}
+
+				const disasterResponseRows = await tx
+					.select()
+					.from(disasterEventResponseTable)
+					.where(
+						inArray(
+							disasterEventResponseTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				if (disasterResponseRows.length > 0) {
+					const responseIdMap = createIdMap(
+						disasterResponseRows.map((row) => row.id),
+					);
+					await tx
+						.insert(disasterEventResponseTable)
+						.values(
+							disasterResponseRows
+								.filter(
+									(row) =>
+										!!row.disasterEventId &&
+										eventIdMap.has(row.disasterEventId),
+								)
+								.map((row) => ({
+									...row,
+									id: getMappedId(responseIdMap, row.id, "disaster response"),
+									disasterEventId: getMappedId(
+										eventIdMap,
+										row.disasterEventId!,
+										"disaster event",
+									),
+								})),
+						)
+						.execute();
+				}
+
+				const disasterAssessmentRows = await tx
+					.select()
+					.from(disasterEventAssessmentTable)
+					.where(
+						inArray(
+							disasterEventAssessmentTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				if (disasterAssessmentRows.length > 0) {
+					const assessmentIdMap = createIdMap(
+						disasterAssessmentRows.map((row) => row.id),
+					);
+					await tx
+						.insert(disasterEventAssessmentTable)
+						.values(
+							disasterAssessmentRows
+								.filter(
+									(row) =>
+										!!row.disasterEventId &&
+										eventIdMap.has(row.disasterEventId),
+								)
+								.map((row) => ({
+									...row,
+									id: getMappedId(
+										assessmentIdMap,
+										row.id,
+										"disaster assessment",
+									),
+									disasterEventId: getMappedId(
+										eventIdMap,
+										row.disasterEventId!,
+										"disaster event",
+									),
+								})),
+						)
+						.execute();
+				}
+
+				const disasterAttachmentRows = await tx
+					.select()
+					.from(disasterEventAttachmentTable)
+					.where(
+						inArray(
+							disasterEventAttachmentTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				if (disasterAttachmentRows.length > 0) {
+					const attachmentIdMap = createIdMap(
+						disasterAttachmentRows.map((row) => row.id),
+					);
+					await tx
+						.insert(disasterEventAttachmentTable)
+						.values(
+							disasterAttachmentRows
+								.filter(
+									(row) =>
+										!!row.disasterEventId &&
+										eventIdMap.has(row.disasterEventId),
+								)
+								.map((row) => {
+									const clonedAttachment = cloneAttachmentFileReference(
+										{
+											title: row.title,
+											file: {
+												name: row.fileKey,
+												originalName: row.fileName,
+												mimeType: row.fileType,
+												size: row.fileSize,
+											},
+										},
+										newCountryAccountId,
+									);
+
+									return {
+										...row,
+										id: getMappedId(
+											attachmentIdMap,
+											row.id,
+											"disaster attachment",
+										),
+										disasterEventId: getMappedId(
+											eventIdMap,
+											row.disasterEventId!,
+											"disaster event",
+										),
+										fileKey:
+											typeof clonedAttachment?.file?.name === "string"
+												? clonedAttachment.file.name
+												: row.fileKey,
+										fileName:
+											typeof clonedAttachment?.file?.originalName === "string"
+												? clonedAttachment.file.originalName
+												: row.fileName,
+										fileType:
+											typeof clonedAttachment?.file?.mimeType === "string"
+												? clonedAttachment.file.mimeType
+												: row.fileType,
+										fileSize:
+											typeof clonedAttachment?.file?.size === "number"
+												? clonedAttachment.file.size
+												: row.fileSize,
+									};
+								}),
+						)
+						.execute();
+				}
+
+				const disasterGeographyRows = await tx
+					.select()
+					.from(disasterEventGeographyTable)
+					.where(
+						inArray(
+							disasterEventGeographyTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				if (disasterGeographyRows.length > 0) {
+					const geographyIdMap = createIdMap(
+						disasterGeographyRows.map((row) => row.id),
+					);
+					await tx
+						.insert(disasterEventGeographyTable)
+						.values(
+							disasterGeographyRows
+								.filter(
+									(row) =>
+										!!row.disasterEventId &&
+										eventIdMap.has(row.disasterEventId),
+								)
+								.map((row) => ({
+									...row,
+									id: getMappedId(geographyIdMap, row.id, "disaster geography"),
+									disasterEventId: getMappedId(
+										eventIdMap,
+										row.disasterEventId!,
+										"disaster event",
+									),
+								})),
+						)
+						.execute();
+				}
+
+				const disasterCausalityRows = await tx
+					.select()
+					.from(disasterCausalityTable)
+					.where(
+						or(
+							inArray(disasterCausalityTable.causeDisasterId, disasterEventIds),
+							inArray(
+								disasterCausalityTable.effectDisasterId,
+								disasterEventIds,
+							),
+						),
+					);
+				if (disasterCausalityRows.length > 0) {
+					const causalityIdMap = createIdMap(
+						disasterCausalityRows.map((row) => row.id),
+					);
+					await tx
+						.insert(disasterCausalityTable)
+						.values(
+							disasterCausalityRows
+								.filter(
+									(row) =>
+										!!row.causeDisasterId &&
+										!!row.effectDisasterId &&
+										eventIdMap.has(row.causeDisasterId) &&
+										eventIdMap.has(row.effectDisasterId),
+								)
+								.map((row) => ({
+									...row,
+									id: getMappedId(causalityIdMap, row.id, "disaster causality"),
+									causeDisasterId: getMappedId(
+										eventIdMap,
+										row.causeDisasterId!,
+										"disaster event",
+									),
+									effectDisasterId: getMappedId(
+										eventIdMap,
+										row.effectDisasterId!,
+										"disaster event",
+									),
+								})),
+						)
+						.execute();
+				}
+
+				const disasterHazardousCausalityRows = await tx
+					.select()
+					.from(disasterHazardousCausalityTable)
+					.where(
+						inArray(
+							disasterHazardousCausalityTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				if (disasterHazardousCausalityRows.length > 0) {
+					const hazardousCausalityIdMap = createIdMap(
+						disasterHazardousCausalityRows.map((row) => row.id),
+					);
+					await tx
+						.insert(disasterHazardousCausalityTable)
+						.values(
+							disasterHazardousCausalityRows
+								.filter(
+									(row) =>
+										!!row.disasterEventId &&
+										!!row.hazardousEventId &&
+										eventIdMap.has(row.disasterEventId) &&
+										eventIdMap.has(row.hazardousEventId),
+								)
+								.map((row) => ({
+									...row,
+									id: getMappedId(
+										hazardousCausalityIdMap,
+										row.id,
+										"disaster hazardous causality",
+									),
+									disasterEventId: getMappedId(
+										eventIdMap,
+										row.disasterEventId!,
+										"disaster event",
+									),
+									hazardousEventId: getMappedId(
+										eventIdMap,
+										row.hazardousEventId!,
+										"hazardous event",
+									),
+								})),
+						)
+						.execute();
+				}
 			}
 
 			if (oldEventIds.length > 0) {
@@ -1287,27 +1598,89 @@ export class DrizzleCountryAccountRepository implements CountryAccountRepository
 			}
 			if (hazardousEventIds.length > 0) {
 				EntityValidationAssignmentRepository.deleteByEntityIdsAndEntityType(
-					recordIds,
+					hazardousEventIds,
 					"hazardous_event",
 					tx,
 				);
 				EntityValidationRejectionRepository.deleteByEntityIdsAndEntityType(
-					recordIds,
+					hazardousEventIds,
 					"hazardous_event",
 					tx,
 				);
 			}
 			if (disasterEventIds.length > 0) {
 				EntityValidationAssignmentRepository.deleteByEntityIdsAndEntityType(
-					recordIds,
+					disasterEventIds,
 					"disaster_event",
 					tx,
 				);
 				EntityValidationRejectionRepository.deleteByEntityIdsAndEntityType(
-					recordIds,
+					disasterEventIds,
 					"disaster_event",
 					tx,
 				);
+
+				await tx
+					.delete(disasterCausalityTable)
+					.where(
+						or(
+							inArray(disasterCausalityTable.causeDisasterId, disasterEventIds),
+							inArray(
+								disasterCausalityTable.effectDisasterId,
+								disasterEventIds,
+							),
+						),
+					);
+
+				await tx
+					.delete(disasterHazardousCausalityTable)
+					.where(
+						inArray(
+							disasterHazardousCausalityTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+
+				await tx
+					.delete(disasterEventDeclarationTable)
+					.where(
+						inArray(
+							disasterEventDeclarationTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				await tx
+					.delete(disasterEventResponseTable)
+					.where(
+						inArray(
+							disasterEventResponseTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				await tx
+					.delete(disasterEventAssessmentTable)
+					.where(
+						inArray(
+							disasterEventAssessmentTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				await tx
+					.delete(disasterEventAttachmentTable)
+					.where(
+						inArray(
+							disasterEventAttachmentTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
+				await tx
+					.delete(disasterEventGeographyTable)
+					.where(
+						inArray(
+							disasterEventGeographyTable.disasterEventId,
+							disasterEventIds,
+						),
+					);
 			}
 			await AssetRepository.deleteByCountryAccountIdAndIsBuiltIn(
 				countryAccountId,
