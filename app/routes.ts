@@ -157,27 +157,6 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		route("sso/azure-b2c/invite", "routes/sso/azure-b2c.invite.tsx");
 	});
 
-	const disasterEventRoutes = defineRoutes((route) => {
-		route("disaster-event/new", "routes/disaster-event/new.tsx");
-		route("disaster-event/:id", "routes/disaster-event/$id.tsx");
-		route("disaster-event", "routes/disaster-event/_index.tsx");
-		route("disaster-event/:id/delete", "routes/disaster-event/delete.tsx");
-		route("disaster-event/:id/edit", "routes/disaster-event/edit.tsx");
-		route(
-			"disaster-event/file-pre-upload",
-			"routes/disaster-event/file-pre-upload.tsx",
-		);
-		route(
-			"disaster-event/file-temp-viewer",
-			"routes/disaster-event/file-temp-viewer.tsx",
-		);
-		route(
-			"disaster-event/file-viewer",
-			"routes/disaster-event/file-viewer.tsx",
-		);
-		route("disaster-event/picker", "routes/disaster-event/picker.tsx");
-	});
-
 	const hazardousEventRoutes = defineRoutes((route) => {
 		route("hazardous-event/:id", "routes/hazardous-event/$id.tsx");
 		route("hazardous-event", "routes/hazardous-event/_index.tsx");
@@ -355,36 +334,6 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		route("api/damage/list", "routes/api/damage/list.ts");
 		route("api/damage/update", "routes/api/damage/update.ts");
 		route("api/damage/upsert", "routes/api/damage/upsert.ts");
-		route("api/disaster-event", "routes/api/disaster-event/_index.tsx");
-		route("api/disaster-event/add", "routes/api/disaster-event/add.ts");
-		route(
-			"api/disaster-event/csv-import-example",
-			"routes/api/disaster-event/csv-import-example.ts",
-		);
-		route("api/disaster-event/fields", "routes/api/disaster-event/fields.ts");
-		route("api/disaster-event/list", "routes/api/disaster-event/list.ts");
-		route(
-			"api/disaster-event/tags-sectors",
-			"routes/api/disaster-event/tags-sectors.ts",
-		);
-		route("api/disaster-event/update", "routes/api/disaster-event/update.ts");
-		route("api/disaster-event/upsert", "routes/api/disaster-event/upsert.ts");
-		route(
-			"api/disaster-events/:disaster_event_id/recovery-cost",
-			"routes/api/disaster-events.$disaster_event_id/recovery-cost.ts",
-		);
-		route(
-			"api/disaster-events/:disaster_event_id/rehabilitation-cost",
-			"routes/api/disaster-events.$disaster_event_id/rehabilitation-cost.tsx",
-		);
-		route(
-			"api/disaster-events/:disaster_event_id/repair-cost",
-			"routes/api/disaster-events.$disaster_event_id/repair-cost.tsx",
-		);
-		route(
-			"api/disaster-events/:disaster_event_id/replacement-cost",
-			"routes/api/disaster-events.$disaster_event_id/replacement-cost.tsx",
-		);
 		route("api/disaster-record", "routes/api/disaster-record/_index.tsx");
 		route("api/disaster-record/add", "routes/api/disaster-record/add.ts");
 		route(
@@ -494,7 +443,6 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 		...adminRoutes,
 		...setupRoutes,
 		...infoRoutes,
-		...disasterEventRoutes,
 		...hazardousEventRoutes,
 		...disasterRecordRoutes,
 		...apiRoutes,
