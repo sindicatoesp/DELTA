@@ -14,6 +14,7 @@ import {
 	makeGetAssetByIdUseCase,
 	makeSaveAssetUseCase,
 } from "~/modules/assets/assets-module.server";
+import { makeGetSectorsPageDataUseCase } from "~/modules/sectors/sectors-module.server";
 import EditAssetDialog from "~/modules/assets/presentation/edit-asset-dialog";
 
 export const loader = async (args: LoaderFunctionArgs) => {
@@ -33,8 +34,13 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		throw new Response("Asset not accessible for editing", { status: 403 });
 	}
 
-	return { item };
+	const sectorsData = await makeGetSectorsPageDataUseCase().execute();
 
+	return {
+		item,
+		sectors: sectorsData.sectors,
+		initialSectorIds: item.sectorIds,
+	};
 };
 
 export const action = authActionWithPerm(
@@ -107,6 +113,8 @@ export default function Screen() {
 
 	return (
 		<EditAssetDialog
+			sectors={ld.sectors}
+			initialSectorIds={ld.initialSectorIds}
 			item={ld.item}
 			nameValue={nameValue}
 			nameError={actionNameError}

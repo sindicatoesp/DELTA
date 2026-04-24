@@ -10,6 +10,7 @@ import {
 import {
 	makeSaveAssetUseCase,
 } from "~/modules/assets/assets-module.server";
+import { makeGetSectorsPageDataUseCase } from "~/modules/sectors/sectors-module.server";
 import NewAssetDialog from "~/modules/assets/presentation/new-asset-dialog";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -17,9 +18,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 	const url = new URL(request.url);
 	const sectorId = (url.searchParams.get("sectorId") || "").trim();
+	const sectorsData = await makeGetSectorsPageDataUseCase().execute();
 
-
-	return { initialSectorIds: sectorId };
+	return {
+		initialSectorIds: sectorId,
+		sectors: sectorsData.sectors,
+	};
 };
 
 export const action = authActionWithPerm(
@@ -79,6 +83,7 @@ export default function Screen() {
 			onHide={() => navigate(`/settings/assets`)}
 			actionData={actionData}
 			initialSectorIds={ld.initialSectorIds}
+			sectors={ld.sectors}
 		/>
 	);
 }

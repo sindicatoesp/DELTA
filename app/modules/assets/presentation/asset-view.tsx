@@ -9,7 +9,8 @@ interface AssetViewProps {
 }
 
 export function AssetView({ item, sectorDisplay }: AssetViewProps) {
-    const sectorNames = sectorDisplay?.map((s) => s.name) ?? [];
+    const sectorNames = sectorDisplay?.map((s) => s.name).filter(Boolean) ?? [];
+    const sectorsAsText = sectorNames.join(", ");
     const isBuiltIn = item.isBuiltIn === true;
     const showFallbackSector = sectorNames.length === 0;
     const valueClassName = "mt-1 text-sm text-slate-900 md:text-base";
@@ -61,22 +62,7 @@ export function AssetView({ item, sectorDisplay }: AssetViewProps) {
 
                 <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{"Sector"}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {showFallbackSector ? (
-                            <span className="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-sm text-slate-600">
-                                {"Not specified"}
-                            </span>
-                        ) : (
-                            sectorNames.map((name) => (
-                                <span
-                                    key={name}
-                                    className="rounded-full bg-cyan-100 px-3 py-1 text-sm font-medium text-cyan-900"
-                                >
-                                    {name}
-                                </span>
-                            ))
-                        )}
-                    </div>
+                    <p className={valueClassName}>{showFallbackSector ? "Not specified" : sectorsAsText}</p>
                 </section>
 
                 <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">

@@ -4,6 +4,7 @@ import { authLoaderWithPerm } from "~/utils/auth";
 import { PERMISSIONS } from "~/frontend/user/roles";
 import { getCountryAccountsIdFromSession } from "~/utils/session";
 import {
+	makeAssetRepository,
 	makeGetAssetByIdUseCase,
 } from "~/modules/assets/assets-module.server";
 import { AssetView } from "~/modules/assets/presentation/asset-view";
@@ -27,11 +28,15 @@ export const loader = authLoaderWithPerm(
 			});
 		}
 
-		return { item };
+		const sectorDisplay = await makeAssetRepository().getSectorDisplay(
+			item.sectorIds,
+		);
+
+		return { item, sectorDisplay };
 	},
 );
 
 export default function Screen() {
 	const ld = useLoaderData<typeof loader>();
-	return <AssetView item={ld.item} />;
+	return <AssetView item={ld.item} sectorDisplay={ld.sectorDisplay} />;
 }

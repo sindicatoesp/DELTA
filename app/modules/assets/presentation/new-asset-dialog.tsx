@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { Form as RRForm } from "react-router";
 
 import { Button } from "primereact/button";
@@ -5,6 +6,15 @@ import { Dialog } from "primereact/dialog";
 import { Divider } from "primereact/divider";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
+import { TreeSelect } from "primereact/treeselect";
+
+import type { SectorListItem } from "~/modules/sectors/domain/entities/sector";
+import {
+    buildSectorTreeNodes,
+    sectorIdsToTreeSelection,
+    treeSelectionToSectorIds,
+    type TreeSelectionKeys,
+} from "~/modules/assets/presentation/sector-tree";
 
 interface NewAssetDialogProps {
     isSubmitting: boolean;
@@ -14,11 +24,16 @@ interface NewAssetDialogProps {
         error?: string;
     };
     initialSectorIds?: string;
-    initialSectorDisplay?: any;
+    sectors: SectorListItem[];
 }
 
 export default function NewAssetDialog(props: NewAssetDialogProps) {
     const nameError = props.actionData && !props.actionData.ok ? props.actionData.error || "" : "";
+    const treeNodes = useMemo(() => buildSectorTreeNodes(props.sectors), [props.sectors]);
+    const [selectedSectors, setSelectedSectors] = useState<TreeSelectionKeys>(
+        sectorIdsToTreeSelection(props.initialSectorIds || ""),
+    );
+    const selectedSectorIds = treeSelectionToSectorIds(selectedSectors);
 
     const footer = (
         <div className="flex justify-end gap-2">
@@ -90,8 +105,22 @@ export default function NewAssetDialog(props: NewAssetDialogProps) {
                 <Divider className="my-1" />
 
                 <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-gray-700">{"Sector"}</label>
-
+                    <label htmlFor="field-sectorIds" className="text-sm font-medium text-gray-700">
+                        {"Sector"}
+                    </label>
+                    <TreeSelect
+                        id="field-sectorIds"
+                        value={selectedSectors}
+                        onChange={(e) => setSelectedSectors((e.value as TreeSelectionKeys) || {})}
+                        options={treeNodes}
+                        selectionMode="checkbox"
+                        filter
+                        className="w-full"
+                        disabled={props.isSubmitting}
+                        display="chip"
+                        placeholder={"Select sectors"}
+                    />
+                    <input type="hidden" name="sectorIds" value={selectedSectorIds} />
                 </div>
             </RRForm>
         </Dialog>

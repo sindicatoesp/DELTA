@@ -42,10 +42,6 @@ export default remixRoutesOptionAdapter((defineRoutes) => {
 				route(":id/delete", "routes/settings/assets/delete.tsx");
 			});
 			route("assets/:id", "routes/settings/assets/$id.tsx");
-			route(
-				"assets/content-picker-datasource",
-				"routes/settings/assets/content-picker-datasource.tsx",
-			);
 
 			route("geography", "routes/settings/geography/_index.tsx");
 			route("geography/:id", "routes/settings/geography/$id.tsx");
